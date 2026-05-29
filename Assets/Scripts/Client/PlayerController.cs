@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -10,27 +10,57 @@ public class PlayerController : NetworkBehaviour
     public Color playerColor = Color.white;
 
     [SerializeField] private Renderer playerRenderer;
+
+    public GameObject chunkCube;
+    
+    private List<GameObject> _cubes = new(); 
+    private List<Material> _materials = new();
     
     public PlayerData playerData;
     
     private Material _cachedMaterial;
 
+    private ChunkData initial = new(new BlockID(1), false);
+
     void Start()
     {
         _cachedMaterial = playerRenderer.material;
         // Ensure the material reflects the current synced color right when spawned
-        _cachedMaterial.SetColor("Color", playerColor);
+        _cachedMaterial.SetColor("_BaseColor", playerColor);
+        
+        for (int x = 0; x < ChunkUtils.ChunkSize; x++)
+        {
+            for (int y = 0; y < ChunkUtils.ChunkSize; y++)
+            {
+                float scale = 0.1f;
+                
+                var newOne = Instantiate(chunkCube, new Vector3(x*1*scale, y*1*scale, 0), Quaternion.identity);
+                
+                newOne.transform.localScale = new Vector3(scale, scale, scale);
+                
+                _materials.Add(newOne.GetComponent<Renderer>().material);
+            }
+        }
     }
 
     void Update()
     {
+        if (!isClient) return;
+        
+        for (ushort i = 0; i < ChunkUtils.ChunkSize * ChunkUtils.ChunkSize; i++)
+        {
+            _materials[i].SetColor("_BaseColor", initial[i].GetColor());
+        }
+        
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
 
         // When the local player presses Space, ask the server to change the color.
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             CmdChangeColor();
+            
+            CmdBroadcastChunkDelta();
         }
 
         float control = 0f;
@@ -49,6 +79,22 @@ public class PlayerController : NetworkBehaviour
         //CmdAffectPos(control);
     }
 
+    [Command]
+    void CmdBroadcastChunkDelta()
+    {
+        ChunkData updated = new (new BlockID(1), true);
+        
+        SparseChunkDelta delta = new(initial, updated);
+        
+        RpcApplyChunkDelta(delta);
+    }
+
+    [ClientRpc]
+    void RpcApplyChunkDelta(SparseChunkDelta delta)
+    {
+        delta.Apply(initial);
+    }
+    
     [Command]
     void CmdAffectPos(float pos)
     {
