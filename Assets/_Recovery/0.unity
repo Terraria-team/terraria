@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 488109029}
   - component: {fileID: 488109028}
+  - component: {fileID: 488109030}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -164,6 +165,21 @@ Transform:
   - {fileID: 785681553}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &488109030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488109027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4afdf4a6b77b49fc85737a6931e33f84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Client::Client.RenderComponent
+  foregroundTilemap: {fileID: 785681555}
+  groundTile: {fileID: 11400000, guid: 182b5021277e2d74db0f895280313f06, type: 2}
+  cam: {fileID: 519420031}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3089,7 +3105,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 6026004524852160811, guid: b7aa8cdf5d2d2944da14b260bd9b4949, type: 3}
+  playerPrefab: {fileID: 7554499572583266452, guid: 298cf303d555b6c49bba9b0df1070663, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
