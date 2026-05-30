@@ -16,7 +16,7 @@ public readonly struct BlockID : IEquatable<BlockID>, IComparable<BlockID>
     public static explicit operator BlockID(ushort value) => new(value);
 
     public bool Equals(BlockID other) => Value == other.Value;
-    public override bool Equals(object? obj) => obj is BlockID other && Equals(other);
+    public override bool Equals(object obj) => obj is BlockID other && Equals(other);
     public override int GetHashCode() => Value.GetHashCode();
     public override string ToString() => Value.ToString();
 

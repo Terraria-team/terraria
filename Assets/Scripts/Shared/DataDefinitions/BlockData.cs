@@ -4,6 +4,6 @@ using UnityEngine;
 public class BlockData : ScriptableObject
 {
     public ushort id;
-    public string name;
+    public string unlocalizedName;
     public Sprite sprite;
 }

@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 
-public struct ChunkDeltaEntry
+public readonly struct ChunkDeltaEntry
 {
     public readonly ushort Index;
     public readonly BlockID Value;
@@ -16,6 +15,7 @@ public struct ChunkDeltaEntry
 public readonly struct SparseChunkDelta
 {
     public readonly List<ChunkDeltaEntry> Deltas;
+    public bool IsEmpty => Deltas.Count == 0;
 
     public SparseChunkDelta(ChunkData original, ChunkData updated)
     {
@@ -28,10 +28,17 @@ public readonly struct SparseChunkDelta
         }
     }
 
-    public void Apply(ChunkData on)
+    public SparseChunkDelta(List<ChunkDeltaEntry> deltas)
     {
+        Deltas = deltas;
+    }
+
+    public void Apply(ref ChunkData on)
+    {
+        int appliedCount = 0;
         foreach (ChunkDeltaEntry entry in Deltas)
         {
+            appliedCount++;
             on[entry.Index] = entry.Value;
         }
     }

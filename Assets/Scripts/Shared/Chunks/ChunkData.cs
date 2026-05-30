@@ -13,9 +13,9 @@ public readonly struct ChunkData
         if (!randomize)
             return;
         
+        Random rand = new Random();
         for (int i = 0; i < ChunkUtils.ChunkMaxIndex / 2; i++)
         {
-            Random rand = new Random();
             int index = rand.Next(0, ChunkUtils.ChunkMaxIndex);
             _matrix[index] = new BlockID(0);
         }

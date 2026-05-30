@@ -2,7 +2,8 @@
     "name": "Server",
     "rootNamespace": "",
     "references": [
-        "Shared"
+        "Shared",
+        "Mirror"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
