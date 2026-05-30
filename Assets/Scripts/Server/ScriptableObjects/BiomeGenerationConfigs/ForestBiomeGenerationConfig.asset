@@ -24,7 +24,7 @@ MonoBehaviour:
   amplitudeX: 10
   frequencyX: 0.01
   octavesX: 7
-  caveFrequency: 0.07
-  tunnelThickness: 0.3
+  caveFrequency: 0.03
+  tunnelThickness: 0.21
   caveSeedOffset1: 100
   caveSeedOffset2: 200
