@@ -69,6 +69,7 @@ MonoBehaviour:
   syncInterval: 0
   playerColor: {r: 0, g: 0, b: 0, a: 1}
   playerRenderer: {fileID: 2590959796689460895}
+  chunkCube: {fileID: 2550125032901174633, guid: 40603468a78a19e4f982164404284cef, type: 3}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
 --- !u!114 &6390058239813142274
 MonoBehaviour:

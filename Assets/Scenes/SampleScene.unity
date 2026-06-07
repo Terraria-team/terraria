@@ -3043,7 +3043,7 @@ GameObject:
   - component: {fileID: 786780905}
   - component: {fileID: 786780908}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: NetworkManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

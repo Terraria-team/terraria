@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,6 +12,8 @@ public class PlayerController : NetworkBehaviour
     
     private PlayerRenderer playerRenderer;
 
+
+    private ChunkManager _chunkManager;
 
     void Start()
     {
