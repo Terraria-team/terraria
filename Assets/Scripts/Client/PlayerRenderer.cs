@@ -59,9 +59,6 @@ public class PlayerRenderer : NetworkBehaviour
         // The server generates a random color and updates the SyncVar.
         // Because it's a SyncVar, this automatically pushes the new color to all clients.
         playerFacingLeft = newDirection;
-
-        // The server also triggers an RPC to send a message to everyone.
-        RpcLogChange("A player changed their direction!");
     }
 
     // 3. CLIENT RPC: Called by the Server, but executed on ALL Clients.
