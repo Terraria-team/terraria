@@ -2,7 +2,8 @@
     "name": "Shared",
     "rootNamespace": "",
     "references": [
-        "GUID:107d69109d8f39440b0f011a29082a82"
+        "GUID:107d69109d8f39440b0f011a29082a82",
+        "GUID:30817c1a0e6d646d99c048fc403f5979"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

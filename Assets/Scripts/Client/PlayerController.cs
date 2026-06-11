@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,16 +11,49 @@ public class PlayerController : NetworkBehaviour
     public Color playerColor = Color.white;
 
     [SerializeField] private Renderer playerRenderer;
+
+    public GameObject chunkCube;
+    
+    private List<Material> _materials = new();
     
     public PlayerData playerData;
     
     private Material _cachedMaterial;
 
+    private ChunkManager _chunkManager;
+
     void Start()
     {
+        _chunkManager = ChunkManager.Instance;
         _cachedMaterial = playerRenderer.material;
         // Ensure the material reflects the current synced color right when spawned
-        _cachedMaterial.SetColor("Color", playerColor);
+        _cachedMaterial.SetColor("_BaseColor", playerColor);
+
+        if (!isLocalPlayer) return;
+        
+        for (int x = 0; x < ChunkUtils.ChunkSize; x++)
+        {
+            for (int y = 0; y < ChunkUtils.ChunkSize; y++)
+            {
+                float scale = 0.1f;
+                
+                var newOne = Instantiate(chunkCube, new Vector3(x*1*scale, y*1*scale, 0), Quaternion.identity);
+                
+                newOne.transform.localScale = new Vector3(scale, scale, scale);
+                
+                _materials.Add(newOne.GetComponent<Renderer>().material);
+            }
+        }
+
+        //SubscribeToChunks();
+    }
+
+    private List<NetworkConnectionToClient> _chunkListeners = new();
+    
+    [Command]
+    void SubscribeToChunks()
+    {
+        _chunkListeners.Add(connectionToClient);
     }
 
     void Update()
@@ -27,8 +61,40 @@ public class PlayerController : NetworkBehaviour
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
 
+        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        {
+            _materials[i].SetColor("_BaseColor", _chunkManager._localView[i].GetColor());
+        }
+
+        int place = -1;
+        
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            place = 0;
+        }
+        
+        if (Input.GetKey(KeyCode.Alpha2))
+        {
+            place = 1;
+        }
+
+        if (place != -1)
+        {
+            var coord = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        
+            float scale = 0.1f;
+
+            var x = (int)(coord.x / scale);
+            var y = (int)(coord.y / scale);
+            
+            x = Mathf.Clamp(x, 0, ChunkUtils.ChunkSize - 1);
+            y = Mathf.Clamp(y, 0, ChunkUtils.ChunkSize - 1);
+            
+            _chunkManager.Place((byte)x, (byte)y, new BlockID((ushort)place));
+        }
+        
         // When the local player presses Space, ask the server to change the color.
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             CmdChangeColor();
         }
@@ -48,7 +114,6 @@ public class PlayerController : NetworkBehaviour
         
         //CmdAffectPos(control);
     }
-
     [Command]
     void CmdAffectPos(float pos)
     {
