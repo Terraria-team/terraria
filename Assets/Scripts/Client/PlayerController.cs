@@ -19,6 +19,8 @@ public class PlayerController : NetworkBehaviour
     public PlayerData playerData;
     
     private Material _cachedMaterial;
+    private float _velocityY = 0f;
+    private bool _isGrounded = false;
 
     private ChunkManager _chunkManager;
 
@@ -94,23 +96,44 @@ public class PlayerController : NetworkBehaviour
         }
         
         // When the local player presses Space, ask the server to change the color.
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             CmdChangeColor();
         }
-
+        
         float control = 0f;
+        if (Input.GetKey(KeyCode.A)) control += -1f;
+        if (Input.GetKey(KeyCode.D)) control += 1f;
         
-        if (Input.GetKey(KeyCode.S))
+        bool wantsToJump = Input.GetKeyDown(KeyCode.Space);
+
+        if (_isGrounded)
         {
-            control += -1f;
+            //on the ground -> no gravity
+            _velocityY = 0f;
+            //jump -> impulse up
+            if (wantsToJump)
+            {
+                _velocityY = playerData.jumpForce;
+                _isGrounded = false;
+            }
         }
-        if (Input.GetKey(KeyCode.W))
+        else
         {
-            control += 1f;
+            //gravity pulls down
+            _velocityY += playerData.gravity * Time.deltaTime;
         }
         
-        GetComponent<Transform>().position += Vector3.up * (control * playerData.baseSpeed * Time.deltaTime);
+        Vector3 movement = new Vector3(control * playerData.baseSpeed, _velocityY, 0f);
+        
+        GetComponent<Transform>().position += movement  * Time.deltaTime;
+        
+        //tmp floor
+        if (transform.position.y <= 0f)
+        {
+            transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+            _isGrounded = true; 
+        }
         
         //CmdAffectPos(control);
     }
