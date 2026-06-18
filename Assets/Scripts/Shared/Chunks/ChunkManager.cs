@@ -8,6 +8,12 @@ public class ChunkManager : NetworkBehaviour
     
     public ChunkData _localView;
     public static ChunkManager Instance;
+    
+    public Dictionary<Vector2Int, ChunkData> Chunks = new Dictionary<Vector2Int, ChunkData>();
+    public void InjectWorldData(Dictionary<Vector2Int, ChunkData> generatedWorld)
+    {
+        Chunks = generatedWorld;
+    }
 
     public void Mine(byte x, byte y)
     {
@@ -42,8 +48,7 @@ public class ChunkManager : NetworkBehaviour
             Instance = this;
         else
             Debug.LogError("Multiple instances of ChunkManager detected");
-        
-        // TODO generate world here
+
         _localView = _initial;
     }
 }
