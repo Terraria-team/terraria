@@ -11,10 +11,6 @@ public class PlayerController : NetworkBehaviour
     public Color playerColor = Color.white;
 
     [SerializeField] private Renderer playerRenderer;
-
-    public GameObject chunkCube;
-    
-    private List<Material> _materials = new();
     
     public PlayerData playerData;
     
@@ -28,26 +24,10 @@ public class PlayerController : NetworkBehaviour
     {
         _chunkManager = ChunkManager.Instance;
         _cachedMaterial = playerRenderer.material;
-        // Ensure the material reflects the current synced color right when spawned
-        _cachedMaterial.SetColor("_BaseColor", playerColor);
-
+       
         if (!isLocalPlayer) return;
         
-        for (int x = 0; x < ChunkUtils.ChunkSize; x++)
-        {
-            for (int y = 0; y < ChunkUtils.ChunkSize; y++)
-            {
-                float scale = 0.1f;
-                
-                var newOne = Instantiate(chunkCube, new Vector3(x*1*scale, y*1*scale, 0), Quaternion.identity);
-                
-                newOne.transform.localScale = new Vector3(scale, scale, scale);
-                
-                _materials.Add(newOne.GetComponent<Renderer>().material);
-            }
-        }
-
-        //SubscribeToChunks();
+        SubscribeToChunks();
     }
 
     private List<NetworkConnectionToClient> _chunkListeners = new();
@@ -58,41 +38,46 @@ public class PlayerController : NetworkBehaviour
         _chunkListeners.Add(connectionToClient);
     }
 
+    private int? place = null;
     void Update()
     {
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
-
-        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
-        {
-            _materials[i].SetColor("_BaseColor", _chunkManager._localView[i].GetColor());
-        }
-
-        int place = -1;
         
-        if (Input.GetKey(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             place = 0;
+            Debug.Log($"Choose AIR");
         }
         
-        if (Input.GetKey(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             place = 1;
+            Debug.Log($"Choose Grass");
         }
 
-        if (place != -1)
+        if (Input.GetMouseButton(0) && place != null)
         {
-            var coord = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        
-            float scale = 0.1f;
-
-            var x = (int)(coord.x / scale);
-            var y = (int)(coord.y / scale);
+            Vector3 mousePos = Input.mousePosition;
+            // Ensure ScreenToWorldPoint works correctly by providing distance from camera
+            mousePos.z = -Camera.main.transform.position.z; 
             
-            x = Mathf.Clamp(x, 0, ChunkUtils.ChunkSize - 1);
-            y = Mathf.Clamp(y, 0, ChunkUtils.ChunkSize - 1);
+            Vector3 worldCoord = Camera.main.ScreenToWorldPoint(mousePos);
+            worldCoord.z = 0f;
             
-            _chunkManager.Place((byte)x, (byte)y, new BlockID((ushort)place));
+            Vector3Int cellPos = _chunkManager.playerGrid.WorldToCell(worldCoord);
+            // _chunkManager.UpdateTileVisual(cellPos.x, cellPos.y, (int)place);
+            
+            // Only place blocks if we are clicking INSIDE the chunk boundaries (0 to 63)
+            if (cellPos.x >= 0 && cellPos.x < ChunkUtils.ChunkSize && 
+                cellPos.y >= 0 && cellPos.y < ChunkUtils.ChunkSize)
+            {
+                // Immediate local visual feedback
+                _chunkManager.UpdateTileVisual((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
+                
+                _chunkManager.Place((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
+                Debug.Log($"Clicked World: {worldCoord} -> Grid Cell: {cellPos}. Sending Place({cellPos.x}, {cellPos.y}, {place.Value})");
+            }
         }
         
         // When the local player presses Space, ask the server to change the color.
