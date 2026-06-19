@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 6026004524852160811}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.68, y: 6, z: 0}
+  m_LocalPosition: {x: 40, y: 41.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 3071630997
+  _assetId: 4073852623
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -68,8 +68,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playerColor: {r: 1, g: 1, b: 1, a: 1}
-  playerRenderer: {fileID: 0}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
 --- !u!114 &8650986358743929723
 MonoBehaviour:

@@ -112,9 +112,9 @@ public class PlayerController : NetworkBehaviour
         GetComponent<Transform>().position += movement  * Time.deltaTime;
         
         //tmp floor
-        if (transform.position.y <= 0f)
+        if (transform.position.y <= 41.3f)
         {
-            transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 41.3f, transform.position.z);
             _isGrounded = true; 
         }
         
