@@ -5,20 +5,9 @@ using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
-    // 1. REPLICATION (SyncVar): Automatically syncs from the Server to all Clients.
-    // The "hook" function runs on clients whenever the server changes this value.
-    [SyncVar(hook = nameof(OnColorChanged))]
-    public Color playerColor = Color.white;
-
-    [SerializeField] private Renderer playerRenderer;
-
-    public GameObject chunkCube;
-    
-    private Dictionary<Vector2Int, List<Material>> _tempRenderMaterials = new();
-    
     public PlayerData playerData;
+    private PlayerRenderer _playerRenderer;
     
-    private Material _cachedMaterial;
     private float _velocityY = 0f;
     private bool _isGrounded = false;
 
@@ -27,41 +16,11 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         _chunkManager = ChunkManager.Instance;
-        _cachedMaterial = playerRenderer.material;
-        // Ensure the material reflects the current synced color right when spawned
-        _cachedMaterial.SetColor("_BaseColor", playerColor);
-
+        _playerRenderer = GetComponent<PlayerRenderer>();
+       
         if (!isLocalPlayer) return;
-
-        // Kills game, do not try
-        return;
-        for (int cX = 0; cX < 512 / 64; cX++)
-        {
-            for (int cY = 0; cY < 512 / 64; cY++)
-            {
-                Vector2Int chunkPosition = new Vector2Int(cX, cY);
-                
-                _tempRenderMaterials[chunkPosition] = new List<Material>();
-                
-                float scale = 0.1f;
-
-                Vector3 chunkOffset = new Vector3(scale, scale, 0) * ChunkUtils.ChunkSize;
-                
-                for (int x = 0; x < ChunkUtils.ChunkSize; x++)
-                {
-                    for (int y = 0; y < ChunkUtils.ChunkSize; y++)
-                    {
-                        var newOne = Instantiate(chunkCube, new Vector3(x*scale, y*scale, 0) + chunkOffset, Quaternion.identity);
-                
-                        newOne.transform.localScale = new Vector3(scale, scale, scale);
-                
-                        _tempRenderMaterials[chunkPosition].Add(newOne.GetComponent<Renderer>().material);
-                    }
-                }
-            }
-        }
-
-        //SubscribeToChunks();
+        
+        SubscribeToChunks();
     }
 
     private List<NetworkConnectionToClient> _chunkListeners = new();
@@ -72,64 +31,62 @@ public class PlayerController : NetworkBehaviour
         _chunkListeners.Add(connectionToClient);
     }
 
+    private int? place = null;
     void Update()
     {
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
-
-        // Kills game, do not try
-        /*for (int x = 0; x < 512 / 64; x++)
-        {
-            for (int y = 0; y < 512 / 64; y++)
-            {
-                Vector2Int chunkPosition = new Vector2Int(x, y);
-                
-                List<Material> materials = _tempRenderMaterials[chunkPosition];
-                ChunkData data = _chunkManager.GetChunkAt(chunkPosition);
-                
-                for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
-                {
-                    materials[i].SetColor("_BaseColor", data[i].GetColor());
-                }
-            }
-        }*/
-
-        int place = -1;
         
-        if (Input.GetKey(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             place = 0;
         }
         
-        if (Input.GetKey(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             place = 1;
         }
 
-        if (place != -1)
+        if (Input.GetMouseButton(0) && place != null)
         {
-            var coord = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        
-            float scale = 0.1f;
-
-            var x = (int)(coord.x / scale);
-            var y = (int)(coord.y / scale);
+            Vector3 mousePos = Input.mousePosition;
+            // Ensure ScreenToWorldPoint works correctly by providing distance from camera
+            mousePos.z = -Camera.main.transform.position.z; 
             
-            x = Mathf.Clamp(x, 0, ChunkUtils.ChunkSize - 1);
-            y = Mathf.Clamp(y, 0, ChunkUtils.ChunkSize - 1);
+            Vector3 worldCoord = Camera.main.ScreenToWorldPoint(mousePos);
+            worldCoord.z = 0f;
             
-            _chunkManager.Place((byte)x, (byte)y, new BlockID((ushort)place));
+            Vector3Int cellPos = _chunkManager.playerGrid.WorldToCell(worldCoord);
+            // _chunkManager.UpdateTileVisual(cellPos.x, cellPos.y, (int)place);
+            
+            // Only place blocks if we are clicking INSIDE the chunk boundaries (0 to 63)
+            if (cellPos.x >= 0 && cellPos.x < ChunkUtils.ChunkSize && 
+                cellPos.y >= 0 && cellPos.y < ChunkUtils.ChunkSize)
+            {
+                    // Immediate local visual feedback
+                _chunkManager.UpdateTileVisual((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
+                    
+                _chunkManager.Place((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
+            }
         }
         
         // When the local player presses Space, ask the server to change the color.
         if (Input.GetKeyDown(KeyCode.C))
         {
-            CmdChangeColor();
+            _playerRenderer.ChangeColor();
         }
         
         float control = 0f;
-        if (Input.GetKey(KeyCode.A)) control += -1f;
-        if (Input.GetKey(KeyCode.D)) control += 1f;
+        if (Input.GetKey(KeyCode.A))
+        {
+            control += -1f;
+            _playerRenderer.ChangeDirection(true);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            control += 1f;
+            _playerRenderer.ChangeDirection(false);
+        }
         
         bool wantsToJump = Input.GetKeyDown(KeyCode.Space);
 
@@ -163,39 +120,16 @@ public class PlayerController : NetworkBehaviour
         
         //CmdAffectPos(control);
     }
+    
     [Command]
     void CmdAffectPos(float pos)
     {
         
     }
-    
-    // 2. COMMAND: Called by a Client, but executed ONLY on the Server.
-    // Method names must start with "Cmd".
-    [Command]
-    void CmdChangeColor()
-    {
-        // The server generates a random color and updates the SyncVar.
-        // Because it's a SyncVar, this automatically pushes the new color to all clients.
-        playerColor = new Color(Random.value, Random.value, Random.value);
 
-        // The server also triggers an RPC to send a message to everyone.
-        RpcLogChange("A player changed their color!");
-    }
-
-    // 3. CLIENT RPC: Called by the Server, but executed on ALL Clients.
-    // Method names must start with "Rpc".
     [ClientRpc]
     void RpcLogChange(string message)
     {
         Debug.Log($"[Server says]: {message}");
-    }
-
-    // 4. THE HOOK: The local function triggered by the SyncVar changing.
-    void OnColorChanged(Color oldColor, Color newColor)
-    {
-        if (_cachedMaterial != null)
-        {
-            _cachedMaterial.SetColor("_BaseColor", playerColor);
-        }
     }
 }

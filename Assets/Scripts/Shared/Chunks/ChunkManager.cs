@@ -3,6 +3,7 @@ using Core.WorldGeneration;
 using Mirror;
 using Server.SODefinitions;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ChunkManager : NetworkBehaviour
 {
@@ -14,6 +15,9 @@ public class ChunkManager : NetworkBehaviour
     [SerializeField] private WorldGenerationConfig worldConfig; 
     [SerializeField] private BiomeGenerationConfig forestConfig;  
 
+    public Tilemap playerGrid;
+    [SerializeField] private List<BlockData> blockTexture = new List<BlockData>();
+    
     public void Mine(byte x, byte y)
     {
         CmdBroadcastChunkDelta(x, y, new BlockID(0));
@@ -31,8 +35,12 @@ public class ChunkManager : NetworkBehaviour
 
         SparseChunkDelta delta = new(list);
         
+        // Apply to server's internal state so late-joiners can get the updated view.
+        Vector2Int chunkCoord = new Vector2Int(0, 0);
+        _visibleChunks[chunkCoord] = delta.Apply(_visibleChunks[chunkCoord]);
+        
         if (!delta.IsEmpty)
-            RpcChunkDeltaReceived(delta, new Vector2Int(0, 0));
+            RpcChunkDeltaReceived(delta, chunkCoord);
     }
     
     [ClientRpc]
@@ -40,7 +48,29 @@ public class ChunkManager : NetworkBehaviour
     {
         // TODO handle known/unknown
         
-        _visibleChunks[chunkCoordinates] = delta.Apply(_initialChunks[chunkCoordinates]);
+        _visibleChunks[chunkCoordinates] = delta.Apply(_visibleChunks[chunkCoordinates]);
+        
+        foreach (var entry in delta.Deltas)
+        {
+            var coords = ChunkUtils.ChunkCellCoordinates(entry.Index);
+            UpdateTileVisual(coords.x, coords.y, entry.Value);
+        }
+    }
+    
+    public void UpdateTileVisual(byte x, byte y, BlockID value)
+    {
+        Vector3Int tilePosition = new Vector3Int(x, y, 0);
+
+        int id = value.Value;
+        if (id < blockTexture.Count && blockTexture[id] != null)
+        {
+            TileBase tileToSet = blockTexture[id].blockTexture;
+            playerGrid.SetTile(tilePosition, tileToSet);
+        }
+        else
+        {
+            playerGrid.SetTile(tilePosition, null);
+        }
     }
     
     void Awake()
@@ -100,5 +130,21 @@ public class ChunkManager : NetworkBehaviour
             }
         }
         return result;
+    }
+    
+    // Client
+    public override void OnStartClient() // from my branch
+    {
+        Vector2Int chunkCoord = new Vector2Int(0, 0);
+        if (!_visibleChunks.ContainsKey(chunkCoord)) return;
+        
+        ChunkData chunkData = _visibleChunks[chunkCoord];
+
+        // Initial population of the Tilemap
+        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        {
+            var coords = ChunkUtils.ChunkCellCoordinates(i);
+            UpdateTileVisual(coords.x, coords.y, chunkData[i]);
+        }
     }
 }
