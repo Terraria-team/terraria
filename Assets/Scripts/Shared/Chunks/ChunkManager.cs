@@ -1,19 +1,18 @@
 using System.Collections.Generic;
+using Core.WorldGeneration;
 using Mirror;
+using Server.SODefinitions;
 using UnityEngine;
 
 public class ChunkManager : NetworkBehaviour
 {
-    private readonly ChunkData _initial = new(new BlockID(1), false);
-    
-    public ChunkData _localView;
     public static ChunkManager Instance;
     
-    public Dictionary<Vector2Int, ChunkData> Chunks = new Dictionary<Vector2Int, ChunkData>();
-    public void InjectWorldData(Dictionary<Vector2Int, ChunkData> generatedWorld)
-    {
-        Chunks = generatedWorld;
-    }
+    private Dictionary<Vector2Int, ChunkData> _initialChunks = new();
+    private Dictionary<Vector2Int, ChunkData> _visibleChunks = new();
+    
+    [SerializeField] private WorldGenerationConfig worldConfig; 
+    [SerializeField] private BiomeGenerationConfig forestConfig;  
 
     public void Mine(byte x, byte y)
     {
@@ -33,13 +32,15 @@ public class ChunkManager : NetworkBehaviour
         SparseChunkDelta delta = new(list);
         
         if (!delta.IsEmpty)
-            RpcChunkDeltaReceived(delta);
+            RpcChunkDeltaReceived(delta, new Vector2Int(0, 0));
     }
     
     [ClientRpc]
-    void RpcChunkDeltaReceived(SparseChunkDelta delta)
+    void RpcChunkDeltaReceived(SparseChunkDelta delta, Vector2Int chunkCoordinates)
     {
-        delta.Apply(ref _localView);
+        // TODO handle known/unknown
+        
+        _visibleChunks[chunkCoordinates] = delta.Apply(_initialChunks[chunkCoordinates]);
     }
     
     void Awake()
@@ -49,6 +50,55 @@ public class ChunkManager : NetworkBehaviour
         else
             Debug.LogError("Multiple instances of ChunkManager detected");
 
-        _localView = _initial;
+        GenerateAndInjectWorldToChunkManager();
+    }
+    
+    private void GenerateAndInjectWorldToChunkManager()
+    {
+        var biomeConfigs = new Dictionary<BiomeType, IBiomeGenerationConfig>
+        {
+            { BiomeType.Forest, forestConfig }
+        };
+        
+        MapGenerator generator = new MapGenerator(worldConfig, biomeConfigs);
+        BlockType[,] rawMap = generator.Generate();
+        
+        _initialChunks = SliceMapIntoChunks(rawMap);
+        _visibleChunks = _initialChunks;
+    }
+
+    public ChunkData GetChunkAt(Vector2Int chunkCoordinates)
+    {
+        return _visibleChunks[chunkCoordinates];
+    }
+    
+    private Dictionary<Vector2Int, ChunkData> SliceMapIntoChunks(BlockType[,] rawMap)
+    {
+        var result = new Dictionary<Vector2Int, ChunkData>();
+
+        int worldHeightInChunks = worldConfig.Height / ChunkUtils.ChunkSize;
+        int worldWidthInChunks = worldConfig.Width / ChunkUtils.ChunkSize;
+
+        for (int chunkX = 0; chunkX < worldWidthInChunks; chunkX++)
+        {
+            for (int chunkY = 0; chunkY < worldHeightInChunks; chunkY++)
+            {
+                ChunkData newChunk = new ChunkData(new BlockID(0), false);
+                
+                for (byte localX = 0; localX < 64; localX++)
+                {
+                    for (byte localY = 0; localY < 64; localY++)
+                    {
+                        int globalX = chunkX * 64 + localX;
+                        int globalY = chunkY * 64 + localY;
+                        
+                        ushort blockValue = (ushort)rawMap[globalX, globalY];
+                        newChunk.Set(localX, localY, new BlockID(blockValue));
+                    }
+                }
+                result.Add(new Vector2Int(chunkX, chunkY), newChunk);
+            }
+        }
+        return result;
     }
 }

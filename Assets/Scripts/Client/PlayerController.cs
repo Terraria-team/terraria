@@ -14,7 +14,7 @@ public class PlayerController : NetworkBehaviour
 
     public GameObject chunkCube;
     
-    private List<Material> _materials = new();
+    private Dictionary<Vector2Int, List<Material>> _tempRenderMaterials = new();
     
     public PlayerData playerData;
     
@@ -32,18 +32,32 @@ public class PlayerController : NetworkBehaviour
         _cachedMaterial.SetColor("_BaseColor", playerColor);
 
         if (!isLocalPlayer) return;
-        
-        for (int x = 0; x < ChunkUtils.ChunkSize; x++)
+
+        // Kills game, do not try
+        return;
+        for (int cX = 0; cX < 512 / 64; cX++)
         {
-            for (int y = 0; y < ChunkUtils.ChunkSize; y++)
+            for (int cY = 0; cY < 512 / 64; cY++)
             {
+                Vector2Int chunkPosition = new Vector2Int(cX, cY);
+                
+                _tempRenderMaterials[chunkPosition] = new List<Material>();
+                
                 float scale = 0.1f;
+
+                Vector3 chunkOffset = new Vector3(scale, scale, 0) * ChunkUtils.ChunkSize;
                 
-                var newOne = Instantiate(chunkCube, new Vector3(x*1*scale, y*1*scale, 0), Quaternion.identity);
+                for (int x = 0; x < ChunkUtils.ChunkSize; x++)
+                {
+                    for (int y = 0; y < ChunkUtils.ChunkSize; y++)
+                    {
+                        var newOne = Instantiate(chunkCube, new Vector3(x*scale, y*scale, 0) + chunkOffset, Quaternion.identity);
                 
-                newOne.transform.localScale = new Vector3(scale, scale, scale);
+                        newOne.transform.localScale = new Vector3(scale, scale, scale);
                 
-                _materials.Add(newOne.GetComponent<Renderer>().material);
+                        _tempRenderMaterials[chunkPosition].Add(newOne.GetComponent<Renderer>().material);
+                    }
+                }
             }
         }
 
@@ -63,10 +77,22 @@ public class PlayerController : NetworkBehaviour
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
 
-        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        // Kills game, do not try
+        /*for (int x = 0; x < 512 / 64; x++)
         {
-            _materials[i].SetColor("_BaseColor", _chunkManager._localView[i].GetColor());
-        }
+            for (int y = 0; y < 512 / 64; y++)
+            {
+                Vector2Int chunkPosition = new Vector2Int(x, y);
+                
+                List<Material> materials = _tempRenderMaterials[chunkPosition];
+                ChunkData data = _chunkManager.GetChunkAt(chunkPosition);
+                
+                for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+                {
+                    materials[i].SetColor("_BaseColor", data[i].GetColor());
+                }
+            }
+        }*/
 
         int place = -1;
         
