@@ -5,16 +5,10 @@ using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
-    // 1. REPLICATION (SyncVar): Automatically syncs from the Server to all Clients.
-    // The "hook" function runs on clients whenever the server changes this value.
-    [SyncVar(hook = nameof(OnColorChanged))]
-    public Color playerColor = Color.white;
-
-    [SerializeField] private Renderer playerRenderer;
+    private PlayerRenderer _playerRenderer;
     
     public PlayerData playerData;
     
-    private Material _cachedMaterial;
     private float _velocityY = 0f;
     private bool _isGrounded = false;
 
@@ -23,7 +17,7 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         _chunkManager = ChunkManager.Instance;
-        _cachedMaterial = playerRenderer.material;
+        _playerRenderer = GetComponent<PlayerRenderer>();
        
         if (!isLocalPlayer) return;
         
@@ -83,12 +77,20 @@ public class PlayerController : NetworkBehaviour
         // When the local player presses Space, ask the server to change the color.
         if (Input.GetKeyDown(KeyCode.C))
         {
-            CmdChangeColor();
+            _playerRenderer.ChangeColor();
         }
         
         float control = 0f;
-        if (Input.GetKey(KeyCode.A)) control += -1f;
-        if (Input.GetKey(KeyCode.D)) control += 1f;
+        if (Input.GetKey(KeyCode.A))
+        {
+            control += -1f;
+            _playerRenderer.ChangeDirection(true);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            control += 1f;
+            _playerRenderer.ChangeDirection(false);
+        }
         
         bool wantsToJump = Input.GetKeyDown(KeyCode.Space);
 
@@ -122,39 +124,16 @@ public class PlayerController : NetworkBehaviour
         
         //CmdAffectPos(control);
     }
+    
     [Command]
     void CmdAffectPos(float pos)
     {
         
     }
-    
-    // 2. COMMAND: Called by a Client, but executed ONLY on the Server.
-    // Method names must start with "Cmd".
-    [Command]
-    void CmdChangeColor()
-    {
-        // The server generates a random color and updates the SyncVar.
-        // Because it's a SyncVar, this automatically pushes the new color to all clients.
-        playerColor = new Color(Random.value, Random.value, Random.value);
 
-        // The server also triggers an RPC to send a message to everyone.
-        RpcLogChange("A player changed their color!");
-    }
-
-    // 3. CLIENT RPC: Called by the Server, but executed on ALL Clients.
-    // Method names must start with "Rpc".
     [ClientRpc]
     void RpcLogChange(string message)
     {
         Debug.Log($"[Server says]: {message}");
-    }
-
-    // 4. THE HOOK: The local function triggered by the SyncVar changing.
-    void OnColorChanged(Color oldColor, Color newColor)
-    {
-        if (_cachedMaterial != null)
-        {
-            _cachedMaterial.SetColor("_BaseColor", playerColor);
-        }
     }
 }
