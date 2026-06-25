@@ -338,6 +338,12 @@
       },
       "url": "https://packages.unity.com"
     },
+    "terraria.lobbyunityshared": {
+      "version": "file:C:/Year2Term3/Projects/IS2SEBA/terraria/LobbyUnityShared",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

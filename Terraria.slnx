@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Lobby/Lobby.csproj" />
+  <Project Path="LobbyUnityShared/LobbyUnityShared.csproj" />
+</Solution>
