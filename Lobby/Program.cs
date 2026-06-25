@@ -1,41 +1,49 @@
+using System.Runtime.InteropServices;
+using Docker.DotNet;
+using Lobby.Application.Repositories;
+using Lobby.Application.Services;
+using Lobby.Data;
+using Lobby.Repositories;
+using Lobby.Services;
+using Lobby.Settings;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IServerInstanceService, ServerInstanceService>();
+builder.Services.AddScoped<IServerInstanceRepository, EfServerInstanceRepository>();
+builder.Services.AddScoped<IServerInstanseManagementService, DockerServerInstanceService>();
+
+builder.Services.Configure<DockerServerSettings>(builder.Configuration.GetSection(DockerServerSettings.SettingsName));
+
+builder.Services.AddDbContext<LobbyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("LobbyDb"))
+);
+
+builder.Services.AddSingleton<IDockerClient>(provider =>
+{
+    bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    Uri dockerUri = isWindows 
+        ? new Uri("npipe://./pipe/docker_engine") 
+        : new Uri("unix:///var/run/docker.sock");
+
+    return new DockerClientConfiguration(dockerUri).CreateClient();
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var db = scope.ServiceProvider.GetRequiredService<LobbyDbContext>();
+    await db.Database.MigrateAsync();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

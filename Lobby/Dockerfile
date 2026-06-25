@@ -11,10 +11,14 @@ WORKDIR /src
 COPY ["Lobby/Lobby.csproj", "Lobby/"]
 COPY ["LobbyUnityShared/LobbyUnityShared.csproj", "LobbyUnityShared/"]
 COPY ["LobbyUnityShared/Directory.Build.props", "LobbyUnityShared/"]
+COPY ["Lobby.Application/Lobby.Application.csproj", "Lobby.Application/"]
+
 RUN dotnet restore "Lobby/Lobby.csproj"
 
 COPY Lobby/ Lobby/
 COPY LobbyUnityShared/ LobbyUnityShared/
+COPY Lobby.Application/ Lobby.Application/
+
 WORKDIR "/src/Lobby"
 
 RUN dotnet build "./Lobby.csproj" -c $BUILD_CONFIGURATION -o /app/build
