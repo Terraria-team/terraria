@@ -3200,7 +3200,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1198788060}
-  - component: {fileID: 1198788059}
   - component: {fileID: 1198788061}
   - component: {fileID: 1198788062}
   m_Layer: 0
@@ -3210,27 +3209,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1198788059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1198788058}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 137048aac26c4a9192fce9f4daa852e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Shared::Server.BlockWorldManager
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  gridWidth: 30
-  gridHeight: 30
-  playerGrid: {fileID: 785681555}
-  blockTexture:
-  - {fileID: 0}
-  - {fileID: 11400000, guid: 1512c44682fe1d44fbd85ae039e132ec, type: 2}
 --- !u!4 &1198788060
 Transform:
   m_ObjectHideFlags: 0
@@ -3278,6 +3256,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  worldConfig: {fileID: 0}
+  forestConfig: {fileID: 0}
   playerGrid: {fileID: 785681555}
   blockTexture:
   - {fileID: 11400000, guid: 21c4aa08a31edbb428824232ab317a12, type: 2}

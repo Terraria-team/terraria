@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 67876141}
   - component: {fileID: 67876140}
-  - component: {fileID: 67876142}
   m_Layer: 0
   m_Name: GameStartupScript
   m_TagString: Untagged
@@ -164,18 +163,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &67876142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 67876139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21f0dc36ad3443f0bcc64b46126db1f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Server::Server.WorldBootstrapper
 --- !u!1 &244808768
 GameObject:
   m_ObjectHideFlags: 0
@@ -642,7 +629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Mirror::Mirror.NetworkManager
   dontDestroyOnLoad: 1
   runInBackground: 1
-  headlessStartMode: 0
+  headlessStartMode: 1
   editorAutoStart: 0
   sendRate: 60
   offlineScene: 
