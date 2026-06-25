@@ -10,19 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Linux Server
+  m_Name: LinuxServer_x86_64
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
   m_BuildTarget: 24
   m_Subtarget: 1
   m_PlatformId: 91d938b35f6f4798811e41f2acf9377f
   m_PlatformBuildProfile:
-    rid: 6142018881288929282
+    rid: 2772275109217173696
   m_OverrideGlobalSceneList: 0
-  m_Scenes:
-  - m_enabled: 1
-    m_path: Assets/Scenes/SampleScene.unity
-    m_guid: 8c9cfa26abfee488c85f1582747f6a02
+  m_Scenes: []
   m_HasScriptingDefines: 0
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
@@ -30,7 +27,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6142018881288929282
+    - rid: 2772275109217173696
       type: {class: LinuxPlatformSettings, ns: UnityEditor.LinuxStandalone, asm: UnityEditor.LinuxStandalone.Extensions}
       data:
         m_Development: 0
@@ -47,10 +44,10 @@ MonoBehaviour:
         m_InsightsSettingsContainer:
           m_BuildProfileEngineDiagnosticsState: 2
         m_AdaptivePerformanceEnabled: 0
-        m_Architecture: 1
-        m_RemoteDeviceSectionFoldoutOpen: 1
+        m_Architecture: 0
+        m_RemoteDeviceSectionFoldoutOpen: 0
         m_DeployTarget: 0
-        m_RemoteDeviceAddress: unity-1
-        m_RemoteDeviceUsername: root
+        m_RemoteDeviceAddress: 
+        m_RemoteDeviceUsername: 
         m_RemoteDeviceExports: 
-        m_PathOnRemoteDevice: /ter_server
+        m_PathOnRemoteDevice: 
