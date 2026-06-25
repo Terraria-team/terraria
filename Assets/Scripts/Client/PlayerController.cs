@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using Mirror;
+using Shared.Components;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
     public PlayerData playerData;
     private PlayerRenderer _playerRenderer;
+    private HealthComponent _healthComponent;
     
     private float _velocityY = 0f;
     private bool _isGrounded = false;
@@ -17,12 +18,23 @@ public class PlayerController : NetworkBehaviour
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
+        _healthComponent =  GetComponent<HealthComponent>();
        
         if (!isLocalPlayer) return;
-        
-        SubscribeToChunks();
-    }
 
+        SubscribeToChunks();
+        _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
+    }
+    
+    void OnDestroy()
+    {
+        // Always unsubscribe to prevent memory leaks
+        if (_healthComponent != null)
+        {
+            _healthComponent.OnDamageFlashed -= _playerRenderer.DamageFlash;
+        }
+    }
+    
     private List<NetworkConnectionToClient> _chunkListeners = new();
     
     [Command]
@@ -36,6 +48,16 @@ public class PlayerController : NetworkBehaviour
     {
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
+        
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            _healthComponent.ApplyDamageServerRpc(10);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            _healthComponent.ApplyDamageServerRpc(-99);
+        }
         
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
