@@ -18,7 +18,7 @@ public class PlayerController : NetworkBehaviour
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
-        _healthComponent =  GetComponent<HealthComponent>();
+        _healthComponent = GetComponent<HealthComponent>();
        
         if (!isLocalPlayer) return;
 
@@ -49,24 +49,16 @@ public class PlayerController : NetworkBehaviour
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
         
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            _healthComponent.ApplyDamageServerRpc(10);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            _healthComponent.ApplyDamageServerRpc(-99);
-        }
-        
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             place = 0;
+            Debug.Log("You choose air!");
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             place = 1;
+            Debug.Log("You choose grass!");
         }
 
         if (Input.GetMouseButton(0) && place != null)
@@ -96,6 +88,11 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             _playerRenderer.ChangeColor();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            DoDamage(10);
         }
         
         float control = 0f;
@@ -153,5 +150,17 @@ public class PlayerController : NetworkBehaviour
     void RpcLogChange(string message)
     {
         Debug.Log($"[Server says]: {message}");
+    }
+
+    void DoDamage(int amount)
+    {
+        HealthComponent[] players = Object.FindObjectsByType<HealthComponent>();
+
+        foreach (var player in  players)
+        {
+            if (player == _healthComponent) continue;
+            
+            player.ApplyDamageServerRpc(amount);
+        }
     }
 }

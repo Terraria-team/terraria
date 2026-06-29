@@ -42,7 +42,7 @@ namespace Shared.Components
             OnDamageFlashed?.Invoke();
         }
         
-        public override void OnStartServer() 
+        public void Awake() 
         {
             CurrentHealth = MaxHealth;
         }

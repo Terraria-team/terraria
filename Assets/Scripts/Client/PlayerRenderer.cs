@@ -67,11 +67,11 @@ public class PlayerRenderer : NetworkBehaviour
         Debug.Log($"[Server says]: {message}");
     }
 
-    [ClientRpc]
+    [Command]
     public async void DamageFlash()
     {
         Color curColor = playerColor;
-        playerRenderer.color = Color.red;
+        playerColor = Color.red;
 
         // wait for damageFlashTime ms
         await Task.Delay(damageFlashTime); 
@@ -79,7 +79,7 @@ public class PlayerRenderer : NetworkBehaviour
         // Safety check: Ensure the object hasn't been destroyed while we were waiting
         if (this != null && playerRenderer != null) 
         {
-            playerRenderer.color = curColor;
+            playerColor= curColor;
         }
     }
     
