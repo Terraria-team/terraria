@@ -145,7 +145,7 @@ public class PlayerController : NetworkBehaviour
 
         if (!_hasSpawnedOnSurface)
         {
-            if (_chunkManager != null && _chunkManager.IsInitialized)
+            if (_chunkManager != null)
             {
                 _rb.bodyType = RigidbodyType2D.Dynamic; // Enable physics now that the map is ready
                 RepositionToSurface();
@@ -213,7 +213,7 @@ public class PlayerController : NetworkBehaviour
 
         _isGrounded = CheckGrounded() && _jumpCooldownTimer <= 0f;
 
-        // Зберігаємо поточну швидкість по Y, яку рушій Unity порахував від своєї гравітації
+        //store the current Y velocity that the Unity engine calculated from its gravity
         float currentVelocityY = _rb.linearVelocity.y;
 
         if (_isGrounded)
@@ -227,7 +227,7 @@ public class PlayerController : NetworkBehaviour
         
         if (_jumpBufferCounter > 0f && _coyoteTimeCounter > 0f)
         {
-            currentVelocityY = playerData.jumpForce; // Змінюємо Y тільки під час стрибка
+            currentVelocityY = playerData.jumpForce; //change y only during the jump
             _isGrounded = false;
             
             _jumpBufferCounter = 0f;
@@ -235,7 +235,7 @@ public class PlayerController : NetworkBehaviour
             _jumpCooldownTimer = 0.15f; 
         }
 
-        // Застосовуємо: рух по X з клавіатури, рух по Y - від Unity або стрибка
+        //use: movement along X from the keyboard, movement along Y - from Unity or jump
         _rb.linearVelocity = new Vector2(_horizontalInput * playerData.baseSpeed, currentVelocityY);
     }
     
