@@ -1,14 +1,17 @@
-using Lobby.Application.Services;
+using Lobby.Application.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lobby.Controllers;
 
 
 [ApiController]
-[Route("server-instances")]
-public class ServerInstancesController : ControllerBase
+[Authorize]
+[Route("api/server-instances")]
+public class ServerInstancesController : LobbyControllerBase
 {
     private readonly IServerInstanceService _instanceService;
+    
     
     public ServerInstancesController( IServerInstanceService instanceService)
     {

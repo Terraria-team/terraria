@@ -1,17 +1,14 @@
-﻿using System;
-using Lobby.Application.Entities;
+namespace Lobby.Application.Entities;
 
-namespace Lobby.Application.Models;
-
-public record ServerInstanceModel(
+public record ServerInstanceEntity(
     Guid Id,
     string ContainerId,
     string Image,
     string Name,
     int Port,
+    int PlayerCount,
     DateTime? EmptySince,
     DateTime CreatedAt,
-    int PlayerCount,
-    DateTime UpdatedAt,
+    DateTime? UpdatedAt,
     ServerInstanceStatus Status
 );

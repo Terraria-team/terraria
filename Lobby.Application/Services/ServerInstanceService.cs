@@ -1,30 +1,30 @@
+using Lobby.Application.Contracts;
 using Lobby.Application.Entities;
-using Lobby.Application.Repositories;
 
 namespace Lobby.Application.Services;
 
 public class ServerInstanceService : IServerInstanceService
 {
     private readonly IServerInstanceRepository _repository;
-    private readonly IServerInstanseManagementService _serverInstanseManagementService;
+    private readonly IServerInstanceSpawner _serverInstanceSpawner;
 
-    public ServerInstanceService(IServerInstanceRepository repository, IServerInstanseManagementService serverInstanseManagementService)
+    public ServerInstanceService(IServerInstanceRepository repository, IServerInstanceSpawner serverInstanceSpawner)
     {
         _repository = repository;
-        _serverInstanseManagementService = serverInstanseManagementService;
+        _serverInstanceSpawner = serverInstanceSpawner;
     }
 
-    public async Task<List<ServerInstance>> GetAll()
+    public async Task<List<ServerInstanceEntity>> GetAll()
     {
         return await _repository.GetAll();
     }
 
-    public async Task<ServerInstance> Create()
+    public async Task<ServerInstanceEntity> Create()
     {
         int freePort = await _repository.GetFreeInstancePort();
-        var info = await _serverInstanseManagementService
+        var info = await _serverInstanceSpawner
             .CreateNewServerInstance(freePort, $"server_instance_{freePort}"); 
-        var newInstance = new ServerInstance
+        var newInstance = new ServerInstanceEntity
         (
             Id: Guid.NewGuid(),
             ContainerId: info.ContainerId,
