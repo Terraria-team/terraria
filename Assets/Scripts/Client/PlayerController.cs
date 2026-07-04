@@ -5,9 +5,8 @@ using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
-    private PlayerRenderer _playerRenderer;
-    
     public PlayerData playerData;
+    private PlayerRenderer _playerRenderer;
     
     private float _velocityY = 0f;
     private bool _isGrounded = false;
@@ -41,13 +40,11 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             place = 0;
-            Debug.Log($"Choose AIR");
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             place = 1;
-            Debug.Log($"Choose Grass");
         }
 
         if (Input.GetMouseButton(0) && place != null)
@@ -66,11 +63,10 @@ public class PlayerController : NetworkBehaviour
             if (cellPos.x >= 0 && cellPos.x < ChunkUtils.ChunkSize && 
                 cellPos.y >= 0 && cellPos.y < ChunkUtils.ChunkSize)
             {
-                // Immediate local visual feedback
+                    // Immediate local visual feedback
                 _chunkManager.UpdateTileVisual((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
-                
+                    
                 _chunkManager.Place((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
-                Debug.Log($"Clicked World: {worldCoord} -> Grid Cell: {cellPos}. Sending Place({cellPos.x}, {cellPos.y}, {place.Value})");
             }
         }
         
@@ -116,9 +112,9 @@ public class PlayerController : NetworkBehaviour
         GetComponent<Transform>().position += movement  * Time.deltaTime;
         
         //tmp floor
-        if (transform.position.y <= 0f)
+        if (transform.position.y <= 41.3f)
         {
-            transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 41.3f, transform.position.z);
             _isGrounded = true; 
         }
         

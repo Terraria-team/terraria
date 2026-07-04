@@ -33,13 +33,13 @@ public readonly struct SparseChunkDelta
         Deltas = deltas;
     }
 
-    public void Apply(ref ChunkData on)
+    public ChunkData Apply(ChunkData on)
     {
-        int appliedCount = 0;
         foreach (ChunkDeltaEntry entry in Deltas)
         {
-            appliedCount++;
             on[entry.Index] = entry.Value;
         }
+
+        return on;
     }
 }

@@ -1,34 +1,32 @@
 using System.Collections.Generic;
+using Core.WorldGeneration;
 using Mirror;
+using Server.SODefinitions;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class ChunkManager : NetworkBehaviour
 {
-    private readonly ChunkData _initial = new(new BlockID(0), false);
-    
-    public ChunkData _localView;
     public static ChunkManager Instance;
     
+    private Dictionary<Vector2Int, ChunkData> _initialChunks = new();
+    private Dictionary<Vector2Int, ChunkData> _visibleChunks = new();
+    
+    [SerializeField] private WorldGenerationConfig worldConfig; 
+    [SerializeField] private BiomeGenerationConfig forestConfig;  
+
     public Tilemap playerGrid;
     [SerializeField] private List<BlockData> blockTexture = new List<BlockData>();
     
-    public Dictionary<Vector2Int, ChunkData> Chunks = new Dictionary<Vector2Int, ChunkData>();
-    [SerializeField] private float MaxDistance; 
-    public void InjectWorldData(Dictionary<Vector2Int, ChunkData> generatedWorld)
-    {
-        Chunks = generatedWorld;
-    }
-
+    [SerializeField] private float MaxDistance = 5.0f; 
+    
     public void Mine(byte x, byte y)
     {
-        Debug.Log($"Trying to mine {x} {y}");
         CmdBroadcastChunkDelta(x, y, new BlockID(0));
     }
 
     public void Place(byte x, byte y, BlockID value)
     {
-        Debug.Log($"Trying to place {x} {y}");
         CmdBroadcastChunkDelta(x, y, value);
     }
     
@@ -46,16 +44,19 @@ public class ChunkManager : NetworkBehaviour
         SparseChunkDelta delta = new(list);
         
         // Apply to server's internal state so late-joiners can get the updated view.
-        delta.Apply(ref _localView);
+        Vector2Int chunkCoord = new Vector2Int(0, 0);
+        _visibleChunks[chunkCoord] = delta.Apply(_visibleChunks[chunkCoord]);
         
         if (!delta.IsEmpty)
-            RpcChunkDeltaReceived(delta);
+            RpcChunkDeltaReceived(delta, chunkCoord);
     }
     
     [ClientRpc]
-    void RpcChunkDeltaReceived(SparseChunkDelta delta)
+    void RpcChunkDeltaReceived(SparseChunkDelta delta, Vector2Int chunkCoordinates)
     {
-        delta.Apply(ref _localView);
+        // TODO handle known/unknown
+        
+        _visibleChunks[chunkCoordinates] = delta.Apply(_visibleChunks[chunkCoordinates]);
         
         foreach (var entry in delta.Deltas)
         {
@@ -98,12 +99,10 @@ public class ChunkManager : NetworkBehaviour
         {
             TileBase tileToSet = blockTexture[id].blockTexture;
             playerGrid.SetTile(tilePosition, tileToSet);
-            Debug.Log($"Set tile to {value.Value} on  position {tilePosition}");
         }
         else
         {
             playerGrid.SetTile(tilePosition, null);
-            Debug.Log($"Set tile to {value.Value} on  position {tilePosition}");
         }
     }
     
@@ -114,18 +113,71 @@ public class ChunkManager : NetworkBehaviour
         else
             Debug.LogError("Multiple instances of ChunkManager detected");
 
-        _localView = _initial;
-        MaxDistance = 5.0f;
+        GenerateAndInjectWorldToChunkManager();
+    }
+    
+    private void GenerateAndInjectWorldToChunkManager()
+    {
+        var biomeConfigs = new Dictionary<BiomeType, IBiomeGenerationConfig>
+        {
+            { BiomeType.Forest, forestConfig }
+        };
+        
+        MapGenerator generator = new MapGenerator(worldConfig, biomeConfigs);
+        BlockType[,] rawMap = generator.Generate();
+        
+        _initialChunks = SliceMapIntoChunks(rawMap);
+        _visibleChunks = _initialChunks;
+    }
+
+    public ChunkData GetChunkAt(Vector2Int chunkCoordinates)
+    {
+        return _visibleChunks[chunkCoordinates];
+    }
+    
+    private Dictionary<Vector2Int, ChunkData> SliceMapIntoChunks(BlockType[,] rawMap)
+    {
+        var result = new Dictionary<Vector2Int, ChunkData>();
+
+        int worldHeightInChunks = worldConfig.Height / ChunkUtils.ChunkSize;
+        int worldWidthInChunks = worldConfig.Width / ChunkUtils.ChunkSize;
+
+        for (int chunkX = 0; chunkX < worldWidthInChunks; chunkX++)
+        {
+            for (int chunkY = 0; chunkY < worldHeightInChunks; chunkY++)
+            {
+                ChunkData newChunk = new ChunkData(new BlockID(0), false);
+                
+                for (byte localX = 0; localX < 64; localX++)
+                {
+                    for (byte localY = 0; localY < 64; localY++)
+                    {
+                        int globalX = chunkX * 64 + localX;
+                        int globalY = chunkY * 64 + localY;
+                        
+                        ushort blockValue = (ushort)rawMap[globalX, globalY];
+                        newChunk.Set(localX, localY, new BlockID(blockValue));
+                    }
+                }
+                result.Add(new Vector2Int(chunkX, chunkY), newChunk);
+            }
+        }
+        return result;
     }
     
     // Client
-    public override void OnStartClient()
+    public override void OnStartClient() // from my branch
     {
+        Vector2Int chunkCoord = new Vector2Int(0, 0);
+        if (!_visibleChunks.ContainsKey(chunkCoord)) return;
+        
+        ChunkData chunkData = _visibleChunks[chunkCoord];
+
         // Initial population of the Tilemap
         for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
         {
             var coords = ChunkUtils.ChunkCellCoordinates(i);
-            UpdateTileVisual(coords.x, coords.y, _localView[i]);
+            UpdateTileVisual(coords.x, coords.y, chunkData[i]);
         }
     }
 }
