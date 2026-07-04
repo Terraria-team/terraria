@@ -14,6 +14,7 @@ public class ChunkManager : NetworkBehaviour
     [SerializeField] private List<BlockData> blockTexture = new List<BlockData>();
     
     public Dictionary<Vector2Int, ChunkData> Chunks = new Dictionary<Vector2Int, ChunkData>();
+    [SerializeField] private float MaxDistance; 
     public void InjectWorldData(Dictionary<Vector2Int, ChunkData> generatedWorld)
     {
         Chunks = generatedWorld;
@@ -32,8 +33,14 @@ public class ChunkManager : NetworkBehaviour
     }
     
     [Command(requiresAuthority = false)]
-    void CmdBroadcastChunkDelta(byte x, byte y, BlockID value)
+    void CmdBroadcastChunkDelta(byte x, byte y, BlockID value, NetworkConnectionToClient sender = null)
     {
+        if (!IsValidChange(x, y, value, sender))
+        {
+            Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
+            return; 
+        }
+        
         var list = new List<ChunkDeltaEntry> { new (ChunkUtils.ChunkCellIndex(x, y), value) };
 
         SparseChunkDelta delta = new(list);
@@ -55,6 +62,31 @@ public class ChunkManager : NetworkBehaviour
             var coords = ChunkUtils.ChunkCellCoordinates(entry.Index);
             UpdateTileVisual(coords.x, coords.y, entry.Value);
         }
+    }
+
+    [Server]
+    private bool IsValidChange(byte x, byte y, BlockID value, NetworkConnectionToClient sender)
+    {
+        if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
+        
+        if (sender == null || sender.identity == null) 
+        {
+            Debug.LogWarning("Validation failed: Sender or player identity is null.");
+            return false;
+        }
+        
+        Vector2 playerPosition = sender.identity.transform.position;
+        Vector2 blockWorldPosition = new Vector2(x, y);
+        
+        float distance = Vector2.Distance(playerPosition, blockWorldPosition);
+    
+        if (distance > MaxDistance)
+        {
+            Debug.LogWarning($"Validation failed: Player is too far away ({distance} units).");
+            return false;
+        }
+        
+        return true;
     }
     
     public void UpdateTileVisual(byte x, byte y, BlockID value)
@@ -83,6 +115,7 @@ public class ChunkManager : NetworkBehaviour
             Debug.LogError("Multiple instances of ChunkManager detected");
 
         _localView = _initial;
+        MaxDistance = 5.0f;
     }
     
     // Client
