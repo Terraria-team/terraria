@@ -232,7 +232,7 @@ MonoBehaviour:
   blockTexture:
   - {fileID: 11400000, guid: 21c4aa08a31edbb428824232ab317a12, type: 2}
   - {fileID: 11400000, guid: d3cec0ef711fb7646b401a0ccae7a282, type: 2}
-  MaxDistance: 3
+  MaxDistance: 4
 --- !u!4 &244808771
 Transform:
   m_ObjectHideFlags: 0

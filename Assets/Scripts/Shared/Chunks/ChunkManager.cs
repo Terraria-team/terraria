@@ -80,71 +80,77 @@ public class ChunkManager : NetworkBehaviour
         
         Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
         Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
+
+        if (value.Value != 0 && IsOnPlayer(block2D, sender)) return false;
         
-        // is a player block check
-        if (value.Value != 0) 
-        {
-            Collider2D playerCollider = sender.identity.GetComponent<Collider2D>();
-            if (playerCollider != null)
-            {
-                Bounds blockBounds = new Bounds(new Vector3(block2D.x, block2D.y, 0), Vector3.one);
-                if (playerCollider.bounds.Intersects(blockBounds))
-                {
-                    Debug.LogWarning("Validation failed: Player attempted to place a block inside themselves.");
-                    return false;
-                }
-            }
-        }
-        
-        // Range Check
-        float distance = Vector2.Distance(player2D, block2D);
+        return (IsInRange(player2D, block2D)
+                && IsVisible(x, y, player2D));
+    }
+
+    [Server]
+    private bool IsInRange(Vector2 playerPos, Vector2 blockPos)
+    {
+        float distance = Vector2.Distance(playerPos, blockPos);
         if (distance > MaxDistance)
         {
             Debug.LogWarning($"Validation failed: Player is too far away ({distance} units).");
             return false;
         }
-        
-        // Is seen check
+
+        return true;
+    }
+
+    [Server]
+    private bool IsOnPlayer(Vector2 blockPos, NetworkConnectionToClient sender)
+    {
+        Collider2D playerCollider = sender.identity.GetComponent<Collider2D>();
+        if (playerCollider != null)
+        {
+            Bounds blockBounds = new Bounds(new Vector3(blockPos.x, blockPos.y, 0), Vector3.one);
+            if (playerCollider.bounds.Intersects(blockBounds))
+            {
+                Debug.LogWarning("Validation failed: Player in the block.");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    [Server]
+    private bool IsVisible(byte x, byte y, Vector2 playerPos)
+    {
         int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
         Vector2[] targetPoints = {
-            block2D,                             // Center
+            new Vector2(x + 0.5f, y + 0.5f),          // Center
             new Vector2(x + 0.1f, y + 0.1f),         // Bottom-Left
             new Vector2(x + 0.9f, y + 0.1f),         // Bottom-Right
             new Vector2(x + 0.1f, y + 0.9f),         // Top-Left
             new Vector2(x + 0.9f, y + 0.9f)          // Top-Right
         };
 
-        bool isVisible = false;
-
         foreach (Vector2 point in targetPoints)
         {
-            RaycastHit2D hit = Physics2D.Linecast(player2D, point, solidBlocksLayerMask);
-
-            // If the ray hit nothing, OR the thing it hit is the actual block we are aiming at
+            RaycastHit2D hit = Physics2D.Linecast(playerPos, point, solidBlocksLayerMask);
             if (hit.collider == null || IsHitOnTargetBlock(hit.point, x, y))
             {
-                isVisible = true;
-                break; // Stop checking! We found a clear path.
+                return true;  // is visible
             }
         }
 
-        if (!isVisible)
-        {
-            Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
-            return false;
-        }
-        return true;
+        Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
+        return false;  // is not visible
     }
     
     [Server]
-    private bool IsHitOnTargetBlock(Vector2 hitPoint, byte targetX, byte targetY)
+    private bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
     {
         float epsilon = 0.05f; 
-        return hitPoint.x >= (targetX - epsilon) && hitPoint.x <= (targetX + 1 + epsilon) &&
-               hitPoint.y >= (targetY - epsilon) && hitPoint.y <= (targetY + 1 + epsilon);
+        return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
+               hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
     }
     
-    public void UpdateTileVisual(byte x, byte y, BlockID value)
+    private void UpdateTileVisual(byte x, byte y, BlockID value)
     {
         Vector3Int tilePosition = new Vector3Int(x, y, 0);
 
