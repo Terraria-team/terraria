@@ -104,7 +104,44 @@ public class ChunkManager : NetworkBehaviour
             return false;
         }
         
+        // Is seen check
+        int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
+        Vector2[] targetPoints = {
+            block2D,                             // Center
+            new Vector2(x + 0.1f, y + 0.1f),         // Bottom-Left
+            new Vector2(x + 0.9f, y + 0.1f),         // Bottom-Right
+            new Vector2(x + 0.1f, y + 0.9f),         // Top-Left
+            new Vector2(x + 0.9f, y + 0.9f)          // Top-Right
+        };
+
+        bool isVisible = false;
+
+        foreach (Vector2 point in targetPoints)
+        {
+            RaycastHit2D hit = Physics2D.Linecast(player2D, point, solidBlocksLayerMask);
+
+            // If the ray hit nothing, OR the thing it hit is the actual block we are aiming at
+            if (hit.collider == null || IsHitOnTargetBlock(hit.point, x, y))
+            {
+                isVisible = true;
+                break; // Stop checking! We found a clear path.
+            }
+        }
+
+        if (!isVisible)
+        {
+            Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
+            return false;
+        }
         return true;
+    }
+    
+    [Server]
+    private bool IsHitOnTargetBlock(Vector2 hitPoint, byte targetX, byte targetY)
+    {
+        float epsilon = 0.05f; 
+        return hitPoint.x >= (targetX - epsilon) && hitPoint.x <= (targetX + 1 + epsilon) &&
+               hitPoint.y >= (targetY - epsilon) && hitPoint.y <= (targetY + 1 + epsilon);
     }
     
     public void UpdateTileVisual(byte x, byte y, BlockID value)
