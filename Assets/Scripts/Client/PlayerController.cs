@@ -12,11 +12,13 @@ public class PlayerController : NetworkBehaviour
     private bool _isGrounded = false;
 
     private ChunkManager _chunkManager;
+    private BlockHighlight _blockHighlight;
 
     void Start()
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
+        _blockHighlight = FindObjectOfType<BlockHighlight>();
        
         if (!isLocalPlayer) return;
         
@@ -37,14 +39,21 @@ public class PlayerController : NetworkBehaviour
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
         
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            _blockHighlight.ChangeMode();
+        }
+        
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             place = 0;
+            _blockHighlight.SetBlockId((ushort)place);
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             place = 1;
+            _blockHighlight.SetBlockId((ushort)place);
         }
 
         if (Input.GetMouseButton(0) && place != null)

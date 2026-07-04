@@ -33,7 +33,7 @@ public class ChunkManager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     void CmdBroadcastChunkDelta(byte x, byte y, BlockID value, NetworkConnectionToClient sender = null)
     {
-        if (!IsValidChange(x, y, value, sender))
+        if (!IsValidChange(x, y, value, sender.identity))
         {
             Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
             return; 
@@ -64,19 +64,18 @@ public class ChunkManager : NetworkBehaviour
             UpdateTileVisual(coords.x, coords.y, entry.Value);
         }
     }
-
-    [Server]
-    private bool IsValidChange(byte x, byte y, BlockID value, NetworkConnectionToClient sender)
+    
+    public bool IsValidChange(byte x, byte y, BlockID value, NetworkIdentity sender)
     {
         if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
         
-        if (sender == null || sender.identity == null) 
+        if (sender == null ) 
         {
             Debug.LogWarning("Validation failed: Sender or player identity is null.");
             return false;
         }
         
-        Vector3Int playerCellPos = playerGrid.WorldToCell(sender.identity.transform.position);
+        Vector3Int playerCellPos = playerGrid.WorldToCell(sender.transform.position);
         
         Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
         Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
@@ -86,8 +85,7 @@ public class ChunkManager : NetworkBehaviour
         return (IsInRange(player2D, block2D)
                 && IsVisible(x, y, player2D));
     }
-
-    [Server]
+    
     private bool IsInRange(Vector2 playerPos, Vector2 blockPos)
     {
         float distance = Vector2.Distance(playerPos, blockPos);
@@ -99,11 +97,10 @@ public class ChunkManager : NetworkBehaviour
 
         return true;
     }
-
-    [Server]
-    private bool IsOnPlayer(Vector2 blockPos, NetworkConnectionToClient sender)
+    
+    private bool IsOnPlayer(Vector2 blockPos, NetworkIdentity sender)
     {
-        Collider2D playerCollider = sender.identity.GetComponent<Collider2D>();
+        Collider2D playerCollider = sender.GetComponent<Collider2D>();
         if (playerCollider != null)
         {
             Bounds blockBounds = new Bounds(new Vector3(blockPos.x, blockPos.y, 0), Vector3.one);
@@ -116,8 +113,7 @@ public class ChunkManager : NetworkBehaviour
 
         return false;
     }
-
-    [Server]
+    
     private bool IsVisible(byte x, byte y, Vector2 playerPos)
     {
         int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
@@ -140,14 +136,13 @@ public class ChunkManager : NetworkBehaviour
 
         Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
         return false;  // is not visible
-    }
-    
-    [Server]
-    private bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
-    {
-        float epsilon = 0.05f; 
-        return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
-               hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
+        
+        bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
+        {
+            float epsilon = 0.05f; 
+            return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
+                   hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
+        }
     }
     
     private void UpdateTileVisual(byte x, byte y, BlockID value)
