@@ -57,15 +57,11 @@ public class PlayerController : NetworkBehaviour
             worldCoord.z = 0f;
             
             Vector3Int cellPos = _chunkManager.playerGrid.WorldToCell(worldCoord);
-            // _chunkManager.UpdateTileVisual(cellPos.x, cellPos.y, (int)place);
             
             // Only place blocks if we are clicking INSIDE the chunk boundaries (0 to 63)
             if (cellPos.x >= 0 && cellPos.x < ChunkUtils.ChunkSize && 
                 cellPos.y >= 0 && cellPos.y < ChunkUtils.ChunkSize)
             {
-                    // Immediate local visual feedback
-                _chunkManager.UpdateTileVisual((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
-                    
                 _chunkManager.Place((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
             }
         }

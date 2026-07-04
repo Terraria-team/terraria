@@ -76,10 +76,12 @@ public class ChunkManager : NetworkBehaviour
             return false;
         }
         
-        Vector2 playerPosition = sender.identity.transform.position;
-        Vector2 blockWorldPosition = new Vector2(x, y);
+        Vector3Int playerCellPos = playerGrid.WorldToCell(sender.identity.transform.position);
         
-        float distance = Vector2.Distance(playerPosition, blockWorldPosition);
+        Vector2 player2D = new Vector2(playerCellPos.x, playerCellPos.y);
+        Vector2 block2D = new Vector2(x, y);
+        
+        float distance = Vector2.Distance(player2D, block2D);
     
         if (distance > MaxDistance)
         {
