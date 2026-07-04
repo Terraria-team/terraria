@@ -78,11 +78,26 @@ public class ChunkManager : NetworkBehaviour
         
         Vector3Int playerCellPos = playerGrid.WorldToCell(sender.identity.transform.position);
         
-        Vector2 player2D = new Vector2(playerCellPos.x, playerCellPos.y);
-        Vector2 block2D = new Vector2(x, y);
+        Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
+        Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
         
+        // is a player block check
+        if (value.Value != 0) 
+        {
+            Collider2D playerCollider = sender.identity.GetComponent<Collider2D>();
+            if (playerCollider != null)
+            {
+                Bounds blockBounds = new Bounds(new Vector3(block2D.x, block2D.y, 0), Vector3.one);
+                if (playerCollider.bounds.Intersects(blockBounds))
+                {
+                    Debug.LogWarning("Validation failed: Player attempted to place a block inside themselves.");
+                    return false;
+                }
+            }
+        }
+        
+        // Range Check
         float distance = Vector2.Distance(player2D, block2D);
-    
         if (distance > MaxDistance)
         {
             Debug.LogWarning($"Validation failed: Player is too far away ({distance} units).");
