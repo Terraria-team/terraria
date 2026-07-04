@@ -15,6 +15,7 @@ public class PlayerRenderer : NetworkBehaviour
 
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private int damageFlashTime = 15;
+    [SerializeField] private int healingFlashTime = 15;
     
     public PlayerData playerData;
     
@@ -75,6 +76,22 @@ public class PlayerRenderer : NetworkBehaviour
 
         // wait for damageFlashTime ms
         await Task.Delay(damageFlashTime); 
+
+        // Safety check: Ensure the object hasn't been destroyed while we were waiting
+        if (this != null && playerRenderer != null) 
+        {
+            playerColor= curColor;
+        }
+    }
+    
+    [Command]
+    public async void HealingFlash()
+    {
+        Color curColor = playerColor;
+        playerColor = Color.limeGreen;
+
+        // wait for healingFlashTime ms
+        await Task.Delay(healingFlashTime); 
 
         // Safety check: Ensure the object hasn't been destroyed while we were waiting
         if (this != null && playerRenderer != null) 

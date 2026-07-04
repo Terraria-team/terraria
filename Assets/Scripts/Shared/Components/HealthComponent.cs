@@ -9,6 +9,7 @@ namespace Shared.Components
     public class HealthComponent : NetworkBehaviour
     {
         public event Action OnDamageFlashed;
+        public event Action OnHealingFlashed;
         
         [Header("Health Stats")]
         [SerializeField][SyncVar(hook = "OnHealthChange")]
@@ -40,6 +41,26 @@ namespace Shared.Components
         private void RpcTriggerDamageFlash()
         {
             OnDamageFlashed?.Invoke();
+        }
+        
+        [Command(requiresAuthority = false)]
+        public void ApplyHealingServerRpc(int amount)
+        {
+            if (amount <= 0 || amount > MaxHealth)
+            {
+                Debug.LogWarning("Rejected healing " + amount); 
+                return;
+            }
+
+            CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+            
+            RpcTriggerHealingFlash();
+        }
+
+        [ClientRpc]
+        private void RpcTriggerHealingFlash()
+        {
+            OnHealingFlashed?.Invoke();
         }
         
         public void Awake() 
