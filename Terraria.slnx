@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="Lobby.Application/Lobby.Application.csproj" />
+  <Project Path="Lobby.Infrastructure/Lobby.Infrastructure.csproj" />
+  <Project Path="Lobby.Tests/Lobby.Tests.csproj" />
   <Project Path="Lobby/Lobby.csproj" />
   <Project Path="LobbyUnityShared/LobbyUnityShared.csproj" />
 </Solution>

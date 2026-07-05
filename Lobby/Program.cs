@@ -16,7 +16,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.IncludeFields = true;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -93,6 +97,8 @@ builder.Services.AddAuthentication(opt =>
         }
     };
 });
+
+
 
 // hosted services
 //builder.Services.AddHostedService<ServerInstanceCleanupService>();
