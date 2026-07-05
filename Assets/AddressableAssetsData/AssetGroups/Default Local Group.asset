@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Default Local Group
+  m_GUID: cdcc6ad4dc38b004188dbc67824168a1
+  m_SerializeEntries:
+  - m_GUID: 21c4aa08a31edbb428824232ab317a12
+    m_Address: Assets/Data/Blocks/air.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39ade16061e333e4a851970d4636cfba
+    m_Address: Assets/Data/Items/Pickaxe1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 88945f5a2df83af4785a91cf27dd8b3c
+    m_Address: Assets/Data/Items/Bow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b41781c61df4d9c4199f4fbb7b015c4f
+    m_Address: Assets/Data/Items/Sword1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb22b42b7ee6de6459ab4752117ae947
+    m_Address: Assets/Data/Attacks/Swings/Swing1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3cec0ef711fb7646b401a0ccae7a282
+    m_Address: Assets/Data/Blocks/grass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ff4128e1d77197e40abe5578f049b9fe
+    m_Address: Assets/Data/Items/Block1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: ca9af34e10e72784783baf0d7971b485, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b881016fb49ea594491b544acaccc21c, type: 2}
+    - {fileID: 11400000, guid: c92d950200cd2204687e3f6acc951f8d, type: 2}

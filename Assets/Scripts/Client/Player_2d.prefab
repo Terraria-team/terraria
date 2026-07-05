@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5805675542344271598}
   - component: {fileID: 8650986358743929723}
   - component: {fileID: 8852370581878649959}
+  - component: {fileID: -1118419898680239285}
   m_Layer: 0
   m_Name: Player_2d
   m_TagString: Untagged
@@ -68,6 +69,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  uiPrefab: {fileID: 8176624637013669728, guid: bc90622679ea93941abab2e7f06e36c3, type: 3}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
 --- !u!114 &8650986358743929723
 MonoBehaviour:
@@ -122,6 +124,21 @@ MonoBehaviour:
   playerFacingLeft: 1
   playerRenderer: {fileID: 2954491323016807364}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
+--- !u!114 &-1118419898680239285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6026004524852160811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3948986a8e012874c9595ba378c41165, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shared::InventoryComponent
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!1 &8910666878331743509
 GameObject:
   m_ObjectHideFlags: 0

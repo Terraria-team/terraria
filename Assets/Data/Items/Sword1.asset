@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe69a55c7f55d2409e851144eca918b, type: 3}
+  m_Name: Sword1
+  m_EditorClassIdentifier: Shared::ItemData
+  id: 3
+  icon: {fileID: -3951517328453871476, guid: fc554fb7e6f245c4eb2d189839cd24f8, type: 3}
+  unlocalizedName: 
+  primaryAction: 3
+  blockToPlace: 0
+  projectileToSpawn: 0
+  swingData: {fileID: 11400000, guid: cb22b42b7ee6de6459ab4752117ae947, type: 2}

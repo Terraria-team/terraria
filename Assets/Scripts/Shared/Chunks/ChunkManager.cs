@@ -16,7 +16,6 @@ public class ChunkManager : NetworkBehaviour
     [SerializeField] private BiomeGenerationConfig forestConfig;  
 
     public Tilemap playerGrid;
-    [SerializeField] private List<BlockData> blockTexture = new List<BlockData>();
     
     public void Mine(byte x, byte y)
     {
@@ -52,6 +51,8 @@ public class ChunkManager : NetworkBehaviour
         
         foreach (var entry in delta.Deltas)
         {
+            Debug.Log(ChunkUtils.ChunkCellCoordinates(entry.Index));
+            Debug.Log(entry.Value);
             var coords = ChunkUtils.ChunkCellCoordinates(entry.Index);
             UpdateTileVisual(coords.x, coords.y, entry.Value);
         }
@@ -60,17 +61,15 @@ public class ChunkManager : NetworkBehaviour
     public void UpdateTileVisual(byte x, byte y, BlockID value)
     {
         Vector3Int tilePosition = new Vector3Int(x, y, 0);
-
-        int id = value.Value;
-        if (id < blockTexture.Count && blockTexture[id] != null)
-        {
-            TileBase tileToSet = blockTexture[id].blockTexture;
-            playerGrid.SetTile(tilePosition, tileToSet);
-        }
-        else
+        
+        if (value.IsAir)
         {
             playerGrid.SetTile(tilePosition, null);
+            return;
         }
+        
+        TileBase tileToSet = value.BlockData.blockTexture;
+        playerGrid.SetTile(tilePosition, tileToSet);
     }
     
     void Awake()

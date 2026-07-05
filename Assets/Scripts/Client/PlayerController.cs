@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private GameObject uiPrefab;
+    
     public PlayerData playerData;
     private PlayerRenderer _playerRenderer;
     
@@ -12,13 +14,21 @@ public class PlayerController : NetworkBehaviour
     private bool _isGrounded = false;
 
     private ChunkManager _chunkManager;
+    
+    private InventoryComponent _inventory;
 
     void Start()
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
+        _inventory = GetComponent<InventoryComponent>();
        
         if (!isLocalPlayer) return;
+        
+        Camera.main.transform.SetParent(transform);
+        Camera.main.transform.localPosition = new Vector3(0, 0, -10);
+        
+        Instantiate(uiPrefab);
         
         SubscribeToChunks();
     }
@@ -31,43 +41,16 @@ public class PlayerController : NetworkBehaviour
         _chunkListeners.Add(connectionToClient);
     }
 
-    private int? place = null;
     void Update()
     {
         // Safety check: We only want the player who OWNS this object to send inputs.
         if (!isLocalPlayer) return;
         
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            place = 0;
-        }
-        
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            place = 1;
-        }
+        TrySwitchingInventorySlot();
 
-        if (Input.GetMouseButton(0) && place != null)
+        if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePos = Input.mousePosition;
-            // Ensure ScreenToWorldPoint works correctly by providing distance from camera
-            mousePos.z = -Camera.main.transform.position.z; 
-            
-            Vector3 worldCoord = Camera.main.ScreenToWorldPoint(mousePos);
-            worldCoord.z = 0f;
-            
-            Vector3Int cellPos = _chunkManager.playerGrid.WorldToCell(worldCoord);
-            // _chunkManager.UpdateTileVisual(cellPos.x, cellPos.y, (int)place);
-            
-            // Only place blocks if we are clicking INSIDE the chunk boundaries (0 to 63)
-            if (cellPos.x >= 0 && cellPos.x < ChunkUtils.ChunkSize && 
-                cellPos.y >= 0 && cellPos.y < ChunkUtils.ChunkSize)
-            {
-                    // Immediate local visual feedback
-                _chunkManager.UpdateTileVisual((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
-                    
-                _chunkManager.Place((byte)cellPos.x, (byte)cellPos.y, new BlockID((ushort)place.Value));
-            }
+            _inventory.UseSelectedItem();
         }
         
         // When the local player presses Space, ask the server to change the color.
@@ -131,5 +114,45 @@ public class PlayerController : NetworkBehaviour
     void RpcLogChange(string message)
     {
         Debug.Log($"[Server says]: {message}");
+    }
+
+    void TrySwitchingInventorySlot()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            _inventory.ChangeSelection(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            _inventory.ChangeSelection(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            _inventory.ChangeSelection(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            _inventory.ChangeSelection(3);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            _inventory.ChangeSelection(4);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            _inventory.ChangeSelection(5);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            _inventory.ChangeSelection(6);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            _inventory.ChangeSelection(7);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            _inventory.ChangeSelection(8);
+        }
     }
 }
