@@ -34,7 +34,7 @@ public class GoogleAuthService : IGoogleAuthService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Google token endpoint call failed.");
-            return ErrorModel.Validation("Google token exchange failed");
+            return ErrorModel.Validation($"Google token exchange failed: {ex.Message}");
         }
 
         if (idToken is null)
