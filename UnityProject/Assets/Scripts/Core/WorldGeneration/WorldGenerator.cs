@@ -5,7 +5,6 @@ namespace Core.WorldGeneration
 {
     public class MapGenerator
     {
-        
         private readonly Dictionary<BiomeType,IBiomeGenerationConfig> _biomeGenerationConfigs;
         private readonly Dictionary<BiomeType, FastNoiseLite> _landscapeYNoises;
         private readonly Dictionary<BiomeType, FastNoiseLite> _landscapeXNoises;
