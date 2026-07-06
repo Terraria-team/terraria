@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -39,13 +40,27 @@ namespace Client.Auth
                 $"Could not bind OAuth redirect listener on any of the ports: {string.Join(", ", ports)}. " +
                 "Close any apps using those ports and try again.");
         }
-
-
-        public async Task<string> WaitForRedirectAsync()
+        
+        public async Task<string> WaitForRedirectAsync(TimeSpan timeout = default)
         {
+            if (timeout == default) timeout = TimeSpan.FromMinutes(5);
+
+            using var cts = new CancellationTokenSource(timeout);
+
             try
             {
-                var context = await _listener.GetContextAsync();
+                var getContextTask = _listener.GetContextAsync();
+                var cancelTask = Task.Delay(Timeout.Infinite, cts.Token);
+
+                var completed = await Task.WhenAny(getContextTask, cancelTask);
+
+                if (completed != getContextTask)
+                {
+                    Debug.LogWarning("[Browser] OAuth redirect timed out. Did the user close the browser?");
+                    return null;
+                }
+
+                var context = await getContextTask;
                 string redirectUrl = context.Request.Url.ToString();
 
                 string html = @"
@@ -63,6 +78,11 @@ namespace Client.Auth
                 await output.WriteAsync(buffer, 0, buffer.Length);
 
                 return redirectUrl;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("[Browser] OAuth redirect wait was cancelled.");
+                return null;
             }
             catch (Exception ex)
             {

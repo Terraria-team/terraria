@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Client.Auth
 {
@@ -21,13 +22,26 @@ namespace Client.Auth
 
         private async void HandleLoginClicked()
         {
-            _view.ClearMessages();
-            await _authService.StartGoogleLoginFlow();
+            try
+            {
+                _view.ClearMessages();
+                await _authService.StartGoogleLoginFlow();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[LoginPresenter] Unexpected exception during login: {ex.Message}");
+                _view.ShowError($"Unexpected error: {ex.Message}");
+                _view.SetLoadingState(false);
+            }
         }
 
         private void HandleAuthStarted() => _view.SetLoadingState(true);
         private void HandleStatusUpdated(string status) => _view.UpdateStatus(status);
-        private void HandleAuthFailed(string error) => _view.ShowError(error);
+        private void HandleAuthFailed(string error)
+        {
+            _view.ShowError(error);
+            _view.SetLoadingState(false);
+        }
 
         private void HandleAuthSuccess(string jwtToken)
         {

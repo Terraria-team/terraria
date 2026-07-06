@@ -67,7 +67,7 @@ namespace Client.Auth
 
                 if (string.IsNullOrEmpty(redirectResponse))
                 {
-                    OnAuthFailed?.Invoke("No redirect received from Google.");
+                    OnAuthFailed?.Invoke("Login timed out or browser was closed. Please try again.");
                     return;
                 }
 

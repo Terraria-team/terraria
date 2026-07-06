@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Client.Api;
 using Client.Auth;
 using UnityEngine;
 
-// SAMPLE OF HOW THE UI LOGIC MAY HANDLE THE LOGIN AND THE REST OF THE FUNCTIONALITY
 namespace Client
 {
     public class GameFlowCoordinator : MonoBehaviour
@@ -14,7 +13,7 @@ namespace Client
         [Tooltip("The root GameObject containing your AuthorizedEndpointsUIView")]
         [SerializeField] private GameObject dashboardScreenRoot;
 
-        private const string RefreshTkenKey = "refresh_token";
+        private const string RefreshTokenKey = "refresh_token";
 
         private void Awake()
         {
@@ -43,7 +42,7 @@ namespace Client
         private async Task ExecuteSilentBootAsync()
         {
             
-            string savedRefreshToken = PlayerPrefs.GetString(RefreshTkenKey, null);
+            string savedRefreshToken = PlayerPrefs.GetString(RefreshTokenKey, null);
 
             if (!string.IsNullOrEmpty(savedRefreshToken))
             {
@@ -64,20 +63,15 @@ namespace Client
 
         private void HandleAuthenticationSuccess(string newJwtAccessToken)
         {
-            
-            if (!string.IsNullOrEmpty(AuthService.Instance.CurrentRefreshToken))
-            {
-                PlayerPrefs.SetString(RefreshTkenKey, AuthService.Instance.CurrentRefreshToken);
-                PlayerPrefs.Save();
-            }
-
+            // Note: AuthService.UpdateTokens already persists the refresh token to PlayerPrefs.
+            // No need to write it again here.
             ShowDashboardScreen();
         }
 
         private void HandleSessionExpired()
         {
             
-            PlayerPrefs.DeleteKey(RefreshTkenKey);
+            PlayerPrefs.DeleteKey(RefreshTokenKey);
             PlayerPrefs.Save();
             
             ShowLoginScreen();
