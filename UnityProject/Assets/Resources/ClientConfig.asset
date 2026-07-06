@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f4b73748c0601742832bc81dbffc1a5, type: 3}
   m_Name: ClientConfig
   m_EditorClassIdentifier: Client::Client.Config.ClientConfig
-  baseUrl: http://localhost:5241
+  baseUrl: https://167.233.73.146.nip.io
   serverInstancesEndpoint: /api/server-instances
   logoutAllEndpoint: /api/auth/logoutAll
   googleLoginEndpoint: /api/auth/google-login
