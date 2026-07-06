@@ -4,7 +4,7 @@ namespace Lobby.Application.Contracts;
 
 public interface IAuthService
 {
-    Task<ResultModel<LoginTokensModel>> LoginWithGoogle(string googleIdToken, string createdByIp);
+    Task<ResultModel<LoginTokensModel>> LoginWithGoogle(string code, string redirectUri, string createdByIp);
     
     Task<ResultModel> Logout(Guid playerId, string refreshToken);
     

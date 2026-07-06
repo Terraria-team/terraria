@@ -33,9 +33,9 @@ public class AuthService : IAuthService
         _jwtSettings = jwtSettings;
     }
 
-    public async Task<ResultModel<LoginTokensModel>> LoginWithGoogle(string googleIdToken, string createdByIp)
+    public async Task<ResultModel<LoginTokensModel>> LoginWithGoogle(string code, string redirectUri, string createdByIp)
     {
-        var res = await _googleAuthService.ValidateToken(googleIdToken);
+        var res = await _googleAuthService.ExchangeCode(code, redirectUri);
 
         if (!res.IsSuccessful) return res.Error!;
 

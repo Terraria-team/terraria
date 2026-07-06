@@ -5,7 +5,10 @@ using Client.Auth;
 using Client.Config;
 using UnityEngine;
 
-// AI GENERATED TEST TO JUST CHECK IF  AUTH FUNCTIONALITY WORKS WITH LOBBY ENDPOINTS
+// AI GENERATED TEST TO CHECK IF AUTH FUNCTIONALITY WORKS WITH LOBBY ENDPOINTS
+// Auth flow (as of refactor): Client opens browser → captures ?code= from loopback redirect
+// → POSTs {code, redirectUri} to /api/auth/google-login → server exchanges code with Google
+// → server issues JWT + refresh token. The OidcClient / client-secret are no longer used.
 namespace Client
 {
     public class AuthWorkflowTest : MonoBehaviour

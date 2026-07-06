@@ -1,8 +1,7 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using Client.Api;
-using Duende.IdentityModel.Client;
-using Duende.IdentityModel.OidcClient;
 using LobbyUnityShared.DTOs;
 using Client.Config;
 using UnityEngine;
@@ -13,13 +12,11 @@ namespace Client.Auth
     {
         private static AuthService _instance;
         public static AuthService Instance => _instance ??= new AuthService();
-        
+
         private readonly string _googleClientId;
-        private readonly string _googleClientSecret;
         private readonly string _googleLoginEndpoint;
         private readonly string _refreshEndpoint;
         private readonly string _logoutEndpoint;
-
         private readonly string _baseUrl;
 
         public string CurrentAccessToken { get; private set; }
@@ -35,24 +32,20 @@ namespace Client.Auth
             var config = Resources.Load<ClientConfig>("ClientConfig");
             if (config != null)
             {
-                _googleClientId = config.googleClientId;
-                _googleClientSecret = config.googleClientSecret;
+                _googleClientId      = config.googleClientId;
                 _googleLoginEndpoint = config.googleLoginEndpoint;
-                _refreshEndpoint = config.refreshEndpoint;
-                _logoutEndpoint = config.logoutEndpoint;
-                
-                _baseUrl = config.baseUrl;
+                _refreshEndpoint     = config.refreshEndpoint;
+                _logoutEndpoint      = config.logoutEndpoint;
+                _baseUrl             = config.baseUrl;
             }
             else
             {
                 Debug.LogError("[AuthService] CRITICAL: ClientConfig not found in Resources folder! Falling back to localhost defaults.");
-                _googleClientId = "859856222839-qjfks5pbv25osu3ks8pirl994llfkt4p.apps.googleusercontent.com";
-                _googleClientSecret = "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";
+                _googleClientId      = "YOUR_GOOGLE_CLIENT_ID_HERE";
                 _googleLoginEndpoint = "/api/auth/google-login";
-                _refreshEndpoint = "/api/auth/refresh";
-                _logoutEndpoint = "/api/auth/logout";
-                
-                _baseUrl = "http://localhost:5241";
+                _refreshEndpoint     = "/api/auth/refresh";
+                _logoutEndpoint      = "/api/auth/logout";
+                _baseUrl             = "http://localhost:5241";
             }
             LoadRefreshTokenFromDisk();
         }
@@ -64,31 +57,36 @@ namespace Client.Auth
 
             try
             {
-                var browser = new Browser();
-                int freePort = browser.Port;
-                
-                var options = new OidcClientOptions
-                {
-                    Authority = "https://accounts.google.com",
-                    ClientId = _googleClientId,
-                    ClientSecret = _googleClientSecret,
-                    Scope = "openid profile email",
-                    RedirectUri = $"http://127.0.0.1:{freePort}/",
-                    Browser = browser,
-                    Policy = new Policy { Discovery = new DiscoveryPolicy { ValidateEndpoints = false } }
-                };
-                
-                var oidcClient = new OidcClient(options);
-                LoginResult loginResult = await oidcClient.LoginAsync();
+                using var browser = new Browser();
+                string redirectUri = $"http://127.0.0.1:{browser.Port}/";
+                string authUrl     = BuildGoogleAuthUrl(redirectUri);
 
-                if (loginResult.IsError)
+                Application.OpenURL(authUrl);
+
+                string redirectResponse = await browser.WaitForRedirectAsync();
+
+                if (string.IsNullOrEmpty(redirectResponse))
                 {
-                    OnAuthFailed?.Invoke($"Google OAuth Error: {loginResult.Error}");
+                    OnAuthFailed?.Invoke("No redirect received from Google.");
                     return;
                 }
 
-                OnAuthStatusUpdated?.Invoke("Google authentication complete! Connecting to server");
-                bool success = await ExchangeTokenWithBackendAsync(loginResult.IdentityToken);
+                string error = ParseQueryParam(redirectResponse, "error");
+                if (!string.IsNullOrEmpty(error))
+                {
+                    OnAuthFailed?.Invoke($"Google OAuth Error: {error}");
+                    return;
+                }
+
+                string code = ParseQueryParam(redirectResponse, "code");
+                if (string.IsNullOrEmpty(code))
+                {
+                    OnAuthFailed?.Invoke("No authorization code received from Google.");
+                    return;
+                }
+
+                OnAuthStatusUpdated?.Invoke("Google authentication complete! Connecting to server...");
+                bool success = await ExchangeCodeWithBackendAsync(code, redirectUri);
 
                 if (success)
                 {
@@ -102,11 +100,38 @@ namespace Client.Auth
             }
         }
 
-        private async Task<bool> ExchangeTokenWithBackendAsync(string googleIdToken)
+        private string BuildGoogleAuthUrl(string redirectUri)
+        {
+            var sb = new StringBuilder("https://accounts.google.com/o/oauth2/v2/auth?");
+            sb.Append($"client_id={Uri.EscapeDataString(_googleClientId)}");
+            sb.Append($"&redirect_uri={Uri.EscapeDataString(redirectUri)}");
+            sb.Append("&response_type=code");
+            sb.Append("&scope=openid%20profile%20email");
+            sb.Append("&access_type=offline");
+            return sb.ToString();
+        }
+
+        private static string ParseQueryParam(string url, string param)
+        {
+            int queryStart = url.IndexOf('?');
+            if (queryStart < 0) return null;
+
+            string query = url.Substring(queryStart + 1);
+            foreach (var part in query.Split('&'))
+            {
+                int eqIndex = part.IndexOf('=');
+                if (eqIndex < 0) continue;
+                string key = Uri.UnescapeDataString(part.Substring(0, eqIndex));
+                if (key == param)
+                    return Uri.UnescapeDataString(part.Substring(eqIndex + 1));
+            }
+            return null;
+        }
+
+        private async Task<bool> ExchangeCodeWithBackendAsync(string code, string redirectUri)
         {
             string url = _baseUrl + _googleLoginEndpoint;
-    
-            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new { googleIdToken });
+            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new { code, redirectUri });
 
             if (tokens == null || string.IsNullOrEmpty(tokens.accesstoken))
             {
@@ -154,34 +179,33 @@ namespace Client.Auth
 
             string url = _baseUrl + _logoutEndpoint;
             await HttpUtil.SendRawAsync(url, "POST", new { refreshToken = CurrentRefreshToken }, CurrentAccessToken);
-        
+
             ClearTokens();
         }
-        
+
         private void UpdateTokens(LoginTokensDto tokens)
         {
-            
-            CurrentAccessToken = tokens.accesstoken;
+            CurrentAccessToken  = tokens.accesstoken;
             CurrentRefreshToken = tokens.sessiontoken;
-            
+
             PlayerPrefs.SetString("refresh_token", CurrentRefreshToken);
             PlayerPrefs.Save();
         }
 
         private void ClearTokens()
         {
-            CurrentAccessToken = null;
+            CurrentAccessToken  = null;
             CurrentRefreshToken = null;
-            
+
             PlayerPrefs.DeleteKey("refresh_token");
             PlayerPrefs.Save();
         }
-        
+
         public void SetRefreshToken(string token)
         {
             CurrentRefreshToken = token;
         }
-        
+
         public bool LoadRefreshTokenFromDisk()
         {
             if (PlayerPrefs.HasKey("refresh_token"))
@@ -191,5 +215,5 @@ namespace Client.Auth
             }
             return false;
         }
-    } 
+    }
 }

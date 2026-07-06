@@ -17,7 +17,7 @@ namespace Client.Config
         public string logoutEndpoint = "/api/auth/logout";
 
         [Header("Google OAuth")]
-        public string googleClientId = "859856222839-qjfks5pbv25osu3ks8pirl994llfkt4p.apps.googleusercontent.com";
-        public string googleClientSecret = "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";
+        public string googleClientId = "YOUR_GOOGLE_CLIENT_ID_HERE";
+        // googleClientSecret intentionally removed — the server holds the secret now
     }
 }

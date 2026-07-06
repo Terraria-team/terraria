@@ -1,80 +1,79 @@
 using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Duende.IdentityModel.OidcClient.Browser;
 using UnityEngine;
 
 namespace Client.Auth
 {
-    public class Browser : IBrowser
+    public class Browser : IDisposable
     {
-        public int Port { get; private set; }
+        private static readonly int[] CandidatePorts = { 9000, 9001, 9002, 9003, 9004 };
+
+        private readonly HttpListener _listener;
+        public int Port { get; }
 
         public Browser()
         {
-            Port = GetAvailablePort();
-        }
-        
-        private static int GetAvailablePort()
-        {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            
-            listener.Start();
-            int assignedPort = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-            
-            return assignedPort;
+            (Port, _listener) = BindToFirstAvailablePort(CandidatePorts);
         }
 
-        public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
+        private static (int port, HttpListener listener) BindToFirstAvailablePort(int[] ports)
         {
-            using var listener = new HttpListener();
-            listener.Prefixes.Add($"http://127.0.0.1:{Port}/");
-            listener.Start();
+            foreach (var port in ports)
+            {
+                try
+                {
+                    var listener = new HttpListener();
+                    listener.Prefixes.Add($"http://127.0.0.1:{port}/");
+                    listener.Start();
+                    return (port, listener);
+                }
+                catch (HttpListenerException)
+                {
+                    // Port in use so retry
+                }
+            }
 
-            Application.OpenURL(options.StartUrl);
+            throw new InvalidOperationException(
+                $"Could not bind OAuth redirect listener on any of the ports: {string.Join(", ", ports)}. " +
+                "Close any apps using those ports and try again.");
+        }
 
+
+        public async Task<string> WaitForRedirectAsync()
+        {
             try
             {
-                var context = await listener.GetContextAsync();
-                var request = context.Request;
-                var response = context.Response;
+                var context = await _listener.GetContextAsync();
+                string redirectUrl = context.Request.Url.ToString();
 
-                string responseString = @"
+                string html = @"
                     <html>
-                        <body style='background-color: #121212; color: #ffffff; font-family: Segoe UI, sans-serif; text-align: center; padding-top: 10%'>
-                            <h1 style='color: #4CAF50;'>Authentication Successful!</h1>
+                        <body style='background-color:#121212;color:#fff;font-family:Segoe UI,sans-serif;text-align:center;padding-top:10%'>
+                            <h1 style='color:#4CAF50;'>Authentication Successful!</h1>
                             <p>You can close this browser tab and return to Terraria.</p>
-                            <script>setTimeout(function() { window.close(); }, 2000);</script>
+                            <script>setTimeout(function(){ window.close(); }, 2000);</script>
                         </body>
                     </html>";
 
-                byte[] buffer = Encoding.UTF8.GetBytes(responseString);
-                response.ContentLength64 = buffer.Length;
-                using var output = response.OutputStream;
-                await output.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
+                byte[] buffer = Encoding.UTF8.GetBytes(html);
+                context.Response.ContentLength64 = buffer.Length;
+                using var output = context.Response.OutputStream;
+                await output.WriteAsync(buffer, 0, buffer.Length);
 
-                return new BrowserResult
-                {
-                    ResultType = BrowserResultType.Success,
-                    Response = request.Url.ToString()
-                };
+                return redirectUrl;
             }
             catch (Exception ex)
             {
-                return new BrowserResult
-                {
-                    ResultType = BrowserResultType.UnknownError,
-                    Error = ex.Message
-                };
+                Debug.LogError($"[Browser] Error waiting for OAuth redirect: {ex.Message}");
+                return null;
             }
-            finally
-            {
-                listener.Stop();
-            }
+        }
+
+        public void Dispose()
+        {
+            try { _listener.Stop(); } catch { /* ignored */ }
         }
     }
 }

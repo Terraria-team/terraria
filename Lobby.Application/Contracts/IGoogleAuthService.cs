@@ -4,5 +4,5 @@ namespace Lobby.Application.Contracts;
 
 public interface IGoogleAuthService
 {
-    Task<ResultModel<PlayerGoogleLoginModel>> ValidateToken(string idToken);
+    Task<ResultModel<PlayerGoogleLoginModel>> ExchangeCode(string code, string redirectUri);
 }

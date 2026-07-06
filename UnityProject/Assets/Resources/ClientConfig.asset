@@ -18,5 +18,4 @@ MonoBehaviour:
   googleLoginEndpoint: /api/auth/google-login
   refreshEndpoint: /api/auth/refresh
   logoutEndpoint: /api/auth/logout
-  googleClientId: 859856222839-qjfks5pbv25osu3ks8pirl994llfkt4p.apps.googleusercontent.com
-  googleClientSecret: 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
+  googleClientId: 859856222839-3ddinrsh57mpmukjueh4n98hbl0skt74.apps.googleusercontent.com

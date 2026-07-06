@@ -24,7 +24,7 @@ public class AuthController : LobbyControllerBase
     public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRecord record )
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress!.MapToIPv4();
-        var res = await _authService.LoginWithGoogle(record.GoogleIdToken, ipAddress.ToString());
+        var res = await _authService.LoginWithGoogle(record.Code, record.RedirectUri, ipAddress.ToString());
         return res.IsSuccessful ? Ok(res.Result) : HttpError(res.Error!);
     }
     
