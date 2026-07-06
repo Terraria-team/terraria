@@ -9,6 +9,8 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+# Prevent NuGet from looking up Windows Visual Studio fallback package folders
+ENV NUGET_FALLBACK_PACKAGES=""
 
 # Copy project files first so NuGet restore is cached separately from source changes
 COPY ["Lobby/Lobby.csproj",                         "Lobby/"]
