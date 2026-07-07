@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-// using TMPro;
+using TMPro;
 using Client.Api;
 using Client.Auth;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -15,13 +17,15 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button logoutButton;
         [SerializeField] private Button logoutAllButton;
 
+        [Header("Server List References")]
+        [SerializeField] private Transform serverListContainer;
+        [SerializeField] private ServerItemUI serverItemPrefab;
+
         [Header("Feedback References")]
-        // [SerializeField] private GameObject loadingSpinner;
-        // [SerializeField] private TextMeshProUGUI statusText;
-        // [SerializeField] private TextMeshProUGUI errorText;
-        // [SerializeField] private TextMeshProUGUI responseDataText;
+        [SerializeField] private TextMeshProUGUI feedbackText;
 
         private AuthorizedEndpointsPresenter _presenter;
+        private Coroutine _hideFeedbackCoroutine;
         
         public event Action OnGetServersClicked;
         public event Action OnCreateServerClicked;
@@ -38,7 +42,6 @@ namespace Client.AuthorizedEndpoints
             logoutAllButton.onClick.AddListener(() => OnLogoutAllClicked?.Invoke());
 
             SetLoadingState(false);
-            // if (responseDataText != null) responseDataText.text = "";
         }
 
         private void OnDestroy()
@@ -48,7 +51,46 @@ namespace Client.AuthorizedEndpoints
 
         public void DisplayServerResponse(string rawJson)
         {
-            // if (responseDataText != null) responseDataText.text = rawJson;
+            if (serverListContainer == null || serverItemPrefab == null) return;
+
+            // Handle both single objects (from Create) and arrays (from GetServers)
+            try
+            {
+                string trimmedJson = rawJson.TrimStart();
+                if (trimmedJson.StartsWith("{"))
+                {
+                    // It's a single object (e.g., from Create Server)
+                    var server = JsonConvert.DeserializeObject<ServerInstanceDto>(rawJson);
+                    if (server != null)
+                    {
+                        var item = Instantiate(serverItemPrefab, serverListContainer);
+                        item.Setup(server.id, server.name, server.playerCount, 8);
+                    }
+                }
+                else if (trimmedJson.StartsWith("["))
+                {
+                    // It's an array (e.g., from Refresh Servers)
+                    // Clear previous items only when refreshing the full list
+                    foreach (Transform child in serverListContainer)
+                    {
+                        Destroy(child.gameObject);
+                    }
+
+                    var servers = JsonConvert.DeserializeObject<List<ServerInstanceDto>>(rawJson);
+                    if (servers != null)
+                    {
+                        foreach (var server in servers)
+                        {
+                            var item = Instantiate(serverItemPrefab, serverListContainer);
+                            item.Setup(server.id, server.name, server.playerCount, 8);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[AuthorizedEndpointsUIView] Failed to parse server instances: {ex.Message}");
+            }
         }
 
         public void SetLoadingState(bool isLoading)
@@ -57,32 +99,39 @@ namespace Client.AuthorizedEndpoints
             createServerButton.interactable = !isLoading;
             logoutButton.interactable = !isLoading;
             logoutAllButton.interactable = !isLoading;
-            // if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
         }
 
         public void UpdateStatus(string message)
         {
-            /*
-            if (statusText != null)
+            if (feedbackText != null)
             {
-                statusText.gameObject.SetActive(true);
-                statusText.text = message;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.blue;
+                feedbackText.text = message;
+                
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
+                _hideFeedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay(3f));
             }
-            if (errorText != null) errorText.gameObject.SetActive(false);
-            */
         }
 
         public void ShowError(string errorMessage)
         {
             SetLoadingState(false);
-            /*
-            if (statusText != null) statusText.gameObject.SetActive(false);
-            if (errorText != null)
+            if (feedbackText != null)
             {
-                errorText.gameObject.SetActive(true);
-                errorText.text = errorMessage;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.red;
+                feedbackText.text = errorMessage;
+                
+                // Stop any pending hide from a previous status message so the error stays visible
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
             }
-            */
+        }
+        
+        private System.Collections.IEnumerator HideFeedbackAfterDelay(float delay)
+        {
+            yield return new UnityEngine.WaitForSeconds(delay);
+            if (feedbackText != null) feedbackText.gameObject.SetActive(false);
         }
     }
 }

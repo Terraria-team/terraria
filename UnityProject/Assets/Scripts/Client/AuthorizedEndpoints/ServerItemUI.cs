@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mirror;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -12,6 +13,8 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button joinButton;
 
         private string _serverId;
+        private string _ipAddress = "localhost"; // Default for local testing
+        private int _port = 7777;
 
         private void Awake()
         {
@@ -25,9 +28,11 @@ namespace Client.AuthorizedEndpoints
         // Once you have the ServerInstanceDto and the JSON parsing ready in AuthorizedEndpointsUIView.cs,
         // iterate over your DTO list, Instantiate this prefab, and call this Setup() method for each item 
         // to populate the UI with the real data.
-        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers)
+        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers, string ip = "localhost", int port = 7777)
         {
             _serverId = serverId;
+            _ipAddress = ip;
+            _port = port;
             
             if (serverNameText != null) 
                 serverNameText.text = name;
@@ -38,11 +43,27 @@ namespace Client.AuthorizedEndpoints
 
         private void OnJoinClicked()
         {
-            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId}");
+            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId} at {_ipAddress}:{_port}");
             
-            // TODO:
-            // Implement the connection logic here. You should pass the _serverId to the NetworkManager 
-            // or the appropriate service to initiate the connection to the game server.
+            if (NetworkManager.singleton != null)
+            {
+                NetworkManager.singleton.networkAddress = _ipAddress;
+                
+                // Try to set port if transport supports it
+                if (Transport.active is PortTransport portTransport)
+                {
+                    portTransport.Port = (ushort)_port;
+                }
+                
+                NetworkManager.singleton.StartClient();
+            }
+            else
+            {
+                Debug.LogWarning("[ServerItemUI] NetworkManager instance not found!");
+            }
+            
+            //when merged, change to the latest scene(scene with collisions)
+            UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
         }
     }
 }
