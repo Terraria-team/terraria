@@ -6,6 +6,5 @@ public class BlockData : ScriptableObject
 {
     public ushort id;
     public string unlocalizedName;
-    public Sprite sprite;
     public TileBase blockTexture;
 }

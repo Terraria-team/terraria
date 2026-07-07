@@ -1,6 +1,7 @@
 # IDE and Tooling folders
 .idea/
 .vs/
+.vscode/
 *.user
 *.suo
 
