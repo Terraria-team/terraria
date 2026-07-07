@@ -19,20 +19,20 @@ public class ChunkManager : NetworkBehaviour
     
     [SerializeField] private float MaxDistance = 5.0f; 
     
-    public void Mine(byte x, byte y)
+    public void Mine(Vector2Int chunkCoord, byte x, byte y)
     {
-        CmdBroadcastChunkDelta(x, y, new BlockID(0));
+        ServerApplyChunkDelta(chunkCoord, x, y, new BlockID(0));
     }
 
-    public void Place(byte x, byte y, BlockID value)
+    public void Place(Vector2Int chunkCoord, byte x, byte y, BlockID value)
     {
-        CmdBroadcastChunkDelta(x, y, value);
+        ServerApplyChunkDelta(chunkCoord, x, y, value);
     }
     
-    [Command(requiresAuthority = false)]
-    void CmdBroadcastChunkDelta(byte x, byte y, BlockID value, NetworkConnectionToClient sender = null)
+    [Server]
+    void ServerApplyChunkDelta(Vector2Int chunkCoord, byte x, byte y, BlockID value, NetworkIdentity sender = null)
     {
-        if (!IsValidChange(x, y, value, sender.identity))
+        if (!IsValidChange(x, y, value, sender))
         {
             Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
             return; 
@@ -43,7 +43,11 @@ public class ChunkManager : NetworkBehaviour
         SparseChunkDelta delta = new(list);
         
         // Apply to server's internal state so late-joiners can get the updated view.
-        Vector2Int chunkCoord = new Vector2Int(0, 0);
+        if (!_visibleChunks.ContainsKey(chunkCoord))
+        {
+            _visibleChunks[chunkCoord] = new ChunkData();
+        }
+        
         _visibleChunks[chunkCoord] = delta.Apply(_visibleChunks[chunkCoord]);
         
         if (!delta.IsEmpty)
@@ -59,10 +63,8 @@ public class ChunkManager : NetworkBehaviour
         
         foreach (var entry in delta.Deltas)
         {
-            Debug.Log(ChunkUtils.ChunkCellCoordinates(entry.Index));
-            Debug.Log(entry.Value);
             var coords = ChunkUtils.ChunkCellCoordinates(entry.Index);
-            UpdateTileVisual(coords.x, coords.y, entry.Value);
+            UpdateTileVisual(chunkCoordinates, coords.x, coords.y, entry.Value);
         }
     }
     
@@ -148,9 +150,9 @@ public class ChunkManager : NetworkBehaviour
         }
     }
     
-    private void UpdateTileVisual(byte x, byte y, BlockID value)
+    private void UpdateTileVisual(Vector2Int chunkCoord, byte x, byte y, BlockID value)
     {
-        Vector3Int tilePosition = new Vector3Int(x, y, 0);
+        Vector3Int tilePosition = new Vector3Int(chunkCoord.x * ChunkUtils.ChunkSize + x, chunkCoord.y * ChunkUtils.ChunkSize + y, 0);
         
         if (value.IsAir)
         {
@@ -224,16 +226,17 @@ public class ChunkManager : NetworkBehaviour
     // Client
     public override void OnStartClient() // from my branch
     {
-        Vector2Int chunkCoord = new Vector2Int(0, 0);
-        if (!_visibleChunks.ContainsKey(chunkCoord)) return;
-        
-        ChunkData chunkData = _visibleChunks[chunkCoord];
-
-        // Initial population of the Tilemap
-        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        foreach (var kvp in _visibleChunks)
         {
-            var coords = ChunkUtils.ChunkCellCoordinates(i);
-            UpdateTileVisual(coords.x, coords.y, chunkData[i]);
+            Vector2Int chunkCoord = kvp.Key;
+            ChunkData chunkData = kvp.Value;
+
+            // Initial population of the Tilemap
+            for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+            {
+                var coords = ChunkUtils.ChunkCellCoordinates(i);
+                UpdateTileVisual(chunkCoord, coords.x, coords.y, chunkData[i]);
+            }
         }
     }
 }

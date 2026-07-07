@@ -25,6 +25,7 @@ public static class ActionRegistry
                 // TODO select chunk
                 
                 ChunkManager.Instance.Place(
+                    context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
                     new BlockID(0)
@@ -37,6 +38,7 @@ public static class ActionRegistry
                 // TODO select chunk
                 
                 ChunkManager.Instance.Place(
+                    context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
                     new BlockID(1)
