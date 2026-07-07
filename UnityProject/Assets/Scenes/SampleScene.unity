@@ -3131,7 +3131,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 6026004524852160811, guid: 6dce36aea1c13c548ba21bfb2b3b5358, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6265147207640750725, guid: 0edcb09e117ab3f49897f6b1399d762e, type: 3}
+  - {fileID: 492539786732240098, guid: a8544341a41c4e241b67e5d403d80b47, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -3335,12 +3337,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  worldConfig: {fileID: 0, guid: b18356db11c3b55459bd0b396ba8b9a2, type: 2}
-  forestConfig: {fileID: 0, guid: 5ba61664f5e129a4f8e35c2c5e8bdef7, type: 2}
+  worldConfig: {fileID: 11400000, guid: b18356db11c3b55459bd0b396ba8b9a2, type: 2}
+  forestConfig: {fileID: 11400000, guid: 5ba61664f5e129a4f8e35c2c5e8bdef7, type: 2}
   playerGrid: {fileID: 785681555}
-  blockTexture:
-  - {fileID: 11400000, guid: 21c4aa08a31edbb428824232ab317a12, type: 2}
-  - {fileID: 11400000, guid: d3cec0ef711fb7646b401a0ccae7a282, type: 2}
+  MaxDistance: 5
 --- !u!1 &1271768768
 GameObject:
   m_ObjectHideFlags: 0
@@ -3401,7 +3401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 146e06490fdd56942a3e814280f88274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Shared::ActionsSettings
-  ProjectilePrefab: {fileID: 0}
+  ProjectilePrefab: {fileID: 492539786732240098, guid: a8544341a41c4e241b67e5d403d80b47, type: 3}
   SwingPrefab: {fileID: 6265147207640750725, guid: 0edcb09e117ab3f49897f6b1399d762e, type: 3}
 --- !u!4 &1853271974
 Transform:

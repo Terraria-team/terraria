@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Mirror;
+using Shared.Components;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -43,9 +46,22 @@ public static class ActionRegistry
 
             case ActionType.SpawnProjectile:
             {
-                /*GameObject.Instantiate(
-                    
-                );*/
+                Vector2 projectileDirection = context.mousePosition - context.userPosition;
+                projectileDirection.Normalize();
+                
+                Vector2 projectileLocation = context.userPosition + projectileDirection * 1.5f;
+                
+                var projectile = Object.Instantiate(
+                    Settings.ProjectilePrefab,
+                    projectileLocation,
+                    Quaternion.identity
+                );
+                NetworkServer.Spawn(projectile);
+                
+                //swingObject.transform.localScale = new Vector3(swingData.swingSize, swingData.swingSize, swingData.swingSize);
+                //swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
+
+                projectile.GetComponent<Rigidbody2D>().AddForce(projectileDirection * 10, ForceMode2D.Impulse);
                 
                 break;
             }
@@ -70,7 +86,22 @@ public static class ActionRegistry
                 );
                 
                 swingObject.transform.localScale = new Vector3(swingData.swingSize, swingData.swingSize, swingData.swingSize);
-                swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
+                //swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
+                NetworkServer.Spawn(swingObject);
+                
+                // Scan for damage
+                var colliders = Physics2D.OverlapCircleAll(swingLocation, 1);
+
+                Debug.Log(swingLocation);
+                
+                foreach (var collider in colliders)
+                {
+                    Debug.Log(collider.gameObject.name);
+                    if (collider.TryGetComponent<HealthComponent>(out var component))
+                    {
+                        component.ApplyDamageServerRpc(10); 
+                    }
+                }
                 
                 break;
             }

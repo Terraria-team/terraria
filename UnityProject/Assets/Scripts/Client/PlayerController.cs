@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mirror;
 using Shared.Components;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,6 +9,7 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(Collider2D))]
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private TextMeshProUGUI healthBar;
     [SerializeField] private GameObject uiPrefab;
     
     public static Transform LocalPlayerTransform;
@@ -32,7 +34,6 @@ public class PlayerController : NetworkBehaviour
     private float _jumpCooldownTimer = 0f;
 
     private List<NetworkConnectionToClient> _chunkListeners = new();
-    private int? place = null;
 
     void Start()
     {
@@ -67,6 +68,7 @@ public class PlayerController : NetworkBehaviour
         
         SubscribeToChunks();
         _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
+        _healthComponent.OnHealingFlashed += _playerRenderer.HealingFlash;
     }
     
     void OnDestroy()
@@ -75,6 +77,7 @@ public class PlayerController : NetworkBehaviour
         if (_healthComponent != null)
         {
             _healthComponent.OnDamageFlashed -= _playerRenderer.DamageFlash;
+            _healthComponent.OnHealingFlashed -= _playerRenderer.HealingFlash;
         }
     }
 
@@ -163,6 +166,11 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
+        if (healthBar != null && _healthComponent != null)
+        {
+            healthBar.text = _healthComponent.HealthNow.ToString();
+        }
+        
         if (!isLocalPlayer) return;
         
         TrySwitchingInventorySlot();
@@ -180,9 +188,6 @@ public class PlayerController : NetworkBehaviour
                 return;
             }
         }
-        
-        if (Input.GetKeyDown(KeyCode.Alpha1)) place = 0;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) place = 1;
 
         if (Input.GetMouseButtonDown(0))
         {

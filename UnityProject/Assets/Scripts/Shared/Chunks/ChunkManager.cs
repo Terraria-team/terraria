@@ -68,6 +68,8 @@ public class ChunkManager : NetworkBehaviour
     
     public bool IsValidChange(byte x, byte y, BlockID value, NetworkIdentity sender)
     {
+        return true;
+        
         if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
         
         if (sender == null ) 

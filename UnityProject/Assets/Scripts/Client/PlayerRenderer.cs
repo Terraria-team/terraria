@@ -83,7 +83,7 @@ public class PlayerRenderer : NetworkBehaviour
             playerColor= curColor;
         }
     }
-    
+
     [Command]
     public async void HealingFlash()
     {

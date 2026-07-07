@@ -75,6 +75,8 @@ namespace Client.AuthorizedEndpoints
                 Destroy(child.gameObject);
             }
             
+            Debug.Log($"Retrieved server elements: {servers.Count}");
+            
             foreach (var server in servers)
             {
                 var item = Instantiate(serverItemPrefab, serverListContainer, false);

@@ -18,6 +18,8 @@ namespace Shared.Components
         [SerializeField][SyncVar]
         private int MaxHealth = 100;
 
+        public int HealthNow => CurrentHealth;
+        
         void OnHealthChange(int oldHealth, int newHealth)
         {
             Debug.Log($"Current health: {newHealth}");

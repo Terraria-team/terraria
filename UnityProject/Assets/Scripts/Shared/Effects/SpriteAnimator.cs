@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SpriteAnimator : MonoBehaviour
 {
+    public Sprite[] TEMP_sprites;
     private SpriteRenderer _spriteRenderer;
     [SerializeField] private float fps = 12f;
 
@@ -19,6 +20,8 @@ public class SpriteAnimator : MonoBehaviour
         
         if (_spriteRenderer == null)
             Debug.LogError("Sprite renderer is null on SpriteAnimator!");
+
+        Play(TEMP_sprites);
     }
 
     public void Play(Sprite[] sprites)
