@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mirror;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -12,7 +13,7 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button joinButton;
 
         private string _serverId;
-        private int _serverPort;
+        private int _port = 7777;
 
         private void Awake()
         {
@@ -21,11 +22,11 @@ namespace Client.AuthorizedEndpoints
                 joinButton.onClick.AddListener(OnJoinClicked);
             }
         }
-        
-        public void Setup(string serverId, int port, string name, int currentPlayers, int maxPlayers)
+
+        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers, int port)
         {
             _serverId = serverId;
-            _serverPort = port;
+            _port = port;
             
             if (serverNameText != null) 
                 serverNameText.text = name;
@@ -36,11 +37,26 @@ namespace Client.AuthorizedEndpoints
 
         private void OnJoinClicked()
         {
-            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId} on port: {_serverPort}");
+            if (NetworkManager.singleton == null)
+            {
+                Debug.LogWarning("[ServerItemUI] NetworkManager.singleton is null — make sure NetworkManager is in LobbyScene.");
+                return;
+            }
+
+            // If the user clicks join while it's already trying to connect (but hung), 
+            // force stop the old attempt so we can start fresh.
+            if (NetworkManager.singleton.isNetworkActive)
+            {
+                Debug.Log("[ServerItemUI] Stopping previous hung connection attempt...");
+                NetworkManager.singleton.StopClient();
+            }
+
+            Debug.Log($"[ServerItemUI] Connecting to server: {_serverId} at {NetworkManager.singleton.networkAddress}:{_port}");
             
-            // TODO:
-            // Implement the connection logic here. You should pass the _serverId to the NetworkManager 
-            // or the appropriate service to initiate the connection to the game server.
+            if (Transport.active is PortTransport portTransport)
+                portTransport.Port = (ushort)_port;
+
+            NetworkManager.singleton.StartClient();
         }
     }
 }

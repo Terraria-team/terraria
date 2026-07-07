@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-// using TMPro;
+using TMPro;
 using Client.Api;
 using Client.Auth;
 using LobbyUnityShared.DTOs;
@@ -17,17 +17,15 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button logoutButton;
         [SerializeField] private Button logoutAllButton;
 
-        [Header("Feedback References")]
-        // [SerializeField] private GameObject loadingSpinner;
-        // [SerializeField] private TextMeshProUGUI statusText;
-        // [SerializeField] private TextMeshProUGUI errorText;
-        // [SerializeField] private TextMeshProUGUI responseDataText;
-
-        [Header("Server List UI")]
-        [SerializeField] private ServerItemUI serverItemPrefab;
+        [Header("Server List References")]
         [SerializeField] private Transform serverListContainer;
+        [SerializeField] private ServerItemUI serverItemPrefab;
+
+        [Header("Feedback References")]
+        [SerializeField] private TextMeshProUGUI feedbackText;
 
         private AuthorizedEndpointsPresenter _presenter;
+        private Coroutine _hideFeedbackCoroutine;
         
         public event Action OnGetServersClicked;
         public event Action OnCreateServerClicked;
@@ -44,7 +42,6 @@ namespace Client.AuthorizedEndpoints
             logoutAllButton.onClick.AddListener(() => OnLogoutAllClicked?.Invoke());
 
             SetLoadingState(false);
-            // if (responseDataText != null) responseDataText.text = "";
         }
 
         private void OnDestroy()
@@ -54,7 +51,7 @@ namespace Client.AuthorizedEndpoints
 
         public void DisplayServerResponse(string rawJson)
         {
-            // if (responseDataText != null) responseDataText.text = rawJson;
+            //if (serverListContainer == null || serverItemPrefab == null) return;
         }
 
         public void SetLoadingState(bool isLoading)
@@ -63,7 +60,6 @@ namespace Client.AuthorizedEndpoints
             createServerButton.interactable = !isLoading;
             logoutButton.interactable = !isLoading;
             logoutAllButton.interactable = !isLoading;
-            // if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
         }
 
         public void ShowRetrievedServerElements(List<ServerInstanceDto> servers)
@@ -81,33 +77,41 @@ namespace Client.AuthorizedEndpoints
             {
                 var item = Instantiate(serverItemPrefab, serverListContainer, false);
                 item.gameObject.SetActive(true);
-                item.Setup(server.Id, server.Port, server.Name, server.PlayerCount, 8);
+                item.Setup(server.Id, server.Name, server.PlayerCount, 8, server.Port);
             }
         }
 
         public void UpdateStatus(string message)
         {
-            /*
-            if (statusText != null)
+            if (feedbackText != null)
             {
-                statusText.gameObject.SetActive(true);
-                statusText.text = message;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.blue;
+                feedbackText.text = message;
+                
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
+                _hideFeedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay(3f));
             }
-            if (errorText != null) errorText.gameObject.SetActive(false);
-            */
         }
 
         public void ShowError(string errorMessage)
         {
             SetLoadingState(false);
-            /*
-            if (statusText != null) statusText.gameObject.SetActive(false);
-            if (errorText != null)
+            if (feedbackText != null)
             {
-                errorText.gameObject.SetActive(true);
-                errorText.text = errorMessage;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.red;
+                feedbackText.text = errorMessage;
+                
+                // Stop any pending hide from a previous status message so the error stays visible
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
             }
-            */
+        }
+        
+        private System.Collections.IEnumerator HideFeedbackAfterDelay(float delay)
+        {
+            yield return new UnityEngine.WaitForSeconds(delay);
+            if (feedbackText != null) feedbackText.gameObject.SetActive(false);
         }
 
     }
