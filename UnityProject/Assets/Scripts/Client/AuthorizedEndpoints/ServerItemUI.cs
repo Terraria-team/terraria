@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mirror;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -12,7 +13,9 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button joinButton;
 
         private string _serverId;
-        private int _serverPort;
+        private int _port = 7777;
+        private GameObject _lobbyScreenRoot;
+        private GameObject _gameScreenRoot;
 
         private void Awake()
         {
@@ -21,11 +24,13 @@ namespace Client.AuthorizedEndpoints
                 joinButton.onClick.AddListener(OnJoinClicked);
             }
         }
-        
-        public void Setup(string serverId, int port, string name, int currentPlayers, int maxPlayers)
+
+        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers, int port, GameObject lobbyRoot, GameObject gameRoot)
         {
             _serverId = serverId;
-            _serverPort = port;
+            _port = port;
+            _lobbyScreenRoot = lobbyRoot;
+            _gameScreenRoot = gameRoot;
             
             if (serverNameText != null) 
                 serverNameText.text = name;
@@ -36,11 +41,28 @@ namespace Client.AuthorizedEndpoints
 
         private void OnJoinClicked()
         {
-            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId} on port: {_serverPort}");
-            
-            // TODO:
-            // Implement the connection logic here. You should pass the _serverId to the NetworkManager 
-            // or the appropriate service to initiate the connection to the game server.
+            if (NetworkManager.singleton == null)
+            {
+                Debug.LogWarning("[ServerItemUI] NetworkManager.singleton is null — make sure NetworkManager is in LobbyScene.");
+                return;
+            }
+
+            if (NetworkManager.singleton.isNetworkActive)
+            {
+                Debug.LogWarning("[ServerItemUI] Already connected to a server.");
+                return;
+            }
+
+            Debug.Log($"[ServerItemUI] Connecting to server: {_serverId} at {NetworkManager.singleton.networkAddress}:{_port}");
+
+            if (Transport.active is PortTransport portTransport)
+                portTransport.Port = (ushort)_port;
+
+            NetworkManager.singleton.StartClient();
+
+            // Hide Lobby UI, show game world
+            if (_lobbyScreenRoot != null) _lobbyScreenRoot.SetActive(false);
+            if (_gameScreenRoot != null) _gameScreenRoot.SetActive(true);
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-// using TMPro;
+using TMPro;
 
 namespace Client.Auth
 {
@@ -9,9 +9,9 @@ namespace Client.Auth
     {
         [Header("UI References")]
         [SerializeField] private Button loginButton;
-        // [SerializeField] private GameObject loadingSpinner;
-        // [SerializeField] private TextMeshProUGUI statusText;
-        // [SerializeField] private TextMeshProUGUI errorText;
+        [SerializeField] private TextMeshProUGUI feedbackText;
+        
+        private Coroutine _hideFeedbackCoroutine;
 
         private LoginPresenter _presenter;
         public event Action OnLoginClicked;
@@ -33,40 +33,45 @@ namespace Client.Auth
         public void SetLoadingState(bool isLoading)
         {
             loginButton.interactable = !isLoading;
-            // if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
         }
 
         public void UpdateStatus(string message)
         {
-            /*
-            if (statusText != null)
+            if (feedbackText != null)
             {
-                statusText.gameObject.SetActive(true);
-                statusText.text = message;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.blue;
+                feedbackText.text = message;
+                
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
+                _hideFeedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay(3f));
             }
-            if (errorText != null) errorText.gameObject.SetActive(false);
-            */
         }
 
         public void ShowError(string errorMessage)
         {
             SetLoadingState(false);
-            /*
-            if (statusText != null) statusText.gameObject.SetActive(false);
-            if (errorText != null)
+            if (feedbackText != null)
             {
-                errorText.gameObject.SetActive(true);
-                errorText.text = errorMessage;
+                feedbackText.gameObject.SetActive(true);
+                feedbackText.color = Color.red;
+                feedbackText.text = errorMessage;
+                
+                // Stop any pending hide from a previous status message so the error stays visible
+                if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
             }
-            */
         }
 
         public void ClearMessages()
         {
-            /*
-            if (statusText != null) statusText.gameObject.SetActive(false);
-            if (errorText != null) errorText.gameObject.SetActive(false);
-            */
+            if (_hideFeedbackCoroutine != null) StopCoroutine(_hideFeedbackCoroutine);
+            if (feedbackText != null) feedbackText.gameObject.SetActive(false);
+        }
+        
+        private System.Collections.IEnumerator HideFeedbackAfterDelay(float delay)
+        {
+            yield return new UnityEngine.WaitForSeconds(delay);
+            if (feedbackText != null) feedbackText.gameObject.SetActive(false);
         }
     }
 }
