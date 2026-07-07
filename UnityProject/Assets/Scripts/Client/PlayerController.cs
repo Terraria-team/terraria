@@ -16,12 +16,14 @@ public class PlayerController : NetworkBehaviour
     private ChunkManager _chunkManager;
     
     private InventoryComponent _inventory;
+    private BlockHighlight _blockHighlight;
 
     void Start()
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
         _inventory = GetComponent<InventoryComponent>();
+        _blockHighlight = FindObjectOfType<BlockHighlight>();
        
         if (!isLocalPlayer) return;
         

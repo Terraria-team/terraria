@@ -17,6 +17,8 @@ public class ChunkManager : NetworkBehaviour
 
     public Tilemap playerGrid;
     
+    [SerializeField] private float MaxDistance = 5.0f; 
+    
     public void Mine(byte x, byte y)
     {
         CmdBroadcastChunkDelta(x, y, new BlockID(0));
@@ -28,8 +30,14 @@ public class ChunkManager : NetworkBehaviour
     }
     
     [Command(requiresAuthority = false)]
-    void CmdBroadcastChunkDelta(byte x, byte y, BlockID value)
+    void CmdBroadcastChunkDelta(byte x, byte y, BlockID value, NetworkConnectionToClient sender = null)
     {
+        if (!IsValidChange(x, y, value, sender.identity))
+        {
+            Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
+            return; 
+        }
+        
         var list = new List<ChunkDeltaEntry> { new (ChunkUtils.ChunkCellIndex(x, y), value) };
 
         SparseChunkDelta delta = new(list);
@@ -58,7 +66,87 @@ public class ChunkManager : NetworkBehaviour
         }
     }
     
-    public void UpdateTileVisual(byte x, byte y, BlockID value)
+    public bool IsValidChange(byte x, byte y, BlockID value, NetworkIdentity sender)
+    {
+        if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
+        
+        if (sender == null ) 
+        {
+            Debug.LogWarning("Validation failed: Sender or player identity is null.");
+            return false;
+        }
+        
+        Vector3Int playerCellPos = playerGrid.WorldToCell(sender.transform.position);
+        
+        Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
+        Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
+
+        if (value.Value != 0 && IsOnPlayer(block2D, sender)) return false;
+        
+        return (IsInRange(player2D, block2D)
+                && IsVisible(x, y, player2D));
+    }
+    
+    private bool IsInRange(Vector2 playerPos, Vector2 blockPos)
+    {
+        float distance = Vector2.Distance(playerPos, blockPos);
+        if (distance > MaxDistance)
+        {
+            Debug.LogWarning($"Validation failed: Player is too far away ({distance} units).");
+            return false;
+        }
+
+        return true;
+    }
+    
+    private bool IsOnPlayer(Vector2 blockPos, NetworkIdentity sender)
+    {
+        Collider2D playerCollider = sender.GetComponent<Collider2D>();
+        if (playerCollider != null)
+        {
+            Bounds blockBounds = new Bounds(new Vector3(blockPos.x, blockPos.y, 0), Vector3.one);
+            if (playerCollider.bounds.Intersects(blockBounds))
+            {
+                Debug.LogWarning("Validation failed: Player in the block.");
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private bool IsVisible(byte x, byte y, Vector2 playerPos)
+    {
+        int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
+        Vector2[] targetPoints = {
+            new Vector2(x + 0.5f, y + 0.5f),          // Center
+            new Vector2(x + 0.1f, y + 0.1f),         // Bottom-Left
+            new Vector2(x + 0.9f, y + 0.1f),         // Bottom-Right
+            new Vector2(x + 0.1f, y + 0.9f),         // Top-Left
+            new Vector2(x + 0.9f, y + 0.9f)          // Top-Right
+        };
+
+        foreach (Vector2 point in targetPoints)
+        {
+            RaycastHit2D hit = Physics2D.Linecast(playerPos, point, solidBlocksLayerMask);
+            if (hit.collider == null || IsHitOnTargetBlock(hit.point, x, y))
+            {
+                return true;  // is visible
+            }
+        }
+
+        Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
+        return false;  // is not visible
+        
+        bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
+        {
+            float epsilon = 0.05f; 
+            return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
+                   hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
+        }
+    }
+    
+    private void UpdateTileVisual(byte x, byte y, BlockID value)
     {
         Vector3Int tilePosition = new Vector3Int(x, y, 0);
         
