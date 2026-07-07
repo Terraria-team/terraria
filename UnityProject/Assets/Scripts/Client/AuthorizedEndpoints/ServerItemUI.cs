@@ -12,6 +12,7 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button joinButton;
 
         private string _serverId;
+        private int _serverPort;
 
         private void Awake()
         {
@@ -20,14 +21,11 @@ namespace Client.AuthorizedEndpoints
                 joinButton.onClick.AddListener(OnJoinClicked);
             }
         }
-
-        // TODO:
-        // Once you have the ServerInstanceDto and the JSON parsing ready in AuthorizedEndpointsUIView.cs,
-        // iterate over your DTO list, Instantiate this prefab, and call this Setup() method for each item 
-        // to populate the UI with the real data.
-        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers)
+        
+        public void Setup(string serverId, int port, string name, int currentPlayers, int maxPlayers)
         {
             _serverId = serverId;
+            _serverPort = port;
             
             if (serverNameText != null) 
                 serverNameText.text = name;
@@ -38,7 +36,7 @@ namespace Client.AuthorizedEndpoints
 
         private void OnJoinClicked()
         {
-            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId}");
+            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId} on port: {_serverPort}");
             
             // TODO:
             // Implement the connection logic here. You should pass the _serverId to the NetworkManager 

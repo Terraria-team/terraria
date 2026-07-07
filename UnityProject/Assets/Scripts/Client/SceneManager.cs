@@ -63,8 +63,6 @@ namespace Client
 
         private void HandleAuthenticationSuccess(string newJwtAccessToken)
         {
-            // Note: AuthService.UpdateTokens already persists the refresh token to PlayerPrefs.
-            // No need to write it again here.
             ShowDashboardScreen();
         }
 

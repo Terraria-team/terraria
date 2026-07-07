@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 // using TMPro;
 using Client.Api;
 using Client.Auth;
+using LobbyUnityShared.DTOs;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -20,6 +22,10 @@ namespace Client.AuthorizedEndpoints
         // [SerializeField] private TextMeshProUGUI statusText;
         // [SerializeField] private TextMeshProUGUI errorText;
         // [SerializeField] private TextMeshProUGUI responseDataText;
+
+        [Header("Server List UI")]
+        [SerializeField] private ServerItemUI serverItemPrefab;
+        [SerializeField] private Transform serverListContainer;
 
         private AuthorizedEndpointsPresenter _presenter;
         
@@ -60,6 +66,23 @@ namespace Client.AuthorizedEndpoints
             // if (loadingSpinner != null) loadingSpinner.SetActive(isLoading);
         }
 
+        public void ShowRetrievedServerElements(List<ServerInstanceDto> servers)
+        {
+            if (serverItemPrefab == null || serverListContainer == null) return;
+
+            foreach (Transform child in serverListContainer)
+            {
+                Destroy(child.gameObject);
+            }
+            
+            foreach (var server in servers)
+            {
+                var item = Instantiate(serverItemPrefab, serverListContainer, false);
+                item.gameObject.SetActive(true);
+                item.Setup(server.Id, server.Port, server.Name, server.PlayerCount, 8);
+            }
+        }
+
         public void UpdateStatus(string message)
         {
             /*
@@ -84,5 +107,6 @@ namespace Client.AuthorizedEndpoints
             }
             */
         }
+
     }
 }

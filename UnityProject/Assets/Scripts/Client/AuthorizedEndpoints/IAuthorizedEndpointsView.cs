@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using LobbyUnityShared.DTOs;
 
 namespace Client.AuthorizedEndpoints
 {
@@ -13,5 +15,6 @@ namespace Client.AuthorizedEndpoints
         void UpdateStatus(string message);
         void ShowError(string errorMessage);
         void SetLoadingState(bool isLoading);
+        void ShowRetrievedServerElements(List<ServerInstanceDto> servers);
     }
 }

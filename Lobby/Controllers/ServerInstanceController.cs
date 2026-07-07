@@ -1,4 +1,5 @@
 using Lobby.Application.Contracts;
+using Lobby.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +22,8 @@ public class ServerInstancesController : LobbyControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var difficulties = await _instanceService.GetAll();
-        return Ok(difficulties);
+        var serverInstanceEntities = await _instanceService.GetAll();
+        return Ok(serverInstanceEntities.Select(ServerInstanceMapper.Map));
     }
     
     [HttpPost]

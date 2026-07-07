@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Client.Api;
 using Client.Auth;
 using Client.Config;
+using LobbyUnityShared.DTOs;
 using UnityEngine;
 
 namespace Client.AuthorizedEndpoints
@@ -42,6 +44,17 @@ namespace Client.AuthorizedEndpoints
             {
                 _view.UpdateStatus("Server list retrieved successfully.");
                 _view.DisplayServerResponse(jsonResult);
+                
+                try 
+                {
+                    var servers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ServerInstanceDto>>(jsonResult);
+                    if (servers != null)
+                        _view.ShowRetrievedServerElements(servers);
+                } 
+                catch(Exception ex) 
+                {
+                    Debug.LogError("Failed to parse servers: " + ex.Message);
+                }
             }
             else
             {
