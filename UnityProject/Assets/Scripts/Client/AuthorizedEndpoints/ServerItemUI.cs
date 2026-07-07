@@ -13,8 +13,9 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Button joinButton;
 
         private string _serverId;
-        private string _ipAddress = "localhost"; // Default for local testing
         private int _port = 7777;
+        private GameObject _lobbyScreenRoot;
+        private GameObject _gameScreenRoot;
 
         private void Awake()
         {
@@ -24,15 +25,12 @@ namespace Client.AuthorizedEndpoints
             }
         }
 
-        // TODO:
-        // Once you have the ServerInstanceDto and the JSON parsing ready in AuthorizedEndpointsUIView.cs,
-        // iterate over your DTO list, Instantiate this prefab, and call this Setup() method for each item 
-        // to populate the UI with the real data.
-        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers, string ip = "localhost", int port = 7777)
+        public void Setup(string serverId, string name, int currentPlayers, int maxPlayers, int port, GameObject lobbyRoot, GameObject gameRoot)
         {
             _serverId = serverId;
-            _ipAddress = ip;
             _port = port;
+            _lobbyScreenRoot = lobbyRoot;
+            _gameScreenRoot = gameRoot;
             
             if (serverNameText != null) 
                 serverNameText.text = name;
@@ -43,27 +41,28 @@ namespace Client.AuthorizedEndpoints
 
         private void OnJoinClicked()
         {
-            Debug.Log($"[ServerItemUI] Join button clicked for server: {_serverId} at {_ipAddress}:{_port}");
-            
-            if (NetworkManager.singleton != null)
+            if (NetworkManager.singleton == null)
             {
-                NetworkManager.singleton.networkAddress = _ipAddress;
-                
-                // Try to set port if transport supports it
-                if (Transport.active is PortTransport portTransport)
-                {
-                    portTransport.Port = (ushort)_port;
-                }
-                
-                NetworkManager.singleton.StartClient();
+                Debug.LogWarning("[ServerItemUI] NetworkManager.singleton is null — make sure NetworkManager is in LobbyScene.");
+                return;
             }
-            else
+
+            if (NetworkManager.singleton.isNetworkActive)
             {
-                Debug.LogWarning("[ServerItemUI] NetworkManager instance not found!");
+                Debug.LogWarning("[ServerItemUI] Already connected to a server.");
+                return;
             }
-            
-            //when merged, change to the latest scene(scene with collisions)
-            UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
+
+            Debug.Log($"[ServerItemUI] Connecting to server: {_serverId} at {NetworkManager.singleton.networkAddress}:{_port}");
+
+            if (Transport.active is PortTransport portTransport)
+                portTransport.Port = (ushort)_port;
+
+            NetworkManager.singleton.StartClient();
+
+            // Hide Lobby UI, show game world
+            if (_lobbyScreenRoot != null) _lobbyScreenRoot.SetActive(false);
+            if (_gameScreenRoot != null) _gameScreenRoot.SetActive(true);
         }
     }
 }

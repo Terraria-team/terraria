@@ -21,6 +21,10 @@ namespace Client.AuthorizedEndpoints
         [SerializeField] private Transform serverListContainer;
         [SerializeField] private ServerItemUI serverItemPrefab;
 
+        [Header("Scene Root References")]
+        [SerializeField] private GameObject lobbyScreenRoot;
+        [SerializeField] private GameObject gameScreenRoot;
+
         [Header("Feedback References")]
         [SerializeField] private TextMeshProUGUI feedbackText;
 
@@ -64,7 +68,8 @@ namespace Client.AuthorizedEndpoints
                     if (server != null)
                     {
                         var item = Instantiate(serverItemPrefab, serverListContainer);
-                        item.Setup(server.id, server.name, server.playerCount, 8);
+                        item.Setup(server.id, server.name, server.playerCount, 8,
+                             server.port, lobbyScreenRoot, gameScreenRoot);
                     }
                 }
                 else if (trimmedJson.StartsWith("["))
@@ -82,7 +87,8 @@ namespace Client.AuthorizedEndpoints
                         foreach (var server in servers)
                         {
                             var item = Instantiate(serverItemPrefab, serverListContainer);
-                            item.Setup(server.id, server.name, server.playerCount, 8);
+                            item.Setup(server.id, server.name, server.playerCount, 8,
+                                server.port, lobbyScreenRoot, gameScreenRoot);
                         }
                     }
                 }
