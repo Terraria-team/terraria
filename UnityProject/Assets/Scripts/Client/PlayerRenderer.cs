@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,8 +12,10 @@ public class PlayerRenderer : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnRotationChanged))]
     public bool playerFacingLeft = false;
-    
+
     [SerializeField] private SpriteRenderer playerRenderer;
+    [SerializeField] private int damageFlashTime = 15;
+    [SerializeField] private int healingFlashTime = 15;
     
     public PlayerData playerData;
     
@@ -56,20 +59,47 @@ public class PlayerRenderer : NetworkBehaviour
     [Command]
     void CmdChangeDirection(bool newDirection)
     {
-        // The server generates a random color and updates the SyncVar.
-        // Because it's a SyncVar, this automatically pushes the new color to all clients.
         playerFacingLeft = newDirection;
     }
-
-    // 3. CLIENT RPC: Called by the Server, but executed on ALL Clients.
-    // Method names must start with "Rpc".
+    
     [ClientRpc]
     void RpcLogChange(string message)
     {
         Debug.Log($"[Server says]: {message}");
     }
 
-    // 4. THE HOOK: The local function triggered by the SyncVar changing.
+    [Command]
+    public async void DamageFlash()
+    {
+        Color curColor = playerColor;
+        playerColor = Color.red;
+
+        // wait for damageFlashTime ms
+        await Task.Delay(damageFlashTime); 
+
+        // Safety check: Ensure the object hasn't been destroyed while we were waiting
+        if (this != null && playerRenderer != null) 
+        {
+            playerColor= curColor;
+        }
+    }
+    
+    [Command]
+    public async void HealingFlash()
+    {
+        Color curColor = playerColor;
+        playerColor = Color.limeGreen;
+
+        // wait for healingFlashTime ms
+        await Task.Delay(healingFlashTime); 
+
+        // Safety check: Ensure the object hasn't been destroyed while we were waiting
+        if (this != null && playerRenderer != null) 
+        {
+            playerColor= curColor;
+        }
+    }
+    
     void OnColorChanged(Color oldColor, Color newColor)
     {
         playerRenderer.color = newColor;

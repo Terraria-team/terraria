@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Mirror;
+using Shared.Components;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,6 +10,7 @@ public class PlayerController : NetworkBehaviour
     
     public PlayerData playerData;
     private PlayerRenderer _playerRenderer;
+    private HealthComponent _healthComponent;
     
     private float _velocityY = 0f;
     private bool _isGrounded = false;
@@ -24,6 +26,7 @@ public class PlayerController : NetworkBehaviour
         _playerRenderer = GetComponent<PlayerRenderer>();
         _inventory = GetComponent<InventoryComponent>();
         _blockHighlight = FindObjectOfType<BlockHighlight>();
+        _healthComponent = GetComponent<HealthComponent>();
        
         if (!isLocalPlayer) return;
         
@@ -33,6 +36,16 @@ public class PlayerController : NetworkBehaviour
         Instantiate(uiPrefab);
         
         SubscribeToChunks();
+        _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
+    }
+    
+    void OnDestroy()
+    {
+        // Always unsubscribe to prevent memory leaks
+        if (_healthComponent != null)
+        {
+            _healthComponent.OnDamageFlashed -= _playerRenderer.DamageFlash;
+        }
     }
 
     private List<NetworkConnectionToClient> _chunkListeners = new();
@@ -157,4 +170,5 @@ public class PlayerController : NetworkBehaviour
             _inventory.ChangeSelection(8);
         }
     }
+    
 }
