@@ -24,12 +24,38 @@ public static class ActionRegistry
             {
                 // TODO select chunk
                 
+                var currentBlock = ChunkManager.Instance.GetChunkAt(
+                    context.chunkPosition    
+                ).Get(context.blockPositionX, context.blockPositionY);
+
+                // Cannot mine air
+                if (currentBlock.IsAir)
+                    break;
+
+                var droppedItemData = currentBlock.BlockData.droppedItem;
+                
                 ChunkManager.Instance.Place(
                     context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
                     new BlockID(0)
                 );
+
+                if (droppedItemData != null)
+                {
+                    var droppedItem = Object.Instantiate(
+                        Settings.DroppedItemPrefab,
+                        ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY),
+                        Quaternion.identity
+                    );
+                    NetworkServer.Spawn(droppedItem);
+                
+                    droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(new ItemStack(
+                        new ItemID(droppedItemData.id)    
+                    ));
+                }
+                
+                
                 break;
             }
 

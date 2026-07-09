@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core.WorldGeneration;
 using Mirror;
@@ -19,6 +20,8 @@ public class ChunkManager : NetworkBehaviour
     
     [SerializeField] private float MaxDistance = 5.0f; 
     
+    private Dictionary<Vector2Int, List<NetworkConnectionToClient>> _chunkTrackers = new();
+    
     public void Mine(Vector2Int chunkCoord, byte x, byte y)
     {
         ServerApplyChunkDelta(chunkCoord, x, y, new BlockID(0));
@@ -28,43 +31,86 @@ public class ChunkManager : NetworkBehaviour
     {
         ServerApplyChunkDelta(chunkCoord, x, y, value);
     }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSubscribeToChunk(Vector2Int chunkCoord, NetworkConnectionToClient subscriber = null)
+    {
+        // TODO check whether subscription is valid
+        // TODO validate coordinates
+        
+        if (!_chunkTrackers.ContainsKey(chunkCoord))
+            _chunkTrackers[chunkCoord] = new List<NetworkConnectionToClient>();
+
+        if (!_chunkTrackers[chunkCoord].Contains(subscriber))
+        {
+            Debug.Log($"Subscribed: {subscriber}");
+            _chunkTrackers[chunkCoord].Add(subscriber); // TODO rewrite to set
+            
+            var fullDelta = new SparseChunkDelta(
+                _initialChunks[chunkCoord],
+                _visibleChunks[chunkCoord]
+            );
+
+            TargetReceiveChunkDelta(subscriber, chunkCoord, fullDelta);
+        }
+    }
     
     [Server]
     void ServerApplyChunkDelta(Vector2Int chunkCoord, byte x, byte y, BlockID value, NetworkIdentity sender = null)
     {
+        // TODO validate coordinates
+        
         if (!IsValidChange(x, y, value, sender))
         {
             Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
             return; 
         }
         
+        // Build delta
         var list = new List<ChunkDeltaEntry> { new (ChunkUtils.ChunkCellIndex(x, y), value) };
-
         SparseChunkDelta delta = new(list);
         
-        // Apply to server's internal state so late-joiners can get the updated view.
+        if (delta.IsEmpty)
+            Debug.LogError("Applying empty delta. This should have been prevented");
+        
+        // Apply to server's vision of world
         if (!_visibleChunks.ContainsKey(chunkCoord))
         {
             _visibleChunks[chunkCoord] = new ChunkData();
         }
         
         _visibleChunks[chunkCoord] = delta.Apply(_visibleChunks[chunkCoord]);
+
+        var fullDelta = new SparseChunkDelta(
+            _initialChunks[chunkCoord],
+            _visibleChunks[chunkCoord]
+        );
         
-        if (!delta.IsEmpty)
-            RpcChunkDeltaReceived(delta, chunkCoord);
-    }
-    
-    [ClientRpc]
-    void RpcChunkDeltaReceived(SparseChunkDelta delta, Vector2Int chunkCoordinates)
-    {
-        // TODO handle known/unknown
+        Debug.Log($"Applying delta: {delta.Deltas.Count}");
         
-        _visibleChunks[chunkCoordinates] = delta.Apply(_visibleChunks[chunkCoordinates]);
+        if (!_chunkTrackers.ContainsKey(chunkCoord))
+            _chunkTrackers[chunkCoord] = new List<NetworkConnectionToClient>();
         
-        foreach (var entry in delta.Deltas)
+        foreach (var tracker in _chunkTrackers[chunkCoord])
         {
-            var coords = ChunkUtils.ChunkCellCoordinates(entry.Index);
-            UpdateTileVisual(chunkCoordinates, coords.x, coords.y, entry.Value);
+            // TODO check whether subscription is still valid and remove if out of range
+            
+            TargetReceiveChunkDelta(tracker, chunkCoord, fullDelta);
+        }
+    }
+
+    [TargetRpc]
+    void TargetReceiveChunkDelta(NetworkConnectionToClient target, Vector2Int chunkCoord, SparseChunkDelta delta)
+    {
+        _visibleChunks[chunkCoord] = delta.Apply(_initialChunks[chunkCoord]);
+        
+        var updatedChunk = _visibleChunks[chunkCoord];
+        
+        // TODO come up with something smarter than this because current approach hurts performance quite a lot
+        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        {
+            var coords = ChunkUtils.ChunkCellCoordinates(i);
+            UpdateTileVisual(chunkCoord, coords.x, coords.y, updatedChunk[i]);
         }
     }
     
@@ -164,6 +210,7 @@ public class ChunkManager : NetworkBehaviour
         playerGrid.SetTile(tilePosition, tileToSet);
     }
     
+    
     void Awake()
     {
         if (Instance == null)
@@ -185,7 +232,27 @@ public class ChunkManager : NetworkBehaviour
         BlockType[,] rawMap = generator.Generate();
         
         _initialChunks = SliceMapIntoChunks(rawMap);
-        _visibleChunks = _initialChunks;
+        _visibleChunks = SliceMapIntoChunks(rawMap);
+    }
+    
+    private void Start()
+    {
+        if (isClient)
+        {
+            foreach (var (chunkCoord, chunkData) in _visibleChunks)
+            {
+                // Initial population of the Tilemap
+                for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+                {
+                    var coords = ChunkUtils.ChunkCellCoordinates(i);
+                    
+                    if (chunkData[i].Value > 1)
+                        continue;
+                    
+                    UpdateTileVisual(chunkCoord, coords.x, coords.y, chunkData[i]);
+                }
+            }
+        }
     }
 
     public ChunkData GetChunkAt(Vector2Int chunkCoordinates)
@@ -221,22 +288,5 @@ public class ChunkManager : NetworkBehaviour
             }
         }
         return result;
-    }
-    
-    // Client
-    public override void OnStartClient() // from my branch
-    {
-        foreach (var kvp in _visibleChunks)
-        {
-            Vector2Int chunkCoord = kvp.Key;
-            ChunkData chunkData = kvp.Value;
-
-            // Initial population of the Tilemap
-            for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
-            {
-                var coords = ChunkUtils.ChunkCellCoordinates(i);
-                UpdateTileVisual(chunkCoord, coords.x, coords.y, chunkData[i]);
-            }
-        }
     }
 }

@@ -173,6 +173,9 @@ public class PlayerController : NetworkBehaviour
         
         if (!isLocalPlayer) return;
         
+        // TODO rewrite to actually scan chunks around player and only request ones within range.
+        _chunkManager.CmdSubscribeToChunk(new Vector2Int(0, 0));
+        
         TrySwitchingInventorySlot();
 
         if (!_hasSpawnedOnSurface)

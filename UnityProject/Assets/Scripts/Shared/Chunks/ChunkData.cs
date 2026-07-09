@@ -20,6 +20,11 @@ public readonly struct ChunkData
             _matrix[index] = new BlockID(0);
         }
     }
+
+    public ChunkData(BlockID[] matrix)
+    {
+        _matrix = matrix;
+    }
     
     private readonly BlockID[] _matrix;
     
@@ -30,5 +35,10 @@ public readonly struct ChunkData
     {
         get => _matrix[index];
         set => _matrix[index] = value;
+    }
+
+    public ChunkData Clone()
+    {        
+        return new ChunkData((BlockID[])_matrix.Clone());
     }
 }

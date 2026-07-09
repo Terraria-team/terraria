@@ -7,4 +7,5 @@ public class BlockData : ScriptableObject
     public ushort id;
     public string unlocalizedName;
     public TileBase blockTexture;
+    public ItemData droppedItem;
 }

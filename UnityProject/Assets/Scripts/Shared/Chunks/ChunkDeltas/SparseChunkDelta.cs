@@ -33,8 +33,10 @@ public readonly struct SparseChunkDelta
         Deltas = deltas;
     }
 
-    public ChunkData Apply(ChunkData on)
+    public ChunkData Apply(ChunkData onImmutable)
     {
+        ChunkData on = onImmutable.Clone();
+        
         foreach (ChunkDeltaEntry entry in Deltas)
         {
             on[entry.Index] = entry.Value;
