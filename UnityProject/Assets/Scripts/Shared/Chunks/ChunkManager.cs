@@ -86,8 +86,6 @@ public class ChunkManager : NetworkBehaviour
             _visibleChunks[chunkCoord]
         );
         
-        Debug.Log($"Applying delta: {delta.Deltas.Count}");
-        
         if (!_chunkTrackers.ContainsKey(chunkCoord))
             _chunkTrackers[chunkCoord] = new List<NetworkConnectionToClient>();
         

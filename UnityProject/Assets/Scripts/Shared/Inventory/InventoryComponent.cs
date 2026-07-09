@@ -7,7 +7,7 @@ public class InventoryComponent : NetworkBehaviour
 {
     public const int Depth = 4;
     
-    private List<ItemStack?> _slots = new();
+    private SyncList<ItemStack?> _slots = new();
     public int SelectedSlot { get; private set; }
     public ItemStack? GetItemAt(int slot) => _slots[slot];
     public ItemStack? SelectedItem => _slots[SelectedSlot];
@@ -71,6 +71,12 @@ public class InventoryComponent : NetworkBehaviour
         var clientGeneratedContext = ActionFiller.GetActionContext(SelectedItem.Value);
         
         CmdUseSelectedItem(SelectedItem.Value, clientGeneratedContext);
+
+        if (SelectedItem.Value.ItemID.Value == 1)
+        {
+            _slots[SelectedSlot] = null;
+            OnSlotsChanged?.Invoke();
+        }
     }
 
     [Command]
@@ -80,7 +86,8 @@ public class InventoryComponent : NetworkBehaviour
         
         context.userPosition = transform.position;
         ActionRegistry.ExecuteAction(stack.ItemID.ItemData.primaryAction, context);
-
+        
+        
         //RpcUseSelectedItem(stack, context);
     }
 
@@ -89,4 +96,71 @@ public class InventoryComponent : NetworkBehaviour
     {
         
     }
+
+    [Server]
+    public int HowMuchCanAddOf(ItemStack stack)
+    {
+        int capacity = 0;
+
+        foreach (var slot in _slots)
+        {
+            if (slot == null)
+                return stack.ItemID.ItemData.stackSize;
+            
+            if (slot.Value.ItemID != stack.ItemID)
+                continue;
+            
+            capacity += stack.ItemID.ItemData.stackSize - slot.Value.Count;
+            
+            if (capacity >= stack.ItemID.ItemData.stackSize)
+                return capacity;
+        }
+        
+        return capacity;
+    }
+
+    [TargetRpc]
+    void UpdateSlots(NetworkConnectionToClient target)
+    {
+        OnSlotsChanged?.Invoke();
+    }
+    
+    [Server]
+    public void AddItem(ItemID item)
+    {
+        // Trying to find an existing stack and append to it
+        foreach (var slot in _slots)
+        {
+            if (slot == null)
+                continue;
+            
+            if (slot.Value.ItemID != item)
+                continue;
+            
+            if (slot.Value.IsFilled)
+                continue;
+
+            slot.Value.Increment();
+            UpdateSlots(connectionToClient);
+            OnSlotsChanged?.Invoke();
+            
+            return;
+        }
+
+        // No existing stack found, resorting to creating a new one
+        for (var i = 0; i < _slots.Count; i++)
+        {
+            var slot = _slots[i];
+            if (slot == null)
+            {
+                _slots[i] = new ItemStack(item);
+                UpdateSlots(connectionToClient);
+                OnSlotsChanged?.Invoke();
+                return;
+            }
+        }
+        
+        Debug.LogError("Trying to add item but no place found. Make sure you've checked whether it can fit first");
+    }
+    
 }

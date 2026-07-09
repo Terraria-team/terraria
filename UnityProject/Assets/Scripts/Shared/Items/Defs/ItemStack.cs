@@ -2,7 +2,7 @@ using UnityEngine;
 
 public struct ItemStack
 {
-    public int Count { get; }
+    public int Count { get; private set; }
     public readonly ItemID ItemID;
 
     public ItemStack(ItemID itemID)
@@ -22,4 +22,13 @@ public struct ItemStack
         }
         Count = count;
     }
+    
+    public void Increment() => Count++;
+
+    public void Decrement()
+    {
+        Count--;
+    }
+    
+    public bool IsFilled => Count == ItemID.ItemData.stackSize;
 }
