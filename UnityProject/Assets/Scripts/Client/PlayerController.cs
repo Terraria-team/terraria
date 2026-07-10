@@ -42,10 +42,14 @@ public class PlayerController : NetworkBehaviour
         _inventory = GetComponent<InventoryComponent>();
         _blockHighlight = FindObjectOfType<BlockHighlight>();
         _healthComponent = GetComponent<HealthComponent>();
-       
-        if (!isLocalPlayer) return;
-        
         _rb = GetComponent<Rigidbody2D>();
+        
+        if (!isLocalPlayer)
+        {
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            return;
+        }
+        
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _collider = GetComponent<Collider2D>();
 
@@ -53,11 +57,6 @@ public class PlayerController : NetworkBehaviour
 
         // Start as Kinematic to prevent falling before the map is generated/drawn.
         _rb.bodyType = RigidbodyType2D.Kinematic;
-
-        if (!isLocalPlayer)
-        {
-            return;
-        }
         
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
