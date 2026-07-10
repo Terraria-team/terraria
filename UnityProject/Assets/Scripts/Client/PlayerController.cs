@@ -7,31 +7,25 @@ using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : NetworkBehaviour
 {
     [SerializeField] private TextMeshProUGUI healthBar;
     [SerializeField] private GameObject uiPrefab;
-    
+
     public static Transform LocalPlayerTransform;
 
     public PlayerData playerData;
     private PlayerRenderer _playerRenderer;
     private HealthComponent _healthComponent;
-    
-    private bool _isGrounded = false;
-    private float _horizontalInput = 0f; 
+    private PlayerMovement _movement;
 
     private ChunkManager _chunkManager;
-    
+
     private InventoryComponent _inventory;
     private BlockHighlight _blockHighlight;
     private Rigidbody2D _rb;
-    private Collider2D _collider;
     private bool _hasSpawnedOnSurface = false;
-
-    private float _jumpBufferCounter = 0f;
-    private float _coyoteTimeCounter = 0f;
-    private float _jumpCooldownTimer = 0f;
 
     private List<NetworkConnectionToClient> _chunkListeners = new();
 
@@ -43,28 +37,30 @@ public class PlayerController : NetworkBehaviour
         _blockHighlight = FindObjectOfType<BlockHighlight>();
         _healthComponent = GetComponent<HealthComponent>();
         _rb = GetComponent<Rigidbody2D>();
-        
+
         if (!isLocalPlayer)
         {
             _rb.bodyType = RigidbodyType2D.Kinematic;
             return;
         }
-        
+
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        _collider = GetComponent<Collider2D>();
 
         Debug.Log($"[PlayerController] Start. isLocalPlayer={isLocalPlayer}, position={transform.position}, ChunkManagerInstance={(ChunkManager.Instance != null ? "OK" : "NULL")}");
 
         // Start as Kinematic to prevent falling before the map is generated/drawn.
         _rb.bodyType = RigidbodyType2D.Kinematic;
-        
+
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
-        
+
         Instantiate(uiPrefab);
-        
+
         LocalPlayerTransform = transform;
-        
+
+        _movement = GetComponent<PlayerMovement>();
+        _movement.Initialize(playerData, _playerRenderer);
+
         SubscribeToChunks();
         _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
         _healthComponent.OnHealingFlashed += _playerRenderer.HealingFlash;
@@ -133,29 +129,6 @@ public class PlayerController : NetworkBehaviour
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
 
-    private bool CheckGrounded()
-    {
-        if (_collider == null) return false;
-        
-        Bounds bounds = _collider.bounds;
-        
-        Vector2 size = new Vector2(bounds.size.x * 0.9f, 0.06f);
-        Vector2 origin = new Vector2(bounds.center.x, bounds.min.y - 0.03f);
-        
-        Collider2D[] results = new Collider2D[5];
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.useTriggers = false;
-        
-        int hitCount = Physics2D.OverlapBox(origin, size, 0f, filter, results);
-        for (int i = 0; i < hitCount; i++)
-        {
-            if (results[i] != null && !results[i].transform.IsChildOf(transform) && results[i].gameObject != gameObject)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     [Command]
     void SubscribeToChunks()
@@ -195,67 +168,14 @@ public class PlayerController : NetworkBehaviour
         {
             _inventory.UseSelectedItem();
         }
-        
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             _playerRenderer.ChangeColor();
         }
-        
-        _horizontalInput = 0f;
-        if (Input.GetKey(KeyCode.A))
-        {
-            _horizontalInput += -1f;
-            _playerRenderer.ChangeDirection(true);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            _horizontalInput += 1f;
-            _playerRenderer.ChangeDirection(false);
-        }
-        
-        _jumpCooldownTimer -= Time.deltaTime;
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            _jumpBufferCounter = 0.15f; 
-        }
-        else
-        {
-            _jumpBufferCounter -= Time.deltaTime;
-        }
     }
 
-    void FixedUpdate()
-    {
-        if (!isLocalPlayer || !_hasSpawnedOnSurface) return;
 
-        _isGrounded = CheckGrounded() && _jumpCooldownTimer <= 0f;
-
-        //store the current Y velocity that the Unity engine calculated from its gravity
-        float currentVelocityY = _rb.linearVelocity.y;
-
-        if (_isGrounded)
-        {
-            _coyoteTimeCounter = 0.1f; 
-        }
-        else
-        {
-            _coyoteTimeCounter -= Time.fixedDeltaTime;
-        }
-        
-        if (_jumpBufferCounter > 0f && _coyoteTimeCounter > 0f)
-        {
-            currentVelocityY = playerData.jumpForce; //change y only during the jump
-            _isGrounded = false;
-            
-            _jumpBufferCounter = 0f;
-            _coyoteTimeCounter = 0f;
-            _jumpCooldownTimer = 0.15f; 
-        }
-
-        //use: movement along X from the keyboard, movement along Y - from Unity or jump
-        _rb.linearVelocity = new Vector2(_horizontalInput * playerData.baseSpeed, currentVelocityY);
-    }
     
     [Command]
     void CmdAffectPos(float pos)
