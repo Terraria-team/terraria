@@ -8,10 +8,10 @@ using Moq;
 namespace Lobby.Tests.Services;
 
 /// <summary>
-/// Unit tests for <see cref="AuthService.Logout"/>.
-/// Covers every branch of the method: token missing, token expired,
-/// token owned by another player, and the successful revocation path.
-/// Dependencies are mocked (Moq); no DB, no network.
+/// Юніт-тести для <see cref="AuthService.Logout"/>.
+/// Покривають усі гілки методу: токен відсутній, токен протермінований,
+/// токен належить іншому гравцю та успішне відкликання.
+/// Залежності мокаються (Moq); без БД і без мережі.
 /// </summary>
 public class AuthServiceLogoutTests
 {
@@ -44,6 +44,7 @@ public class AuthServiceLogoutTests
         CreatedByIp = "127.0.0.1"
     };
 
+    // Токена немає в репозиторії → помилка валідації, відкликання не відбувається.
     [Fact]
     public async Task Logout_WhenTokenNotFound_ReturnsValidationErrorAndDoesNotRevoke()
     {
@@ -58,6 +59,7 @@ public class AuthServiceLogoutTests
         _refreshTokenRepository.Verify(r => r.RevokeToken(It.IsAny<string>()), Times.Never);
     }
 
+    // Токен протермінований → помилка валідації, відкликання не відбувається.
     [Fact]
     public async Task Logout_WhenTokenExpired_ReturnsValidationErrorAndDoesNotRevoke()
     {
@@ -74,6 +76,7 @@ public class AuthServiceLogoutTests
         _refreshTokenRepository.Verify(r => r.RevokeToken(It.IsAny<string>()), Times.Never);
     }
 
+    // Токен належить іншому гравцю → Unauthorized, відкликання не відбувається.
     [Fact]
     public async Task Logout_WhenTokenBelongsToAnotherPlayer_ReturnsUnauthorizedAndDoesNotRevoke()
     {
@@ -91,6 +94,7 @@ public class AuthServiceLogoutTests
         _refreshTokenRepository.Verify(r => r.RevokeToken(It.IsAny<string>()), Times.Never);
     }
 
+    // Валідний власний токен → успіх і відкликання саме цього токена рівно раз.
     [Fact]
     public async Task Logout_WithValidToken_RevokesTokenAndReturnsSuccess()
     {
