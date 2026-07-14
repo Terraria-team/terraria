@@ -1,12 +1,11 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
+using Client.Config;
+using Shared.Api;
 using UnityEngine;
 using UnityEngine.Networking;
-using Client.Auth;
-using Client.Config;
 
-namespace Client.Api
+namespace Client.Auth
 {
     public class BackendApiService
     {

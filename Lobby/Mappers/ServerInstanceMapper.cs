@@ -7,5 +7,6 @@ namespace Lobby.Mappers;
 [Mapper]
 public static partial class ServerInstanceMapper
 {
+    [MapperIgnoreSource(nameof(ServerInstanceEntity.World))]
     public static partial ServerInstanceDto Map(ServerInstanceEntity entity);
 }

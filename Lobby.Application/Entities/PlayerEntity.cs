@@ -9,4 +9,5 @@ public class PlayerEntity
     
     public PlayerGoogleLoginEntity? GoogleLogin { get; set; }
     public IEnumerable<RefreshTokenEntity>? RefreshTokens { get; set; }
+    public ICollection<TerrariaWorldEntity> OwnedWorlds { get; set; } = new List<TerrariaWorldEntity>();
 }

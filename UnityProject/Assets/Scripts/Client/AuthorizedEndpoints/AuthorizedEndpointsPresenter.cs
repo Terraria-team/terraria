@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Client.Api;
 using Client.Auth;
 using Client.Config;
 using LobbyUnityShared.DTOs;
@@ -67,7 +66,7 @@ namespace Client.AuthorizedEndpoints
             _view.SetLoadingState(true);
             _view.UpdateStatus("Requesting new server instance...");
 
-            string jsonResult = await _apiService.PostAsync(_serverInstancesUrl);
+            string jsonResult = await _apiService.PostAsync(_serverInstancesUrl, new CreateServerDto { Name = null });
 
             _view.SetLoadingState(false);
             if (jsonResult != null)
