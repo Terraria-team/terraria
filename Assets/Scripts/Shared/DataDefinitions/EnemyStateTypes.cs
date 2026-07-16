@@ -1,4 +1,4 @@
-﻿namespace  Shared.DataDefinitions
+namespace Shared.DataDefinitions
 {
     public enum EnemyStateType : byte
     {
@@ -6,6 +6,9 @@
         Patrol,
         Chase,
         Attack,
-        Dead
+        Dead,
+        Jump,
+        Fly,
+        Shoot
     }
 }
