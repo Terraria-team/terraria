@@ -1,0 +1,38 @@
+# -- Version control -------------------------------------------------------------
+.git
+.gitignore
+
+# -- IDE / editor -----------------------------------------------------------------
+.vs
+.vscode
+.idea
+**/*.user
+**/*.suo
+
+# -- .NET build artifacts ----------------------------------------------------------
+**/bin/
+**/.bin/
+**/obj/
+**/.obj/
+
+# -- Secrets & local config -------------------------------------------------------
+# Never bake secrets into the image; inject them as env vars at runtime.
+**/secrets.json
+**/appsettings.Development.json
+**/.env
+
+# -- Unity project (not needed by the backend build) ------------------------------
+UnityProject/
+
+# -- Test projects (keep the image lean) ------------------------------------------
+Lobby.Tests/
+
+# -- Docker meta-files ------------------------------------------------------------
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*
+
+# -- Misc -------------------------------------------------------------------------
+README.md
+LICENSE
+**/*.md
