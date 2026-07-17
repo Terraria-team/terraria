@@ -1726,6 +1726,12 @@ MonoBehaviour:
     m_RuleTransform: 0
   alwaysConnect: 0
   tilesToConnect:
-  - {fileID: 11400000, guid: 0156d6b3473c5f04f8a062221725831c, type: 2}
-  - {fileID: 11400000, guid: d8a3ecdc3cf486f4ea4c43b4066e655a, type: 2}
+  - {fileID: 11400000, guid: 1c8bbf8a2011b7746b28f69050b98ee0, type: 2}
+  - {fileID: 11400000, guid: 337727dcf564add4586c503fe0ad4519, type: 2}
+  - {fileID: 11400000, guid: 28a4757cef2417e4d8d31768cb191ced, type: 2}
+  - {fileID: 11400000, guid: a4fae2174e21407449230267218fbb1d, type: 2}
+  - {fileID: 11400000, guid: f8ea382c11fa0834fba49ca1cef45fe5, type: 2}
+  - {fileID: 11400000, guid: d7f5e5ccab21b334e87ef5d3d65c9d5c, type: 2}
+  - {fileID: 11400000, guid: 3f8e3bca85329794fbab1016b417c889, type: 2}
+  - {fileID: 11400000, guid: 8d49c85c5d2d86949999a0abc2f5adf5, type: 2}
   checkSelf: 1
