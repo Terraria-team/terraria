@@ -20,7 +20,17 @@ namespace Server.AI
         public void EnterState()
         {
             _enemy.currentState = EnemyStateType.Attack;
-            _enemy.Rb.linearVelocity = new Vector2(0f, _enemy.Rb.linearVelocity.y);
+            
+            if (_enemy.BehaviorType == EnemyBehaviorType.Flyer)
+            {
+                _enemy.Rb.gravityScale = 0f;
+                _enemy.Rb.linearVelocity = Vector2.zero;
+            }
+            else
+            {
+                _enemy.Rb.linearVelocity = new Vector2(0f, _enemy.Rb.linearVelocity.y);
+            }
+            
             _cooldownTimer = 0f;
         }
 
@@ -28,7 +38,10 @@ namespace Server.AI
         {
             if (_enemy.Target == null)
             {
-                _enemy.ChangeState(new FighterPatrolState(_enemy));
+                if (_enemy.BehaviorType == EnemyBehaviorType.Flyer)
+                    _enemy.ChangeState(new FlyerIdleState(_enemy));
+                else
+                    _enemy.ChangeState(new FighterPatrolState(_enemy));
                 return;
             }
 
@@ -41,12 +54,15 @@ namespace Server.AI
                 {
                     // Deal damage
                     // TODO: call _enemy.Target.GetComponent<HealthComponent>()?.TakeDamage(...)
-                    Debug.Log($"[Enemy] Melee hit! Damage: {_enemy.Data.attackDamage}");
+                    Debug.Log($"[Enemy] Melee hit! Damage: {_enemy.Data.attackDamage} (HP decrease not implemented yet)");
                     _cooldownTimer = _enemy.Data.attackCooldown;
                 }
                 else
                 {
-                    _enemy.ChangeState(new FighterChaseState(_enemy));
+                    if (_enemy.BehaviorType == EnemyBehaviorType.Flyer)
+                        _enemy.ChangeState(new FlyerChaseState(_enemy));
+                    else
+                        _enemy.ChangeState(new FighterChaseState(_enemy));
                 }
             }
         }

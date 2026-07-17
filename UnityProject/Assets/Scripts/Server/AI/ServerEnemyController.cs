@@ -5,7 +5,8 @@ using Shared.DataDefinitions;
 namespace Server.AI
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(BoxCollider2D))]
+    [RequireComponent(typeof(NetworkIdentity))]
     public class ServerEnemyController : NetworkBehaviour
     {
         // ── Components ────────────────────────────────────────────────
@@ -16,6 +17,7 @@ namespace Server.AI
         [Header("Config")]
         [SerializeField] public EnemyData Data;
         [SerializeField] private EnemyBehaviorType _behaviorType = EnemyBehaviorType.Fighter;
+        public EnemyBehaviorType BehaviorType => _behaviorType;
 
         [Header("Shooter only")]
         [SerializeField] private GameObject _projectilePrefab;
@@ -37,6 +39,7 @@ namespace Server.AI
         public Transform Target { get; set; }
         public LayerMask BlockingLayer => _blockingLayer;
         public GameObject ProjectilePrefab => _projectilePrefab;
+        public void SetProjectilePrefab(GameObject prefab) => _projectilePrefab = prefab;
 
         private IEnemyState _currentState;
 

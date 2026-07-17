@@ -39,10 +39,13 @@ namespace Server.AI
 
             _timeElapsed += Time.deltaTime;
 
-            Vector2 toTarget = (Vector2)(_enemy.Target.position - _enemy.transform.position);
+            // Target a point slightly above the player's head so it stays in the air
+            Vector2 targetPos = (Vector2)_enemy.Target.position + Vector2.up * 1.5f;
+            Vector2 toTarget = targetPos - (Vector2)_enemy.transform.position;
 
-            // Attack range
-            if (toTarget.magnitude <= _enemy.Data.attackRange)
+            // Attack range check - still using actual distance to player center
+            float actualDist = Vector2.Distance(_enemy.transform.position, _enemy.Target.position);
+            if (actualDist <= _enemy.Data.attackRange)
             {
                 _enemy.ChangeState(new MeleeAttackState(_enemy));
                 return;
@@ -64,7 +67,6 @@ namespace Server.AI
 
         public void ExitState()
         {
-            _enemy.Rb.gravityScale = 1f;
         }
     }
 }

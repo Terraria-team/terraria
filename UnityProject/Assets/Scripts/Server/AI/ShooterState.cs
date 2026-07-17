@@ -43,23 +43,45 @@ namespace Server.AI
 
             // Maintain preferred distance
             float currentY = _enemy.Rb.linearVelocity.y;
+            float moveDir = 0f;
+            float speedMult = 1f;
+
             if (dist < preferred * 0.6f)
             {
                 // Too close - retreat
-                float retreatDir = -Mathf.Sign(toTarget.x);
-                _enemy.Rb.linearVelocity = new Vector2(retreatDir * _enemy.Data.moveSpeed, currentY);
+                moveDir = -Mathf.Sign(toTarget.x);
+                speedMult = 1f;
             }
             else if (dist > preferred * 1.4f)
             {
                 // Too far - approach
-                float approachDir = Mathf.Sign(toTarget.x);
-                _enemy.Rb.linearVelocity = new Vector2(approachDir * _enemy.Data.moveSpeed * 0.5f, currentY);
+                moveDir = Mathf.Sign(toTarget.x);
+                speedMult = 0.5f;
             }
-            else
+
+            if (moveDir != 0f)
             {
-                // In sweet spot - stop horizontal movement
-                _enemy.Rb.linearVelocity = new Vector2(0f, currentY);
+                Vector2 dir = new Vector2(moveDir, 0f);
+                bool wallAhead   = _enemy.CheckWallAhead(dir);
+                bool headClear   = _enemy.CheckHeadClear(dir);
+                bool groundAhead = _enemy.CheckGapAhead(dir);
+                bool grounded    = _enemy.IsGrounded();
+
+                if (!groundAhead || (wallAhead && !headClear))
+                {
+                    if (grounded)
+                    {
+                        currentY = _enemy.Data.jumpForce;
+                    }
+                }
+                else if (wallAhead && headClear)
+                {
+                    // Wall is too high to jump over, stop moving horizontally
+                    moveDir = 0f;
+                }
             }
+
+            _enemy.Rb.linearVelocity = new Vector2(moveDir * _enemy.Data.moveSpeed * speedMult, currentY);
 
             // Shoot cooldown + LoS check
             _shootCooldown -= Time.deltaTime;
