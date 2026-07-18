@@ -1,12 +1,12 @@
 using UnityEngine;
 using Shared.DataDefinitions;
+using Shared.Components;
 
 namespace Server.AI
 {
     // Shared melee attack state - used by Fighter and Flyer strategies.
     // Stops the enemy, waits for attack cooldown, deals damage.
     // Returns to Chase if target leaves attack range.
-    // TODO: integrate with player health system
     public class MeleeAttackState : IEnemyState
     {
         private readonly ServerEnemyController _enemy;
@@ -52,9 +52,10 @@ namespace Server.AI
             {
                 if (dist <= _enemy.Data.attackRange)
                 {
-                    // Deal damage
-                    // TODO: call _enemy.Target.GetComponent<HealthComponent>()?.TakeDamage(...)
-                    Debug.Log($"[Enemy] Melee hit! Damage: {_enemy.Data.attackDamage} (HP decrease not implemented yet)");
+                    var health = _enemy.Target.GetComponent<HealthComponent>();
+                    if (health != null)
+                        health.ApplyDamageServerRpc((int)_enemy.Data.attackDamage);
+
                     _cooldownTimer = _enemy.Data.attackCooldown;
                 }
                 else

@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using Shared.Components;
 
 namespace Server.AI
 {
@@ -56,8 +57,10 @@ namespace Server.AI
         {
             if (!other.CompareTag("Player")) return;
 
-            // TODO: call other.GetComponent<HealthComponent>()?.TakeDamage(damage)
-            Debug.Log($"[Projectile] Hit player! Damage: {damage}");
+            var health = other.GetComponent<HealthComponent>();
+            if (health != null)
+                health.ApplyDamageServerRpc((int)damage);
+
             NetworkServer.Destroy(gameObject);
         }
     }
