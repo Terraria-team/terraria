@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: "Dark Caster"
   behaviorType: 3
   moveSpeed: 1.5
-  jumpForce: 8
+  jumpForce: 5
   detectionRange: 18
   loseTargetRange: 24
   attackRange: 1.2
@@ -31,3 +31,4 @@ MonoBehaviour:
   preferredShootDistance: 10
   projectileSpeed: 6
   projectileLifetime: 6
+  projectilePassesThroughWalls: 1

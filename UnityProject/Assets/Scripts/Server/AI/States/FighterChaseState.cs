@@ -35,9 +35,9 @@ namespace Server.AI
                 return;
             }
 
-            // Attack range
-            float dist = Vector2.Distance(_enemy.transform.position, _enemy.Target.position);
-            if (dist <= _enemy.Data.attackRange)
+            // Attack range (contact damage)
+            float dist = _enemy.DistanceToTarget();
+            if (dist <= 0.1f)
             {
                 _enemy.ChangeState(new MeleeAttackState(_enemy));
                 return;
@@ -75,9 +75,21 @@ namespace Server.AI
                 return;
             }
 
-            // Apply horizontal velocity
+            float speedX = moveDir * _enemy.Data.moveSpeed;
+            if (wallAhead && !grounded)
+            {
+                speedX = 0f;
+            }
+
             float currentY = _enemy.Rb.linearVelocity.y;
-            _enemy.Rb.linearVelocity = new Vector2(moveDir * _enemy.Data.moveSpeed, currentY);
+            
+            // Prevent clipping into tile corners when falling
+            if (currentY < 0f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
+            {
+                speedX = 0f;
+            }
+
+            _enemy.Rb.linearVelocity = new Vector2(speedX, currentY);
         }
 
         public void ExitState() { }

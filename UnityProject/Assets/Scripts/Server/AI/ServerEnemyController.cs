@@ -121,8 +121,16 @@ namespace Server.AI
         {
             if (Col == null || Data == null) return false;
             Bounds b = Col.bounds;
-            Vector2 origin = new Vector2(b.center.x, b.min.y + Data.wallCheckHeight);
-            return Physics2D.Raycast(origin, direction.normalized, Data.stepCheckDistance, _groundLayer);
+            
+            // Check at step height
+            Vector2 originUpper = new Vector2(b.center.x, b.min.y + Data.wallCheckHeight);
+            bool hitUpper = Physics2D.Raycast(originUpper, direction.normalized, Data.stepCheckDistance, _groundLayer);
+            
+            // Check near feet
+            Vector2 originLower = new Vector2(b.center.x, b.min.y + 0.05f);
+            bool hitLower = Physics2D.Raycast(originLower, direction.normalized, Data.stepCheckDistance, _groundLayer);
+            
+            return hitUpper || hitLower;
         }
 
         //True = obstacle reaches above jump height
@@ -167,6 +175,20 @@ namespace Server.AI
                 }
             }
             return nearest;
+        }
+
+        [Server]
+        public float DistanceToTarget()
+        {
+            if (Target == null) return float.MaxValue;
+            var targetCol = Target.GetComponent<Collider2D>();
+            if (targetCol != null && Col != null)
+            {
+                var distanceInfo = Physics2D.Distance(Col, targetCol);
+                if (distanceInfo.isOverlapped) return 0f;
+                return distanceInfo.distance;
+            }
+            return Vector2.Distance(transform.position, Target.position);
         }
     }
 }

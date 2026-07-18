@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: "Zombie"
   behaviorType: 0
   moveSpeed: 1.5
-  jumpForce: 8
+  jumpForce: 5
   detectionRange: 10
   loseTargetRange: 14
   attackRange: 1.3

@@ -40,5 +40,6 @@ namespace Shared.DataDefinitions
         public float preferredShootDistance = 6f;
         public float projectileSpeed = 8f;
         public float projectileLifetime = 4f;
+        public bool projectilePassesThroughWalls = false;
     }
 }

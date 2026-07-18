@@ -17,19 +17,23 @@ namespace Server.AI
     {
         [SyncVar] public float damage   = 15f;
         [SyncVar] public float lifetime = 4f;
-
+        [SyncVar] public bool passesThroughWalls = false;
+        
+        private LayerMask _blockingLayer;
         private Rigidbody2D _rb;
         private Vector2 _direction;
         private float _speed;
         private float _timer;
 
         // Called by ShooterState immediately after Instantiate, before NetworkServer.Spawn.
-        public void Initialize(Vector2 direction, float speed, float damage, float lifetime)
+        public void Initialize(Vector2 direction, float speed, float damage, float lifetime, bool passesThroughWalls, LayerMask blockingLayer)
         {
             _direction    = direction.normalized;
             _speed        = speed;
             this.damage   = damage;
             this.lifetime = lifetime;
+            this.passesThroughWalls = passesThroughWalls;
+            _blockingLayer = blockingLayer;
         }
 
         void Awake()
@@ -55,13 +59,24 @@ namespace Server.AI
         [ServerCallback]
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.CompareTag("Player")) return;
+            if (other.CompareTag("Player"))
+            {
+                var health = other.GetComponent<HealthComponent>();
+                if (health != null)
+                    health.ApplyDamageServerRpc((int)damage);
 
-            var health = other.GetComponent<HealthComponent>();
-            if (health != null)
-                health.ApplyDamageServerRpc((int)damage);
+                NetworkServer.Destroy(gameObject);
+                return;
+            }
 
-            NetworkServer.Destroy(gameObject);
+            // Destroy if it hits a blocking wall and isn't a magic projectile
+            if (!passesThroughWalls)
+            {
+                if (((1 << other.gameObject.layer) & _blockingLayer) != 0)
+                {
+                    NetworkServer.Destroy(gameObject);
+                }
+            }
         }
     }
 }

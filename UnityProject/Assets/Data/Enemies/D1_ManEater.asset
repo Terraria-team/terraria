@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: "Man Eater"
   behaviorType: 0
   moveSpeed: 3
-  jumpForce: 8
+  jumpForce: 5
   detectionRange: 12
   loseTargetRange: 16
   attackRange: 1.5
@@ -24,7 +24,7 @@ MonoBehaviour:
   stepCheckDistance: 0.7
   gapCheckDepth: 2.5
   wallCheckHeight: 0.5
-  headClearHeight: 2.2
+  headClearHeight: 1.2
   useSinusoidalFlight: 0
   sinFrequency: 2
   sinAmplitude: 1.5

@@ -34,14 +34,15 @@ namespace Server.AI
             bool wallAhead  = _enemy.CheckWallAhead(dir);
             bool headClear  = _enemy.CheckHeadClear(dir);
             bool groundAhead = _enemy.CheckGapAhead(dir);
+            bool grounded = _enemy.IsGrounded();
 
-            if (!groundAhead)
+            if (grounded && !groundAhead)
             {
                 _moveDir *= -1f;
             }
             else if (wallAhead && !headClear)
             {
-                if (_enemy.IsGrounded())
+                if (grounded)
                 {
                     var v = _enemy.Rb.linearVelocity;
                     _enemy.Rb.linearVelocity = new Vector2(v.x, _enemy.Data.jumpForce);
@@ -52,8 +53,21 @@ namespace Server.AI
                 _moveDir *= -1f;
             }
 
+            float speedX = _moveDir * _enemy.Data.moveSpeed;
+            if (wallAhead && !grounded)
+            {
+                speedX = 0f;
+            }
+
             float currentY = _enemy.Rb.linearVelocity.y;
-            _enemy.Rb.linearVelocity = new Vector2(_moveDir * _enemy.Data.moveSpeed, currentY);
+            
+            // Prevent clipping into tile corners when falling
+            if (currentY < 0f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
+            {
+                speedX = 0f;
+            }
+
+            _enemy.Rb.linearVelocity = new Vector2(speedX, currentY);
         }
 
         public void ExitState() { }

@@ -25,6 +25,16 @@ namespace Server.AI
 
         public void UpdateState()
         {
+            if (_enemy.Target != null)
+            {
+                float dist = _enemy.DistanceToTarget();
+                if (dist <= 0.1f) // Contact damage requires touching
+                {
+                    _enemy.ChangeState(new MeleeAttackState(_enemy));
+                    return;
+                }
+            }
+
             _jumpTimer -= Time.deltaTime;
 
             if (_jumpTimer <= 0f && _enemy.IsGrounded())

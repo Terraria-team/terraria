@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: "Skeleton"
   behaviorType: 0
   moveSpeed: 2.5
-  jumpForce: 9
+  jumpForce: 5
   detectionRange: 10
   loseTargetRange: 14
   attackRange: 1.4

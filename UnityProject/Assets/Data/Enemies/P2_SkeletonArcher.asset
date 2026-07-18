@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: "Skeleton Archer"
   behaviorType: 3
   moveSpeed: 1.8
-  jumpForce: 8
+  jumpForce: 5
   detectionRange: 14
   loseTargetRange: 18
   attackRange: 1.2
