@@ -540,8 +540,8 @@ MonoBehaviour:
     m_NeighborPositions:
     - {x: 0, y: -1, z: 0}
     - {x: 1, y: 0, z: 0}
-    - {x: 0, y: 1, z: 0}
     - {x: -1, y: 0, z: 0}
+    - {x: 0, y: 1, z: 0}
     m_RuleTransform: 0
   - m_Id: 75
     m_Sprites:
@@ -1202,4 +1202,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3f8e3bca85329794fbab1016b417c889, type: 2}
   - {fileID: 11400000, guid: 8d49c85c5d2d86949999a0abc2f5adf5, type: 2}
   - {fileID: 11400000, guid: 279baa8ba93d05a44a02283f2e545bd2, type: 2}
+  - {fileID: 11400000, guid: 0cec8becc1f05e144a2c1bce267a5731, type: 2}
   checkSelf: 1
