@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: D1_ManEater
   m_EditorClassIdentifier: 
-  enemyName: "Man Eater"
+  enemyName: Man Eater
   behaviorType: 0
+  sprite: {fileID: 6059252677235506356, guid: 99d0d2c8f45eacf469da6cef93210837, type: 3}
   moveSpeed: 3
   jumpForce: 5
   detectionRange: 12
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 6
   projectileSpeed: 8
   projectileLifetime: 4
+  projectilePassesThroughWalls: 0

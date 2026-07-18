@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8383042892863472340}
   - component: {fileID: 1394249355202679006}
   - component: {fileID: 707692612065227362}
+  - component: {fileID: 2711025427336029470}
   m_Layer: 0
   m_Name: L1_DemonEye
   m_TagString: Untagged
@@ -85,8 +86,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2868101353237766674, guid: 8be22aefb911ed54ca4c312dd1aeadc6, type: 3}
-  m_Color: {r: 1, g: 0.9, b: 0.2, a: 1}
+  m_Sprite: {fileID: -4887698836003496542, guid: 30c7ac039d762404f80af7539b697c8d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -156,17 +157,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.027820587, y: 0.025196075}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 4.625, y: 2.875}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.6265364, y: 2.8759208}
   m_EdgeRadius: 0
 --- !u!114 &1394249355202679006
 MonoBehaviour:
@@ -212,3 +213,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
+--- !u!95 &2711025427336029470
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2412919458824082510}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373c8070247ab294ea83bcce6a0b8a94, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

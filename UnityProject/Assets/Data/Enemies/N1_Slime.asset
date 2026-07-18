@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: N1_Slime
   m_EditorClassIdentifier: 
-  enemyName: "Green Slime"
+  enemyName: Green Slime
   behaviorType: 2
+  sprite: {fileID: 5245244551154299851, guid: a71ca52b34054f846be56b23ae871f9f, type: 3}
   moveSpeed: 0
   jumpForce: 8
   detectionRange: 10
   loseTargetRange: 14
   attackRange: 1.2
-  attackCooldown: 1.0
+  attackCooldown: 1
   attackDamage: 8
   stepCheckDistance: 0.7
   gapCheckDepth: 2.5
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 6
   projectileSpeed: 8
   projectileLifetime: 4
+  projectilePassesThroughWalls: 0

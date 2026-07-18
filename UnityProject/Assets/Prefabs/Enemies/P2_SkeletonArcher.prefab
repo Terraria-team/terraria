@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 716720917323222629}
   - component: {fileID: 6726252449938063840}
   - component: {fileID: 6281985779444872174}
+  - component: {fileID: -5412990921111519990}
   m_Layer: 0
   m_Name: P2_SkeletonArcher
   m_TagString: Untagged
@@ -85,8 +86,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2868101353237766674, guid: 8be22aefb911ed54ca4c312dd1aeadc6, type: 3}
-  m_Color: {r: 0.4, g: 0.4, b: 1, a: 1}
+  m_Sprite: {fileID: 6203462880614970988, guid: 9f5ad5fd26e9b9246aab74f048833351, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -156,17 +157,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.007717252, y: 0.002900958}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.8333334, y: 2.25}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.8950381, y: 2.2492254}
   m_EdgeRadius: 0
 --- !u!114 &6726252449938063840
 MonoBehaviour:
@@ -212,3 +213,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
+--- !u!95 &-5412990921111519990
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7014284000785131102}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1d4274a780ce2c440becdfa6573f304a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

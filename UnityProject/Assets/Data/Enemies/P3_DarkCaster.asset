@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: P3_DarkCaster
   m_EditorClassIdentifier: 
-  enemyName: "Dark Caster"
+  enemyName: Dark Caster
   behaviorType: 3
+  sprite: {fileID: -2388744650742764598, guid: 735cf43400f6f6048b1d6ee674a6c36f, type: 3}
   moveSpeed: 1.5
   jumpForce: 5
   detectionRange: 18

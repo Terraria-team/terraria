@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: L1_DemonEye
   m_EditorClassIdentifier: 
-  enemyName: "Demon Eye"
+  enemyName: Demon Eye
   behaviorType: 1
+  sprite: {fileID: -4887698836003496542, guid: 30c7ac039d762404f80af7539b697c8d, type: 3}
   moveSpeed: 2
   jumpForce: 0
   detectionRange: 10
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 6
   projectileSpeed: 8
   projectileLifetime: 4
+  projectilePassesThroughWalls: 0

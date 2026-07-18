@@ -25,8 +25,12 @@ namespace Server.AI
             if (_enemy.Target != null)
             {
                 float dist = _enemy.DistanceToTarget();
-                // Add a small 0.5f leniency buffer because physics might have moved them slightly
-                if (dist <= _enemy.Data.attackRange + 0.5f)
+                // Slimes deal contact damage only — use a tight threshold.
+                // Other melee enemies get a small leniency buffer for physics jitter.
+                float maxHitDist = _enemy.BehaviorType == EnemyBehaviorType.Slime
+                    ? 0.15f
+                    : _enemy.Data.attackRange + 0.2f;
+                if (dist <= maxHitDist)
                 {
                     var health = _enemy.Target.GetComponentInParent<HealthComponent>();
                     if (health != null)

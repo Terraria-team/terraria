@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: N1_Zombie
   m_EditorClassIdentifier: 
-  enemyName: "Zombie"
+  enemyName: Zombie
   behaviorType: 0
+  sprite: {fileID: 1414023517719057630, guid: a8e1ba4943a425a4aa8587723a4d39f2, type: 3}
   moveSpeed: 1.5
   jumpForce: 5
   detectionRange: 10
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 6
   projectileSpeed: 8
   projectileLifetime: 4
+  projectilePassesThroughWalls: 0

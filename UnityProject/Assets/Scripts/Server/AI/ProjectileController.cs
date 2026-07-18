@@ -4,14 +4,6 @@ using Shared.Components;
 
 namespace Server.AI
 {
-    // Travels in a straight line, destroys itself on player hit or lifetime expiry.
-    // Synced to clients via SyncVars - clients see it move automatically.
-
-    // Setup in Unity:
-    //   - Add Rigidbody2D (Gravity Scale = 0)
-    //   - Add Collider2D with IsTrigger = true
-    //   - Tag the Player GameObject as "Player"
-    //   - Register this prefab in the NetworkManager's Spawnable Prefabs list
     [RequireComponent(typeof(Rigidbody2D))]
     public class ProjectileController : NetworkBehaviour
     {
@@ -25,7 +17,6 @@ namespace Server.AI
         private float _speed;
         private float _timer;
 
-        // Called by ShooterState immediately after Instantiate, before NetworkServer.Spawn.
         public void Initialize(Vector2 direction, float speed, float damage, float lifetime, bool passesThroughWalls, LayerMask blockingLayer)
         {
             _direction    = direction.normalized;
@@ -34,12 +25,17 @@ namespace Server.AI
             this.lifetime = lifetime;
             this.passesThroughWalls = passesThroughWalls;
             _blockingLayer = blockingLayer;
+            Debug.Log($"[Projectile] Initialized. passesThroughWalls={this.passesThroughWalls}, layer={_blockingLayer.value}");
         }
 
         void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
             _rb.gravityScale = 0f;
+
+            var col = GetComponent<Collider2D>();
+            if (col != null)
+                col.isTrigger = true;
         }
 
         [ServerCallback]
@@ -47,13 +43,32 @@ namespace Server.AI
         {
             _timer += Time.deltaTime;
             if (_timer >= lifetime)
+            {
+                Debug.Log($"[Projectile] Destroyed by lifetime expiry");
                 NetworkServer.Destroy(gameObject);
+            }
         }
 
         [ServerCallback]
         void FixedUpdate()
         {
             _rb.linearVelocity = _direction * _speed;
+
+            if (!passesThroughWalls && _blockingLayer != 0)
+            {
+                float castDist = _speed * Time.fixedDeltaTime + 0.15f;
+                RaycastHit2D hit = Physics2D.Raycast(
+                    (Vector2)transform.position,
+                    _direction,
+                    castDist,
+                    _blockingLayer
+                );
+                if (hit.collider != null)
+                {
+                    Debug.Log($"[Projectile] Destroyed by Raycast hitting {hit.collider.name}");
+                    NetworkServer.Destroy(gameObject);
+                }
+            }
         }
 
         [ServerCallback]
@@ -65,15 +80,16 @@ namespace Server.AI
                 if (health != null)
                     health.ApplyDamageServerRpc((int)damage);
 
+                Debug.Log($"[Projectile] Destroyed by hitting Player {other.name}");
                 NetworkServer.Destroy(gameObject);
                 return;
             }
 
-            // Destroy if it hits a blocking wall and isn't a magic projectile
             if (!passesThroughWalls)
             {
                 if (((1 << other.gameObject.layer) & _blockingLayer) != 0)
                 {
+                    Debug.Log($"[Projectile] Destroyed by OnTriggerEnter hitting wall {other.name}");
                     NetworkServer.Destroy(gameObject);
                 }
             }

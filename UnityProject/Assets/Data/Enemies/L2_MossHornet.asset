@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: L2_MossHornet
   m_EditorClassIdentifier: 
-  enemyName: "Moss Hornet"
+  enemyName: Moss Hornet
   behaviorType: 4
+  sprite: {fileID: -3945659445594881757, guid: 1b4c20967b591924ca1519c324ca88e4, type: 3}
   moveSpeed: 4
   jumpForce: 0
   detectionRange: 16
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 7
   projectileSpeed: 9
   projectileLifetime: 5
+  projectilePassesThroughWalls: 0

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: P1_Skeleton
   m_EditorClassIdentifier: 
-  enemyName: "Skeleton"
+  enemyName: Skeleton
   behaviorType: 0
+  sprite: {fileID: 7698013362315839408, guid: d845242f31b8bd849b66ad98354fb89e, type: 3}
   moveSpeed: 2.5
   jumpForce: 5
   detectionRange: 10
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 6
   projectileSpeed: 8
   projectileLifetime: 4
+  projectilePassesThroughWalls: 0

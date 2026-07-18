@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
   m_Name: P2_SkeletonArcher
   m_EditorClassIdentifier: 
-  enemyName: "Skeleton Archer"
+  enemyName: Skeleton Archer
   behaviorType: 3
+  sprite: {fileID: 6203462880614970988, guid: 9f5ad5fd26e9b9246aab74f048833351, type: 3}
   moveSpeed: 1.8
   jumpForce: 5
   detectionRange: 14
@@ -31,3 +32,4 @@ MonoBehaviour:
   preferredShootDistance: 8
   projectileSpeed: 7
   projectileLifetime: 5
+  projectilePassesThroughWalls: 0

@@ -34,6 +34,9 @@ namespace Server.AI
         [SyncVar]
         public EnemyStateType currentState = EnemyStateType.Idle;
 
+        [SyncVar(hook = nameof(OnFacingRightChanged))]
+        public bool isFacingRight = true;
+
         // ── Runtime ───────────────────────────────────────────────────
         public Transform Target { get; set; }
         public LayerMask BlockingLayer => _blockingLayer;
@@ -41,12 +44,14 @@ namespace Server.AI
         public void SetProjectilePrefab(GameObject prefab) => _projectilePrefab = prefab;
 
         private IEnemyState _currentState;
+        private SpriteRenderer _spriteRenderer;
 
         // ── Unity Lifecycle ───────────────────────────────────────────
         void Awake()
         {
             Rb = GetComponent<Rigidbody2D>();
             Col = GetComponent<Collider2D>();
+            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         public override void OnStartServer()
@@ -59,6 +64,20 @@ namespace Server.AI
         void Update()
         {
             _currentState?.UpdateState();
+
+            // Update facing direction based on horizontal velocity
+            if (Rb.linearVelocity.x > 0.05f && !isFacingRight)
+                isFacingRight = true;
+            else if (Rb.linearVelocity.x < -0.05f && isFacingRight)
+                isFacingRight = false;
+        }
+
+        private void OnFacingRightChanged(bool oldVal, bool newVal)
+        {
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.flipX = newVal;
+            }
         }
 
         // ── FSM ───────────────────────────────────────────────────────
