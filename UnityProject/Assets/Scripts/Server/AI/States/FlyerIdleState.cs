@@ -3,9 +3,10 @@ using Shared.DataDefinitions;
 
 namespace Server.AI
 {
-    // Flyer strategy - idle/hover phase.
+    // Flyer / FlyerShooter strategy - idle/hover phase.
     // Disables gravity, holds position, scans for players.
-    // Switches to FlyerChaseState on detection.
+    // Flyer      → FlyerChaseState  (melee approach)
+    // FlyerShooter → ShooterState   (ranged, stays airborne)
     public class FlyerIdleState : IEnemyState
     {
         private readonly ServerEnemyController _enemy;
@@ -28,7 +29,11 @@ namespace Server.AI
             if (player != null)
             {
                 _enemy.Target = player;
-                _enemy.ChangeState(new FlyerChaseState(_enemy));
+
+                if (_enemy.BehaviorType == EnemyBehaviorType.FlyerShooter)
+                    _enemy.ChangeState(new ShooterState(_enemy));
+                else
+                    _enemy.ChangeState(new FlyerChaseState(_enemy));
             }
         }
 

@@ -16,8 +16,7 @@ namespace Server.AI
         // ── Inspector ─────────────────────────────────────────────────
         [Header("Config")]
         [SerializeField] public EnemyData Data;
-        [SerializeField] private EnemyBehaviorType _behaviorType = EnemyBehaviorType.Fighter;
-        public EnemyBehaviorType BehaviorType => _behaviorType;
+        public EnemyBehaviorType BehaviorType => Data != null ? Data.behaviorType : EnemyBehaviorType.Fighter;
 
         [Header("Shooter only")]
         [SerializeField] private GameObject _projectilePrefab;
@@ -74,7 +73,7 @@ namespace Server.AI
         [Server]
         private void DispatchInitialState()
         {
-            switch (_behaviorType)
+            switch (BehaviorType)
             {
                 case EnemyBehaviorType.Fighter:
                     ChangeState(new FighterPatrolState(this));
@@ -87,6 +86,9 @@ namespace Server.AI
                     break;
                 case EnemyBehaviorType.Shooter:
                     ChangeState(new ShooterState(this));
+                    break;
+                case EnemyBehaviorType.FlyerShooter:
+                    ChangeState(new FlyerIdleState(this));
                     break;
             }
         }

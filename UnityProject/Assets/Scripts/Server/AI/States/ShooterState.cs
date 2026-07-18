@@ -10,6 +10,7 @@ namespace Server.AI
     //   - When LoS is clear and cooldown expired -> spawns a ProjectileController
     //   - П3 (magic through tiles): set BlockingLayer mask to 0 in the inspector
     //     so Linecast always passes, allowing the enemy to fire through walls.
+    //   - FlyerShooter (Л2): ignores gravity, uses 2D steering to orbit player
     // Requires:
     //   - ServerEnemyController._projectilePrefab assigned (NetworkManager spawnable list)
     //   - ServerEnemyController._blockingLayer set to the ground/tile layer
@@ -17,6 +18,7 @@ namespace Server.AI
     {
         private readonly ServerEnemyController _enemy;
         private float _shootCooldown;
+        private bool _isFlying;
 
         public ShooterState(ServerEnemyController controller)
         {
@@ -27,6 +29,12 @@ namespace Server.AI
         {
             _enemy.currentState = EnemyStateType.Shoot;
             _shootCooldown = 0f;
+            _isFlying = _enemy.BehaviorType == EnemyBehaviorType.FlyerShooter;
+
+            if (_isFlying)
+            {
+                _enemy.Rb.gravityScale = 0f;
+            }
         }
 
         public void UpdateState()
@@ -35,13 +43,68 @@ namespace Server.AI
             if (_enemy.Target == null)
                 _enemy.Target = _enemy.FindNearestPlayer();
 
-            if (_enemy.Target == null) return;
+            if (_enemy.Target == null)
+            {
+                // FlyerShooter returns to hover idle; ground shooters just wait
+                if (_isFlying)
+                    _enemy.ChangeState(new FlyerIdleState(_enemy));
+                return;
+            }
 
             Vector2 toTarget = (Vector2)(_enemy.Target.position - _enemy.transform.position);
             float dist = toTarget.magnitude;
             float preferred = _enemy.Data.preferredShootDistance;
 
-            // Maintain preferred distance
+            if (_isFlying)
+            {
+                UpdateFlying(toTarget, dist, preferred);
+            }
+            else
+            {
+                UpdateGround(toTarget, dist, preferred);
+            }
+
+            // Shoot cooldown + LoS check
+            _shootCooldown -= Time.deltaTime;
+            if (_shootCooldown <= 0f && HasLineOfSight())
+            {
+                Shoot(toTarget.normalized);
+                _shootCooldown = _enemy.Data.attackCooldown;
+            }
+        }
+
+        // ── Flying shooter (Л2) ──────────────────────────────────────
+        // Uses 2D steering: orbits above the player at preferred distance.
+        private void UpdateFlying(Vector2 toTarget, float dist, float preferred)
+        {
+            // Target a point slightly above the player
+            Vector2 targetPos = (Vector2)_enemy.Target.position + Vector2.up * 2f;
+            Vector2 toTargetAbove = targetPos - (Vector2)_enemy.transform.position;
+
+            Vector2 velocity;
+            if (dist < preferred * 0.6f)
+            {
+                // Too close — retreat directly away
+                velocity = -toTargetAbove.normalized * _enemy.Data.moveSpeed;
+            }
+            else if (dist > preferred * 1.4f)
+            {
+                // Too far — approach
+                velocity = toTargetAbove.normalized * _enemy.Data.moveSpeed * 0.7f;
+            }
+            else
+            {
+                // In sweet spot — slow orbit / hover
+                velocity = toTargetAbove.normalized * _enemy.Data.moveSpeed * 0.15f;
+            }
+
+            _enemy.Rb.linearVelocity = velocity;
+        }
+
+        // ── Ground shooter (П2, П3) ─────────────────────────────────
+        // Original horizontal-only movement with terrain navigation.
+        private void UpdateGround(Vector2 toTarget, float dist, float preferred)
+        {
             float currentY = _enemy.Rb.linearVelocity.y;
             float moveDir = 0f;
             float speedMult = 1f;
@@ -82,14 +145,6 @@ namespace Server.AI
             }
 
             _enemy.Rb.linearVelocity = new Vector2(moveDir * _enemy.Data.moveSpeed * speedMult, currentY);
-
-            // Shoot cooldown + LoS check
-            _shootCooldown -= Time.deltaTime;
-            if (_shootCooldown <= 0f && HasLineOfSight())
-            {
-                Shoot(toTarget.normalized);
-                _shootCooldown = _enemy.Data.attackCooldown;
-            }
         }
 
         // True if there are no blocking tiles between the enemy and the player.

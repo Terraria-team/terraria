@@ -3,9 +3,14 @@ using UnityEngine;
 
 namespace Shared.DataDefinitions
 {
-    [Serializable]
-    public class EnemyData
+    [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
+    public class EnemyData : ScriptableObject
     {
+        [Header("Identity")]
+        public string enemyName = "Enemy";
+        public EnemyBehaviorType behaviorType = EnemyBehaviorType.Fighter;
+        public Sprite sprite;
+
         [Header("Movement")]
         public float moveSpeed = 3f;
         public float jumpForce = 8f;
