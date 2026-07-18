@@ -229,9 +229,7 @@ MonoBehaviour:
   worldConfig: {fileID: 11400000, guid: b18356db11c3b55459bd0b396ba8b9a2, type: 2}
   forestConfig: {fileID: 11400000, guid: 5ba61664f5e129a4f8e35c2c5e8bdef7, type: 2}
   playerGrid: {fileID: 554839106}
-  blockTexture:
-  - {fileID: 11400000, guid: 21c4aa08a31edbb428824232ab317a12, type: 2}
-  - {fileID: 11400000, guid: d3cec0ef711fb7646b401a0ccae7a282, type: 2}
+  MaxDistance: 5
 --- !u!4 &244808771
 Transform:
   m_ObjectHideFlags: 0
@@ -782,7 +780,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 6026004524852160811, guid: 6dce36aea1c13c548ba21bfb2b3b5358, type: 3}
+  playerPrefab: {fileID: 6026004524852160811, guid: b7aa8cdf5d2d2944da14b260bd9b4949, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
