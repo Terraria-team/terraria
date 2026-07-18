@@ -1,0 +1,7 @@
+{
+  "name": "terraria.lobbyunityshared",
+  "version": "1.0.0",
+  "displayName": "LobbyUnityShared",
+  "description": "Shared DTOs and Enums between Unity Client/Server and the Lobby",
+  "unity": "2022.3"
+}
