@@ -40,9 +40,12 @@ public class PlayerController : NetworkBehaviour
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
         _inventory = GetComponent<InventoryComponent>();
-        _blockHighlight = FindObjectOfType<BlockHighlight>();
+        _blockHighlight = GetComponent<BlockHighlight>();
         _healthComponent = GetComponent<HealthComponent>();
        
+        _blockHighlight.enabled = true;
+        _blockHighlight.InitializeHighlight();
+        
         if (!isLocalPlayer) return;
         
         _rb = GetComponent<Rigidbody2D>();
@@ -191,7 +194,12 @@ public class PlayerController : NetworkBehaviour
                 return;
             }
         }
-
+        
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            _blockHighlight.ChangeMode();
+        }
+        
         if (Input.GetMouseButtonDown(0))
         {
             _inventory.UseSelectedItem();
