@@ -33,10 +33,16 @@ namespace Server.AI.Bosses
         {
             if (_slimeMinionPrefab != null && Random.value <= _spawnChanceOnDamage)
             {
-                // Spawn a minion nearby
-                Vector2 spawnPos = (Vector2)transform.position + new Vector2(Random.Range(-1.5f, 1.5f), 1f);
-                GameObject minion = Instantiate(_slimeMinionPrefab, spawnPos, Quaternion.identity);
-                NetworkServer.Spawn(minion);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 spawnPos = (Vector2)transform.position + new Vector2(Random.Range(-1.5f, 1.5f), 1f);
+                    if (Physics2D.OverlapPoint(spawnPos, BlockingLayer) == null)
+                    {
+                        GameObject minion = Instantiate(_slimeMinionPrefab, spawnPos, Quaternion.identity);
+                        NetworkServer.Spawn(minion);
+                        break;
+                    }
+                }
             }
         }
     }

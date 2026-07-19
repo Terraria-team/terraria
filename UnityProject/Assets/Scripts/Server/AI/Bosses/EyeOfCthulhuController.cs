@@ -72,9 +72,16 @@ namespace Server.AI.Bosses
         {
             if (_servantPrefab != null)
             {
-                Vector2 spawnPos = (Vector2)transform.position + new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f));
-                GameObject minion = Instantiate(_servantPrefab, spawnPos, Quaternion.identity);
-                NetworkServer.Spawn(minion);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 spawnPos = (Vector2)transform.position + new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f));
+                    if (Physics2D.OverlapPoint(spawnPos, BlockingLayer) == null)
+                    {
+                        GameObject minion = Instantiate(_servantPrefab, spawnPos, Quaternion.identity);
+                        NetworkServer.Spawn(minion);
+                        break;
+                    }
+                }
             }
         }
     }
