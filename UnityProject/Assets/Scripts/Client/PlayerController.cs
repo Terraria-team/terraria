@@ -37,14 +37,11 @@ public class PlayerController : NetworkBehaviour
         _blockHighlight.InitializeHighlight();
         
         _rb = GetComponent<Rigidbody2D>();
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        _rb.bodyType = RigidbodyType2D.Kinematic;
 
         if (!isLocalPlayer)
-        {
-            _rb.bodyType = RigidbodyType2D.Kinematic;
             return;
-        }
-
-        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
@@ -125,9 +122,9 @@ public class PlayerController : NetworkBehaviour
     
     void Update()
     {
-        if (_inventoryComponent != null)
+        if (_healthComponent != null)
         {
-            healthBar.text = _inventoryComponent.test_GetNonZeroItemsCount().ToString();
+            healthBar.text = _healthComponent.HealthNow.ToString();
         }
         
         if (!isLocalPlayer) return;

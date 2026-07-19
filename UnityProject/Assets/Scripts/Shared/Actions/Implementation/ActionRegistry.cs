@@ -67,6 +67,13 @@ public static class ActionRegistry
                 if (!PlayerReachUtils.IsBlockChangeValid(context))
                     return false;
                 
+                var currentBlock = ChunkManager.Instance.GetChunkAt(
+                    context.chunkPosition    
+                ).Get(context.blockPositionX, context.blockPositionY);
+                
+                if (!currentBlock.IsAir)
+                    return false;
+                
                 ChunkManager.Instance.Place(
                     context.chunkPosition,
                     context.blockPositionX, 

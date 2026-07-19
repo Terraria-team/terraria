@@ -10,22 +10,6 @@ public class InventoryComponent : NetworkBehaviour
     private readonly SyncList<NullableItemStack> _slots = new();
     public int SelectedSlot { get; private set; }
     public NullableItemStack GetItemAt(int slot) => _slots[slot];
-
-    public int test_GetNonZeroItemsCount()
-    {
-        int count = -1;
-
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            if (count < 0)
-                count = 0;
-            
-            if (_slots[i].HasValue)
-                count++;
-        }
-        
-        return count;
-    }
     
     public event Action OnSelectionChanged;
     public event Action OnSlotsChanged;
