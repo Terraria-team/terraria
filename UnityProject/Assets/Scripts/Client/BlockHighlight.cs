@@ -1,5 +1,4 @@
 using Mirror;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -7,8 +6,8 @@ public class BlockHighlight : MonoBehaviour
 {
     private ChunkManager _chunkManager;
     
-    [SerializeField] public Tilemap mainTilemap;
-    [SerializeField] public Tilemap highlightTileMap;
+    private Tilemap mainTilemap;
+    private Tilemap highlightTileMap;
     [SerializeField] private TileBase yellowBlock;
     [SerializeField] private TileBase redBlock;
     [SerializeField] private TileBase greenBlock;
@@ -17,9 +16,24 @@ public class BlockHighlight : MonoBehaviour
     private bool hints = false;
     private ushort blockId = 0;
     
-    private void Start()
+    public void InitializeHighlight()
     {
         _chunkManager = ChunkManager.Instance;
+        
+        GameObject fg = GameObject.Find("Foreground");
+        if (fg == null) return;
+    
+        mainTilemap = fg.GetComponent<Tilemap>();
+        
+        Grid mainGrid = fg.GetComponentInParent<Grid>();
+        GameObject tilemapGo = new GameObject("LocalHighlightTilemap");
+        tilemapGo.transform.SetParent(mainGrid.transform);
+        tilemapGo.transform.localPosition = mainTilemap.transform.localPosition; 
+    
+        highlightTileMap = tilemapGo.AddComponent<Tilemap>();
+        TilemapRenderer tr = tilemapGo.AddComponent<TilemapRenderer>();
+        tr.sortingLayerName = "UI";
+        tr.sortingOrder = 0;
     }
     
     private void Update()
@@ -74,6 +88,14 @@ public class BlockHighlight : MonoBehaviour
             }
             
             highlightedTilePos = mouseCellPos;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (highlightTileMap != null && gameObject.scene.isLoaded)
+        {
+            Destroy(highlightTileMap.gameObject);
         }
     }
 }

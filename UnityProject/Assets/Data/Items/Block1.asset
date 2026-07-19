@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Block1
   m_EditorClassIdentifier: Shared::ItemData
   id: 1
-  icon: {fileID: -2193749881590392852, guid: 88159294d3774d44b8523ab7dcf91888, type: 3}
+  icon: {fileID: -1765977376496971672, guid: 231bd2788825fe148ba1539cf19c68bc, type: 3}
   unlocalizedName: 
   stackSize: 5
   primaryAction: 1

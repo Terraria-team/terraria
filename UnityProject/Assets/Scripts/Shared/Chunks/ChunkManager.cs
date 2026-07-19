@@ -114,9 +114,6 @@ public class ChunkManager : NetworkBehaviour
     
     public bool IsValidChange(byte x, byte y, BlockID value, NetworkIdentity sender)
     {
-        return true;
-        
-/*
         if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
         
         if (sender == null ) 
@@ -130,11 +127,9 @@ public class ChunkManager : NetworkBehaviour
         Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
         Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
 
-        if (value.Value != 0 && IsOnPlayer(block2D, sender)) return false;
+        if (value.Value != 0 && IsOnPlayer(block2D)) return false;
         
-        return (IsInRange(player2D, block2D)
-                && IsVisible(x, y, player2D));
-*/
+        return IsInRange(player2D, block2D);
     }
     
     private bool IsInRange(Vector2 playerPos, Vector2 blockPos)
@@ -149,51 +144,20 @@ public class ChunkManager : NetworkBehaviour
         return true;
     }
     
-    private bool IsOnPlayer(Vector2 blockPos, NetworkIdentity sender)
+    private bool IsOnPlayer(Vector2 blockPos)
     {
-        Collider2D playerCollider = sender.GetComponent<Collider2D>();
-        if (playerCollider != null)
+        Vector2 boxSize = Vector2.one;
+        int playerLayerMask = LayerMask.GetMask("Player");
+
+        Collider2D overlappingPlayer = Physics2D.OverlapBox(blockPos, boxSize, 0f, playerLayerMask);
+
+        if (overlappingPlayer != null)
         {
-            Bounds blockBounds = new Bounds(new Vector3(blockPos.x, blockPos.y, 0), Vector3.one);
-            if (playerCollider.bounds.Intersects(blockBounds))
-            {
-                Debug.LogWarning("Validation failed: Player in the block.");
-                return true;
-            }
+            Debug.LogWarning("Validation failed: A player is in the block.");
+            return true;
         }
 
         return false;
-    }
-    
-    private bool IsVisible(byte x, byte y, Vector2 playerPos)
-    {
-        int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
-        Vector2[] targetPoints = {
-            new Vector2(x + 0.5f, y + 0.5f),          // Center
-            new Vector2(x + 0.1f, y + 0.1f),         // Bottom-Left
-            new Vector2(x + 0.9f, y + 0.1f),         // Bottom-Right
-            new Vector2(x + 0.1f, y + 0.9f),         // Top-Left
-            new Vector2(x + 0.9f, y + 0.9f)          // Top-Right
-        };
-
-        foreach (Vector2 point in targetPoints)
-        {
-            RaycastHit2D hit = Physics2D.Linecast(playerPos, point, solidBlocksLayerMask);
-            if (hit.collider == null || IsHitOnTargetBlock(hit.point, x, y))
-            {
-                return true;  // is visible
-            }
-        }
-
-        Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
-        return false;  // is not visible
-        
-        bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
-        {
-            float epsilon = 0.05f; 
-            return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
-                   hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
-        }
     }
     
     private void UpdateTileVisual(Vector2Int chunkCoord, byte x, byte y, BlockID value)
