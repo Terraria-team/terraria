@@ -1,0 +1,192 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4628237308896197415
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 737860928570738781, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Size.x
+      value: 0.16851002
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Size.y
+      value: 0.16339214
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.00016653538
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.0022822693
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.w
+      value: 0.049999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.x
+      value: 0.049999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.y
+      value: 0.049999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.z
+      value: 0.049999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 938092539523808939, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 0.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097361059154944182, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: _assetId
+      value: 1029802936
+      objectReference: {fileID: 0}
+    - target: {fileID: 4153227467817105194, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Name
+      value: Boss_QueenBee
+      objectReference: {fileID: 0}
+    - target: {fileID: 5569017204777777728, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 5569017204777777728, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Color.b
+      value: 0.015686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 5569017204777777728, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      propertyPath: m_Color.g
+      value: 0.92156863
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -1105449336717315117, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+    - {fileID: 2526689579016802279, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4153227467817105194, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8407465585414060135}
+    - targetCorrespondingSourceObject: {fileID: 4153227467817105194, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 190706420837537291}
+  m_SourcePrefab: {fileID: 100100000, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+--- !u!1 &8762306331502021645 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4153227467817105194, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+  m_PrefabInstance: {fileID: 4628237308896197415}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8407465585414060135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8762306331502021645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3887c3f3db40d3bef302d1ba6587c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shared::Shared.Components.HealthComponent
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  CurrentHealth: 0
+  MaxHealth: 3400
+--- !u!114 &190706420837537291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8762306331502021645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 945b70c37b0d6be4b937def35787a659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Server::Server.AI.Bosses.QueenBeeController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Data: {fileID: 11400000, guid: 4a2b37d37b14c3b419448dda8b080976, type: 2}
+  _projectilePrefab: {fileID: 8535036198543322807, guid: b9c8e9d11855fa545910d5f8b0156913, type: 3}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  _playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _blockingLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  currentState: 0
+  isFacingRight: 1
+  _hornetPrefab: {fileID: 4153227467817105194, guid: 8411a6fa9de172c468f6902bc7f60c16, type: 3}
+  _phase2HealthThreshold: 0.5
+  _chargeDuration: 5
+  _shootDuration: 4
+  _phase2MoveSpeedMult: 1.5
+  _phase2StateDurationMult: 0.7
+  _hornetSpawnInterval: 10

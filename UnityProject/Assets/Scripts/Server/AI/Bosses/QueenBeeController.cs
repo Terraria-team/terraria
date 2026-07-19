@@ -85,9 +85,6 @@ namespace Server.AI.Bosses
             }
             else
             {
-                // Note: FlyerShooter sets BehaviorType to FlyerShooter for the ShooterState to handle _isFlying properly.
-                // It reads from _enemy.BehaviorType.
-                // We should ensure that Queen Bee has EnemyBehaviorType.FlyerShooter in EnemyData.
                 ChangeState(new ShooterState(this));
             }
         }
