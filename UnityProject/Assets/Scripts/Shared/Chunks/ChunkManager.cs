@@ -116,6 +116,7 @@ public class ChunkManager : NetworkBehaviour
     {
         return true;
         
+/*
         if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
         
         if (sender == null ) 
@@ -133,6 +134,7 @@ public class ChunkManager : NetworkBehaviour
         
         return (IsInRange(player2D, block2D)
                 && IsVisible(x, y, player2D));
+*/
     }
     
     private bool IsInRange(Vector2 playerPos, Vector2 blockPos)

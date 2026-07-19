@@ -23,7 +23,7 @@ public class PlayerController : NetworkBehaviour
 
     private ChunkManager _chunkManager;
     
-    private InventoryComponent _inventory;
+    private InventoryComponent _inventoryComponent;
     private BlockHighlight _blockHighlight;
     private Rigidbody2D _rb;
     private Collider2D _collider;
@@ -39,7 +39,7 @@ public class PlayerController : NetworkBehaviour
     {
         _chunkManager = ChunkManager.Instance;
         _playerRenderer = GetComponent<PlayerRenderer>();
-        _inventory = GetComponent<InventoryComponent>();
+        _inventoryComponent = GetComponent<InventoryComponent>();
         _blockHighlight = FindObjectOfType<BlockHighlight>();
         _healthComponent = GetComponent<HealthComponent>();
        
@@ -166,9 +166,9 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
-        if (healthBar != null && _healthComponent != null)
+        if (_inventoryComponent != null)
         {
-            healthBar.text = _healthComponent.HealthNow.ToString();
+            healthBar.text = _inventoryComponent.test_GetNonZeroItemsCount().ToString();
         }
         
         if (!isLocalPlayer) return;
@@ -194,7 +194,7 @@ public class PlayerController : NetworkBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            _inventory.UseSelectedItem();
+            _inventoryComponent.UseSelectedItem();
         }
         
         if (Input.GetKeyDown(KeyCode.C))
@@ -274,39 +274,39 @@ public class PlayerController : NetworkBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            _inventory.ChangeSelection(0);
+            _inventoryComponent.ChangeSelection(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            _inventory.ChangeSelection(1);
+            _inventoryComponent.ChangeSelection(1);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            _inventory.ChangeSelection(2);
+            _inventoryComponent.ChangeSelection(2);
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            _inventory.ChangeSelection(3);
+            _inventoryComponent.ChangeSelection(3);
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            _inventory.ChangeSelection(4);
+            _inventoryComponent.ChangeSelection(4);
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
         {
-            _inventory.ChangeSelection(5);
+            _inventoryComponent.ChangeSelection(5);
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            _inventory.ChangeSelection(6);
+            _inventoryComponent.ChangeSelection(6);
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            _inventory.ChangeSelection(7);
+            _inventoryComponent.ChangeSelection(7);
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            _inventory.ChangeSelection(8);
+            _inventoryComponent.ChangeSelection(8);
         }
     }
     

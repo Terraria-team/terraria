@@ -33,9 +33,7 @@ public class DroppedItemData : NetworkBehaviour
                 if (canAdd == 0)
                     return;
 
-                var s = ItemStack;
-                s.Decrement();
-                ItemStack = s;
+                ItemStack = ItemStack.Decremented();
                 inventoryComponent.AddItem(ItemStack.ItemID);
             }
             

@@ -447,7 +447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Shared::InventoryComponent
   syncDirection: 0
-  syncMode: 0
+  syncMode: 1
   syncInterval: 0
 --- !u!114 &-8428757503571760790
 MonoBehaviour:

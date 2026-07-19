@@ -6,12 +6,27 @@ using UnityEngine;
 public class InventoryComponent : NetworkBehaviour
 {
     public const int Depth = 4;
-    
-    private SyncList<ItemStack?> _slots = new();
+     
+    private readonly SyncList<NullableItemStack> _slots = new();
     public int SelectedSlot { get; private set; }
-    public ItemStack? GetItemAt(int slot) => _slots[slot];
-    public ItemStack? SelectedItem => _slots[SelectedSlot];
+    public NullableItemStack GetItemAt(int slot) => _slots[slot];
 
+    public int test_GetNonZeroItemsCount()
+    {
+        int count = -1;
+
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            if (count < 0)
+                count = 0;
+            
+            if (_slots[i].HasValue)
+                count++;
+        }
+        
+        return count;
+    }
+    
     public event Action OnSelectionChanged;
     public event Action OnSlotsChanged;
     
@@ -27,16 +42,18 @@ public class InventoryComponent : NetworkBehaviour
                 Debug.LogError("Detecting duplicate InventoryComponent on client");
             
             ClientOnlyInstance = this;
+            _slots.OnChange += OnSlotsReplicated;
+            OnSlotsChanged?.Invoke();
         }
     }
     
     void Start()
     {
-        if (isServer || isOwned)
+        if (isServer)
         {
             for (int i = 0; i < 9 * Depth; i++)
             {
-                _slots.Add(null);
+                _slots.Add(new NullableItemStack());
             }
 
             // TODO for test only, remove
@@ -48,10 +65,14 @@ public class InventoryComponent : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            // TODO for test only, remove
             OnSlotsChanged?.Invoke();
             OnSelectionChanged?.Invoke();
         }
+    }
+
+    private void OnSlotsReplicated(SyncList<NullableItemStack>.Operation op, int index, NullableItemStack newItem)
+    {
+        OnSlotsChanged?.Invoke();
     }
 
     public void ChangeSelection(int slotID)
@@ -63,32 +84,33 @@ public class InventoryComponent : NetworkBehaviour
         OnSelectionChanged?.Invoke();
     }
 
+    [Client]
     public void UseSelectedItem()
     {
-        if (SelectedItem is null)
+        if (!_slots[SelectedSlot].HasValue)
             return;
 
-        var clientGeneratedContext = ActionFiller.GetActionContext(SelectedItem.Value);
+        var clientGeneratedContext = ActionFiller.GetActionContext(_slots[SelectedSlot].ItemStack);
         
-        CmdUseSelectedItem(SelectedItem.Value, clientGeneratedContext);
-
-        if (SelectedItem.Value.ItemID.Value == 1)
-        {
-            _slots[SelectedSlot] = null;
-            OnSlotsChanged?.Invoke();
-        }
+        CmdUseSelectedItem(SelectedSlot, clientGeneratedContext);
     }
 
     [Command]
-    public void CmdUseSelectedItem(ItemStack stack, ActionContext context)
+    public void CmdUseSelectedItem(int selectedSlot, ActionContext context)
     {
-        // TODO validate
+        if (!_slots[selectedSlot].HasValue)
+            return;
         
         context.userPosition = transform.position;
-        ActionRegistry.ExecuteAction(stack.ItemID.ItemData.primaryAction, context);
+        ActionRegistry.ExecuteAction(_slots[selectedSlot].ItemStack.ItemID.ItemData.primaryAction, context);
         
-        
-        //RpcUseSelectedItem(stack, context);
+        if (_slots[selectedSlot].ItemStack.ItemID.Value == 1)
+        {
+            if (_slots[selectedSlot].ItemStack.Count == 1)
+                _slots[selectedSlot] = new NullableItemStack();
+            else
+                _slots[selectedSlot] = new NullableItemStack(_slots[selectedSlot].ItemStack.Decremented());
+        }
     }
 
     [ClientRpc]
@@ -104,13 +126,13 @@ public class InventoryComponent : NetworkBehaviour
 
         foreach (var slot in _slots)
         {
-            if (slot == null)
+            if (!slot.HasValue)
                 return stack.ItemID.ItemData.stackSize;
             
-            if (slot.Value.ItemID != stack.ItemID)
+            if (slot.ItemStack.ItemID != stack.ItemID)
                 continue;
             
-            capacity += stack.ItemID.ItemData.stackSize - slot.Value.Count;
+            capacity += stack.ItemID.ItemData.stackSize - slot.ItemStack.Count;
             
             if (capacity >= stack.ItemID.ItemData.stackSize)
                 return capacity;
@@ -129,21 +151,22 @@ public class InventoryComponent : NetworkBehaviour
     public void AddItem(ItemID item)
     {
         // Trying to find an existing stack and append to it
-        foreach (var slot in _slots)
+        for (var i = 0; i < _slots.Count; i++)
         {
-            if (slot == null)
-                continue;
-            
-            if (slot.Value.ItemID != item)
-                continue;
-            
-            if (slot.Value.IsFilled)
+            var slot = _slots[i];
+            if (!slot.HasValue)
                 continue;
 
-            slot.Value.Increment();
+            if (slot.ItemStack.ItemID != item)
+                continue;
+
+            if (slot.ItemStack.IsFilled)
+                continue;
+
+            _slots[i] = new NullableItemStack(_slots[i].ItemStack.Incremented());
             UpdateSlots(connectionToClient);
             OnSlotsChanged?.Invoke();
-            
+
             return;
         }
 
@@ -151,7 +174,7 @@ public class InventoryComponent : NetworkBehaviour
         for (var i = 0; i < _slots.Count; i++)
         {
             var slot = _slots[i];
-            if (slot == null)
+            if (!slot.HasValue)
             {
                 _slots[i] = new ItemStack(item);
                 UpdateSlots(connectionToClient);

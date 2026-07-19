@@ -9,12 +9,12 @@ public class InventorySlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemCountText;
     [SerializeField] private GameObject itemSelection;
     
-    public void UpdateItem(ItemStack? itemStack)
+    public void UpdateItem(NullableItemStack itemStack)
     {
-        if (itemStack is { } stack)
+        if (itemStack.HasValue)
         {
-            itemSpriteDisplay.sprite = stack.ItemID.ItemData.icon;
-            itemCountText.text = stack.Count.ToString();
+            itemSpriteDisplay.sprite = itemStack.ItemStack.ItemID.ItemData.icon;
+            itemCountText.text = itemStack.ItemStack.Count.ToString();
         }
         else
         {
