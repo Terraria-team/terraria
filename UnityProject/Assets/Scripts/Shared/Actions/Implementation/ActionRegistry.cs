@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Mirror;
 using Shared.Components;
 using UnityEngine;
@@ -16,7 +15,7 @@ public enum ActionType
 public static class ActionRegistry
 {
     private static ActionsSettings Settings => ActionsSettings.Instance;
-    public static void ExecuteAction(ActionType action, ActionContext context)
+    public static bool ExecuteAction(ActionType action, ActionContext context)
     {
         switch (action)
         {
@@ -24,13 +23,16 @@ public static class ActionRegistry
             {
                 // TODO select chunk
                 
+                if (!PlayerReachUtils.IsBlockChangeValid(context))
+                    return false;
+                
                 var currentBlock = ChunkManager.Instance.GetChunkAt(
                     context.chunkPosition    
                 ).Get(context.blockPositionX, context.blockPositionY);
 
                 // Cannot mine air
                 if (currentBlock.IsAir)
-                    break;
+                    return false;
 
                 var droppedItemData = currentBlock.BlockData.droppedItem;
                 
@@ -38,7 +40,7 @@ public static class ActionRegistry
                     context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
-                    new BlockID(0)
+                    BlockID.Air
                 );
 
                 if (droppedItemData != null)
@@ -62,12 +64,14 @@ public static class ActionRegistry
             case ActionType.PlaceBlock:
             {
                 // TODO select chunk
+                if (!PlayerReachUtils.IsBlockChangeValid(context))
+                    return false;
                 
                 ChunkManager.Instance.Place(
                     context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
-                    new BlockID(1)
+                    context.placedBlockID
                 );
                 break;
             }
@@ -134,5 +138,7 @@ public static class ActionRegistry
                 break;
             }
         }
+
+        return true;
     }
 }

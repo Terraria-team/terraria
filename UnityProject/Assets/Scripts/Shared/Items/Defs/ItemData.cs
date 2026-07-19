@@ -13,7 +13,7 @@ public class ItemData : ScriptableObject
 
     [Space] 
     [Header("Specialized data")] 
-    public ushort blockToPlace;
+    public BlockData blockToPlace;
     public int projectileToSpawn;
     public ActionSwingData swingData;
 }

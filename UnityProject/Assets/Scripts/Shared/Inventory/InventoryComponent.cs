@@ -90,7 +90,7 @@ public class InventoryComponent : NetworkBehaviour
         if (!_slots[SelectedSlot].HasValue)
             return;
 
-        var clientGeneratedContext = ActionFiller.GetActionContext(_slots[SelectedSlot].ItemStack);
+        var clientGeneratedContext = ActionFiller.GetStrippedClientContext(_slots[SelectedSlot].ItemStack);
         
         CmdUseSelectedItem(SelectedSlot, clientGeneratedContext);
     }
@@ -98,13 +98,16 @@ public class InventoryComponent : NetworkBehaviour
     [Command]
     public void CmdUseSelectedItem(int selectedSlot, ActionContext context)
     {
+        // TODO validate selected slot value
+        
         if (!_slots[selectedSlot].HasValue)
             return;
+
+        context = ActionFiller.ExpandClientContext(context, _slots[selectedSlot].ItemStack, transform.position);
         
-        context.userPosition = transform.position;
-        ActionRegistry.ExecuteAction(_slots[selectedSlot].ItemStack.ItemID.ItemData.primaryAction, context);
+        bool result = ActionRegistry.ExecuteAction(_slots[selectedSlot].ItemStack.ItemID.ItemData.primaryAction, context);
         
-        if (_slots[selectedSlot].ItemStack.ItemID.Value == 1)
+        if (_slots[selectedSlot].ItemStack.ItemID.Value == 1 && result)
         {
             if (_slots[selectedSlot].ItemStack.Count == 1)
                 _slots[selectedSlot] = new NullableItemStack();

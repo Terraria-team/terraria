@@ -11,14 +11,17 @@ public class BlockHighlight : MonoBehaviour
     [SerializeField] private TileBase yellowBlock;
     [SerializeField] private TileBase redBlock;
     [SerializeField] private TileBase greenBlock;
-
+    
     private Vector3Int highlightedTilePos;
     private bool hints = false;
     private ushort blockId = 0;
+
+    private InventoryComponent _inventoryComponent;
     
     public void InitializeHighlight()
     {
         _chunkManager = ChunkManager.Instance;
+        _inventoryComponent = GetComponent<InventoryComponent>();
         
         GameObject fg = GameObject.Find("Foreground");
         if (fg == null) return;
@@ -72,8 +75,10 @@ public class BlockHighlight : MonoBehaviour
             if (hints)
             {
                 if (!NetworkClient.active || NetworkClient.localPlayer == null) return;
+
+                var context = ActionFiller.GetFullClientContext(new ItemStack(new ItemID(1), 1), transform.position);
                 
-                if (_chunkManager.IsValidChange((byte)mouseCellPos.x, (byte)mouseCellPos.y, new BlockID(blockId), NetworkClient.localPlayer))
+                if (PlayerReachUtils.IsBlockChangeValid(context))
                 {
                     highlightTileMap.SetTile(mouseCellPos, greenBlock);
                 }
