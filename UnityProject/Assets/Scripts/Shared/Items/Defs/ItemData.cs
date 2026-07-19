@@ -7,6 +7,8 @@ public class ItemData : ScriptableObject
     public Sprite icon;
     public string unlocalizedName;
 
+    public int stackSize = 1;
+    
     public ActionType primaryAction;
 
     [Space] 

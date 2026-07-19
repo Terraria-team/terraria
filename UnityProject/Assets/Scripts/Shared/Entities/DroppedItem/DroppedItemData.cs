@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 
@@ -17,5 +18,26 @@ public class DroppedItemData : NetworkBehaviour
     public void RpcSetItemStack(ItemStack itemStack)
     {
         GetComponent<SpriteRenderer>().sprite = itemStack.ItemID.ItemData.icon;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isServer)
+        {
+            var inventoryComponent = other.gameObject.GetComponentInParent<InventoryComponent>();
+
+            while (ItemStack.Count > 0)
+            {
+                int canAdd = inventoryComponent.HowMuchCanAddOf(ItemStack);
+                
+                if (canAdd == 0)
+                    return;
+
+                ItemStack = ItemStack.Decremented();
+                inventoryComponent.AddItem(ItemStack.ItemID);
+            }
+            
+            Destroy(gameObject);
+        }
     }
 }
