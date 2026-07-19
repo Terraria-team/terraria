@@ -43,15 +43,18 @@ namespace Server.AI
         public GameObject ProjectilePrefab => _projectilePrefab;
         public void SetProjectilePrefab(GameObject prefab) => _projectilePrefab = prefab;
 
-        private IEnemyState _currentState;
+        protected IEnemyState _currentState;
         private SpriteRenderer _spriteRenderer;
 
         // ── Unity Lifecycle ───────────────────────────────────────────
-        void Awake()
+        protected virtual void Awake()
         {
             Rb = GetComponent<Rigidbody2D>();
             Col = GetComponent<Collider2D>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            
+            if (Data != null)
+                Data = Instantiate(Data);
         }
 
         public override void OnStartServer()
@@ -61,7 +64,7 @@ namespace Server.AI
         }
 
         [ServerCallback]
-        void Update()
+        protected virtual void Update()
         {
             _currentState?.UpdateState();
 
@@ -90,7 +93,7 @@ namespace Server.AI
         }
 
         [Server]
-        private void DispatchInitialState()
+        protected virtual void DispatchInitialState()
         {
             switch (BehaviorType)
             {
