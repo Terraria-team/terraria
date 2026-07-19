@@ -39,8 +39,8 @@ namespace Server.AI
 
             _timeElapsed += Time.deltaTime;
 
-            // Aim directly at the player to attack
-            Vector2 targetPos = (Vector2)_enemy.Target.position;
+            // Aim slightly above the feet to target the body
+            Vector2 targetPos = (Vector2)_enemy.Target.position + Vector2.up * 1.0f;
             Vector2 toTarget = targetPos - (Vector2)_enemy.transform.position;
 
             // Attack range check - Flyer uses contact damage
@@ -53,6 +53,17 @@ namespace Server.AI
 
             // Steering direction
             Vector2 direction = toTarget.normalized;
+
+            // Avoid dragging on the ground if not super close to the player
+            if (actualDist > 2f)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(_enemy.transform.position, Vector2.down, 1.5f, _enemy.BlockingLayer);
+                if (hit.collider != null && direction.y < 0)
+                {
+                    direction.y += (1.5f - hit.distance) * 2f;
+                    direction = direction.normalized;
+                }
+            }
 
             if (_enemy.Data.useSinusoidalFlight)
             {

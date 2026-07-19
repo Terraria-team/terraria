@@ -65,6 +65,10 @@ namespace EditorScripts
             bossInstance.transform.localScale = Vector3.one * scale;
 
             var health = bossInstance.GetComponent<Shared.Components.HealthComponent>();
+            if (health == null)
+            {
+                health = bossInstance.AddComponent<Shared.Components.HealthComponent>();
+            }
             if (health != null)
             {
                 SerializedObject serializedHealth = new SerializedObject(health);
@@ -76,6 +80,12 @@ namespace EditorScripts
             if (oldController != null)
             {
                 GameObject projPrefab = oldController.ProjectilePrefab;
+                
+                SerializedObject oldSo = new SerializedObject(oldController);
+                int gLayer = oldSo.FindProperty("_groundLayer").intValue;
+                int pLayer = oldSo.FindProperty("_playerLayer").intValue;
+                int bLayer = oldSo.FindProperty("_blockingLayer").intValue;
+
                 Object.DestroyImmediate(oldController, true);
                 
                 var newController = bossInstance.AddComponent(controllerType) as ServerEnemyController;
@@ -84,6 +94,12 @@ namespace EditorScripts
                 {
                     newController.SetProjectilePrefab(projPrefab);
                 }
+
+                SerializedObject newSo = new SerializedObject(newController);
+                newSo.FindProperty("_groundLayer").intValue = gLayer;
+                newSo.FindProperty("_playerLayer").intValue = pLayer;
+                newSo.FindProperty("_blockingLayer").intValue = bLayer;
+                newSo.ApplyModifiedProperties();
 
                 if (controllerType == typeof(KingSlimeController))
                 {
