@@ -124,3 +124,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.Run();
+
+// Для видимості у WebApplicationFactory<Program> в інтеграційних тестах.
+public partial class Program { }
