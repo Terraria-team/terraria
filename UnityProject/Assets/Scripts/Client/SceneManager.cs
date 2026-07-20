@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Auth;
+using Client.AuthorizedEndpoints;
 using UnityEngine;
 
 namespace Client
@@ -85,6 +86,8 @@ namespace Client
         {
             loginScreenRoot.SetActive(false);
             dashboardScreenRoot.SetActive(true);
+            // Explicitly trigger server list load AFTER auth token is guaranteed to be set
+            GetComponent<AuthorizedEndpointsUIView>()?.TriggerServerListRefresh();
         }
     }
-}
+}   

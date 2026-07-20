@@ -18,15 +18,9 @@ public class ChunkManager : NetworkBehaviour
 
     public Tilemap playerGrid;
     
-    [SerializeField] private float MaxDistance = 5.0f; 
+    private readonly Dictionary<Vector2Int, List<NetworkConnectionToClient>> _chunkTrackers = new();
     
-    private Dictionary<Vector2Int, List<NetworkConnectionToClient>> _chunkTrackers = new();
-    
-    public void Mine(Vector2Int chunkCoord, byte x, byte y)
-    {
-        ServerApplyChunkDelta(chunkCoord, x, y, new BlockID(0));
-    }
-
+    [Server]
     public void Place(Vector2Int chunkCoord, byte x, byte y, BlockID value)
     {
         ServerApplyChunkDelta(chunkCoord, x, y, value);
@@ -56,15 +50,9 @@ public class ChunkManager : NetworkBehaviour
     }
     
     [Server]
-    void ServerApplyChunkDelta(Vector2Int chunkCoord, byte x, byte y, BlockID value, NetworkIdentity sender = null)
+    void ServerApplyChunkDelta(Vector2Int chunkCoord, byte x, byte y, BlockID value)
     {
         // TODO validate coordinates
-        
-        if (!IsValidChange(x, y, value, sender))
-        {
-            Debug.LogWarning($"Client attempted an invalid action at {x}, {y}");
-            return; 
-        }
         
         // Build delta
         var list = new List<ChunkDeltaEntry> { new (ChunkUtils.ChunkCellIndex(x, y), value) };
@@ -86,8 +74,6 @@ public class ChunkManager : NetworkBehaviour
             _visibleChunks[chunkCoord]
         );
         
-        Debug.Log($"Applying delta: {delta.Deltas.Count}");
-        
         if (!_chunkTrackers.ContainsKey(chunkCoord))
             _chunkTrackers[chunkCoord] = new List<NetworkConnectionToClient>();
         
@@ -106,110 +92,33 @@ public class ChunkManager : NetworkBehaviour
         
         var updatedChunk = _visibleChunks[chunkCoord];
         
-        // TODO come up with something smarter than this because current approach hurts performance quite a lot
+        UpdateTileVisualBulk(chunkCoord, updatedChunk);
+    }
+    
+    private void UpdateTileVisualBulk(Vector2Int chunkCoord, ChunkData updatedChunk)
+    {
+        TileBase[] tiles = new TileBase[ChunkUtils.ChunkMaxIndex];
+
         for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
         {
-            var coords = ChunkUtils.ChunkCellCoordinates(i);
-            UpdateTileVisual(chunkCoord, coords.x, coords.y, updatedChunk[i]);
-        }
-    }
-    
-    public bool IsValidChange(byte x, byte y, BlockID value, NetworkIdentity sender)
-    {
-        return true;
-        
-        if (x < 0 || x >= ChunkUtils.ChunkSize || y < 0 || y >= ChunkUtils.ChunkSize) return false;
-        
-        if (sender == null ) 
-        {
-            Debug.LogWarning("Validation failed: Sender or player identity is null.");
-            return false;
-        }
-        
-        Vector3Int playerCellPos = playerGrid.WorldToCell(sender.transform.position);
-        
-        Vector2 player2D = new Vector2(playerCellPos.x + 0.5f, playerCellPos.y + 0.5f);
-        Vector2 block2D = new Vector2(x + 0.5f, y + 0.5f);
+            BlockID block = updatedChunk[i];
 
-        if (value.Value != 0 && IsOnPlayer(block2D, sender)) return false;
-        
-        return (IsInRange(player2D, block2D)
-                && IsVisible(x, y, player2D));
-    }
-    
-    private bool IsInRange(Vector2 playerPos, Vector2 blockPos)
-    {
-        float distance = Vector2.Distance(playerPos, blockPos);
-        if (distance > MaxDistance)
-        {
-            Debug.LogWarning($"Validation failed: Player is too far away ({distance} units).");
-            return false;
+            tiles[i] = block.IsAir
+                ? null
+                : block.BlockData.blockTexture;
         }
 
-        return true;
-    }
-    
-    private bool IsOnPlayer(Vector2 blockPos, NetworkIdentity sender)
-    {
-        Collider2D playerCollider = sender.GetComponent<Collider2D>();
-        if (playerCollider != null)
-        {
-            Bounds blockBounds = new Bounds(new Vector3(blockPos.x, blockPos.y, 0), Vector3.one);
-            if (playerCollider.bounds.Intersects(blockBounds))
-            {
-                Debug.LogWarning("Validation failed: Player in the block.");
-                return true;
-            }
-        }
+        BoundsInt bounds = new BoundsInt(
+            chunkCoord.x * ChunkUtils.ChunkSize,
+            chunkCoord.y * ChunkUtils.ChunkSize,
+            0,
+            ChunkUtils.ChunkSize,
+            ChunkUtils.ChunkSize,
+            1
+        );
 
-        return false;
+        playerGrid.SetTilesBlock(bounds, tiles);
     }
-    
-    private bool IsVisible(byte x, byte y, Vector2 playerPos)
-    {
-        int solidBlocksLayerMask = LayerMask.GetMask("Ground"); 
-        Vector2[] targetPoints = {
-            new Vector2(x + 0.5f, y + 0.5f),          // Center
-            new Vector2(x + 0.1f, y + 0.1f),         // Bottom-Left
-            new Vector2(x + 0.9f, y + 0.1f),         // Bottom-Right
-            new Vector2(x + 0.1f, y + 0.9f),         // Top-Left
-            new Vector2(x + 0.9f, y + 0.9f)          // Top-Right
-        };
-
-        foreach (Vector2 point in targetPoints)
-        {
-            RaycastHit2D hit = Physics2D.Linecast(playerPos, point, solidBlocksLayerMask);
-            if (hit.collider == null || IsHitOnTargetBlock(hit.point, x, y))
-            {
-                return true;  // is visible
-            }
-        }
-
-        Debug.LogWarning("Validation failed: No part of the block is visible to the player.");
-        return false;  // is not visible
-        
-        bool IsHitOnTargetBlock(Vector2 hitPoint, byte x, byte y)
-        {
-            float epsilon = 0.05f; 
-            return hitPoint.x >= (x - epsilon) && hitPoint.x <= (x + 1 + epsilon) &&
-                   hitPoint.y >= (y - epsilon) && hitPoint.y <= (y + 1 + epsilon);
-        }
-    }
-    
-    private void UpdateTileVisual(Vector2Int chunkCoord, byte x, byte y, BlockID value)
-    {
-        Vector3Int tilePosition = new Vector3Int(chunkCoord.x * ChunkUtils.ChunkSize + x, chunkCoord.y * ChunkUtils.ChunkSize + y, 0);
-        
-        if (value.IsAir)
-        {
-            playerGrid.SetTile(tilePosition, null);
-            return;
-        }
-        
-        TileBase tileToSet = value.BlockData.blockTexture;
-        playerGrid.SetTile(tilePosition, tileToSet);
-    }
-    
     
     void Awake()
     {
@@ -237,7 +146,8 @@ public class ChunkManager : NetworkBehaviour
     
     private void Start()
     {
-        if (isClient)
+        // TODO revisit. Might not be needed as server handles this on connection
+        /*if (isClient)
         {
             foreach (var (chunkCoord, chunkData) in _visibleChunks)
             {
@@ -252,7 +162,7 @@ public class ChunkManager : NetworkBehaviour
                     UpdateTileVisual(chunkCoord, coords.x, coords.y, chunkData[i]);
                 }
             }
-        }
+        }*/
     }
 
     public ChunkData GetChunkAt(Vector2Int chunkCoordinates)
@@ -271,7 +181,7 @@ public class ChunkManager : NetworkBehaviour
         {
             for (int chunkY = 0; chunkY < worldHeightInChunks; chunkY++)
             {
-                ChunkData newChunk = new ChunkData(new BlockID(0), false);
+                ChunkData newChunk = new ChunkData(new BlockID(0));
                 
                 for (byte localX = 0; localX < 64; localX++)
                 {
