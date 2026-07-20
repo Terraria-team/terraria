@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Налаштування збору покриття (coverlet.collector).
+
+  Мета: метрика має відображати покриття ВЛАСНОРУЧ написаного коду.
+  Тому виключаємо згенерований код, який спотворює цифри в обидва боки:
+    - EF-міграції (Migrations/) — згенеровані, «виконуються» через MigrateAsync
+      і штучно ЗАВИЩУЮТЬ line coverage;
+    - сорс-генератор Microsoft.AspNetCore.OpenApi — сотні гілок, які ніколи
+      не виконуються в тестах і штучно ЗАНИЖУЮТЬ branch coverage.
+
+  Використання:
+    dotnet test Terraria.slnx - -settings coverage.runsettings -collect:"XPlat Code Coverage"
+-->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+          <Exclude>[Lobby]Microsoft.AspNetCore.OpenApi.Generated.*,[Lobby]System.Runtime.CompilerServices.*</Exclude>
+          <!-- Лише GeneratedCode: CompilerGenerated виключати НЕ можна — він позначає
+               стейт-машини async-методів, і метрика втратила б увесь реальний код. -->
+          <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
