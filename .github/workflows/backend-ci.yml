@@ -14,6 +14,7 @@ on:
       - 'Lobby.Tests/**'
       - 'LobbyUnityShared/**'
       - 'Terraria.slnx'
+      - 'coverage.runsettings'
       - '.github/workflows/backend-ci.yml'
   pull_request:
     branches:
@@ -26,6 +27,7 @@ on:
       - 'Lobby.Tests/**'
       - 'LobbyUnityShared/**'
       - 'Terraria.slnx'
+      - 'coverage.runsettings'
       - '.github/workflows/backend-ci.yml'
 
 jobs:
@@ -53,6 +55,7 @@ jobs:
           dotnet test Terraria.slnx
           --configuration Release
           --no-build
+          --settings coverage.runsettings
           --logger "trx;LogFileName=test-results.trx"
           --collect:"XPlat Code Coverage"
           --results-directory ./TestResults
