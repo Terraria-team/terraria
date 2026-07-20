@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# pre-push: попереджувальний прогін тестів бекенду перед пушем.
+#
+# РЕЖИМ: warn-only — хук НІКОЛИ не блокує пуш (завжди exit 0).
+# Він лише повідомляє, що тести червоні, щоб про це дізнатись до CI, а не після.
+#
+# Тести запускаються лише якщо в пуші є зміни бекенду (ті самі шляхи, що в CI),
+# тож пуш суто Unity-змін не чекає на dotnet test.
+#
+# Пропустити разово: git push --no-verify
+
+set -uo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+TEST_SCRIPT="scripts/run-backend-tests.sh"
+ZERO_SHA='0000000000000000000000000000000000000000'
+
+# Шляхи бекенду — дзеркалять `paths` у .github/workflows/backend-ci.yml
+BACKEND_PATHS=(
+    'Lobby/'
+    'Lobby.Application/'
+    'Lobby.Infrastructure/'
+    'Lobby.Tests/'
+    'LobbyUnityShared/'
+    'Terraria.slnx'
+)
+
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    GREEN=$'\033[0;32m'; ORANGE=$'\033[38;5;208m'; DIM=$'\033[2m'; RESET=$'\033[0m'
+else
+    GREEN=''; ORANGE=''; DIM=''; RESET=''
+fi
+
+if [ ! -x "$TEST_SCRIPT" ]; then
+    echo "${ORANGE}⚠ pre-push: не знайдено $TEST_SCRIPT — перевірку пропущено.${RESET}"
+    exit 0
+fi
+
+# Git передає у stdin рядки: <local_ref> <local_sha> <remote_ref> <remote_sha>
+should_run=0
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+    # Видалення віддаленої гілки — перевіряти нічого.
+    [ "$local_sha" = "$ZERO_SHA" ] && continue
+
+    if [ "$remote_sha" = "$ZERO_SHA" ]; then
+        # Нова гілка: бази для порівняння немає — перевіряємо про всяк випадок.
+        should_run=1
+        break
+    fi
+
+    if [ -n "$(git diff --name-only "$remote_sha" "$local_sha" -- "${BACKEND_PATHS[@]}")" ]; then
+        should_run=1
+        break
+    fi
+done
+
+if [ "$should_run" -eq 0 ]; then
+    echo "${DIM}pre-push: змін у бекенді немає — тести пропущено.${RESET}"
+    exit 0
+fi
+
+echo "pre-push: прогін тестів бекенду…"
+
+OUTPUT_FILE="$(mktemp)"
+trap 'rm -f "$OUTPUT_FILE"' EXIT
+
+if "./$TEST_SCRIPT" > "$OUTPUT_FILE" 2>&1; then
+    echo "${GREEN}✓ pre-push: тести бекенду пройдено.${RESET}"
+    exit 0
+fi
+
+echo
+echo "${ORANGE}⚠ pre-push: ТЕСТИ БЕКЕНДУ ЧЕРВОНІ${RESET}"
+echo
+grep -E '^[[:space:]]*(Failed|Error Message|error [A-Z]+[0-9]+)|^(Failed!|Passed!)' "$OUTPUT_FILE" | head -20
+echo
+echo "${DIM}  Повний вивід: ./$TEST_SCRIPT${RESET}"
+echo "${ORANGE}  Пуш НЕ заблоковано (warn-only), але CI, найпевніше, впаде.${RESET}"
+echo
+
+exit 0
