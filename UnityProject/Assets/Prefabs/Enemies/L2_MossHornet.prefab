@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3097361059154944182}
   - component: {fileID: 2526689579016802279}
   - component: {fileID: -1105449336717315117}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: L2_MossHornet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -202,17 +202,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Data: {fileID: 11400000, guid: f98335f0ba67d9d47a56febc73536762, type: 2}
-  _projectilePrefab: {fileID: 8535036198543322807, guid: b9c8e9d11855fa545910d5f8b0156913, type: 3}
+  _projectilePrefab: {fileID: 8535036198543322807, guid: 7f9067ce94b6a1f46b8c184bbff36591, type: 3}
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1280
   _blockingLayer:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
+  isFacingRight: 1
 --- !u!95 &-1105449336717315117
 Animator:
   serializedVersion: 7

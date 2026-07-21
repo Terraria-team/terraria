@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2521119168184815868}
   - component: {fileID: 3038858747445942555}
   - component: {fileID: -4019090242903782654}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: P3_DarkCaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 1.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -202,17 +202,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Data: {fileID: 11400000, guid: a72072b7f051701439017896a9c8d2a0, type: 2}
-  _projectilePrefab: {fileID: 8535036198543322807, guid: b9c8e9d11855fa545910d5f8b0156913, type: 3}
+  _projectilePrefab: {fileID: 8535036198543322807, guid: b5d4fc2a219119d4095b94551e05cc78, type: 3}
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1280
   _blockingLayer:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
+  isFacingRight: 1
 --- !u!95 &-4019090242903782654
 Animator:
   serializedVersion: 7

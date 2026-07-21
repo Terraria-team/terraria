@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3331151144386621487}
   - component: {fileID: 4805010348312227449}
   - component: {fileID: 2286667581970406290}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: N1_Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 1.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -208,11 +208,12 @@ MonoBehaviour:
     m_Bits: 8
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1280
   _blockingLayer:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
+  isFacingRight: 1
 --- !u!95 &2286667581970406290
 Animator:
   serializedVersion: 7

@@ -25,6 +25,12 @@ namespace Server.AI
             this.lifetime = lifetime;
             this.passesThroughWalls = passesThroughWalls;
             _blockingLayer = blockingLayer;
+            
+            if (_direction != Vector2.zero)
+            {
+                transform.up = _direction;
+            }
+            
             Debug.Log($"[Projectile] Initialized. passesThroughWalls={this.passesThroughWalls}, layer={_blockingLayer.value}");
         }
 

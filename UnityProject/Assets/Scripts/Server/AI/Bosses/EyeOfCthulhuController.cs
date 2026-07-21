@@ -8,6 +8,7 @@ namespace Server.AI.Bosses
     {
         [Header("Eye of Cthulhu Phase 2")]
         [SerializeField] private GameObject _servantPrefab;
+        [SerializeField] private float _servantScale = 0.5f;
         [SerializeField] private float _phase2HealthThreshold = 0.5f;
         [SerializeField] private float _phase2MoveSpeed = 8f;
         [SerializeField] private float _phase2AttackCooldown = 0.4f;
@@ -72,12 +73,17 @@ namespace Server.AI.Bosses
         {
             if (_servantPrefab != null)
             {
-                for (int i = 0; i < 5; i++)
+                LayerMask checkMask = BlockingLayer | (1 << gameObject.layer) | LayerMask.GetMask("enemies", "Enemies");
+                for (int i = 0; i < 10; i++)
                 {
-                    Vector2 spawnPos = (Vector2)transform.position + new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f));
-                    if (Physics2D.OverlapPoint(spawnPos, BlockingLayer) == null)
+                    Vector2 offset = Random.insideUnitCircle;
+                    if (offset == Vector2.zero) offset = Vector2.up;
+                    Vector2 spawnPos = (Vector2)transform.position + offset.normalized * Random.Range(2.5f, 4.5f);
+                    
+                    if (Physics2D.OverlapCircle(spawnPos, 0.5f, checkMask) == null)
                     {
                         GameObject minion = Instantiate(_servantPrefab, spawnPos, Quaternion.identity);
+                        minion.transform.localScale = Vector3.one * _servantScale;
                         NetworkServer.Spawn(minion);
                         break;
                     }

@@ -11,54 +11,54 @@ PrefabInstance:
     - target: {fileID: 1127012728241374531, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: 1935260466075926084, guid: 2ba9f43df830bb2458f368aab31d0d7f, type: 3}
     - target: {fileID: 1127012728241374531, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1127012728241374531, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Size.x
-      value: 0.15858436
+      value: 1.6674554
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Size.y
-      value: 0.15639794
+      value: 1.1305465
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Offset.x
-      value: -0.0003990382
+      value: 0.007542491
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Offset.y
-      value: 0.00057697296
+      value: 0.0111656785
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.border.w
-      value: 0.049999997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.border.x
-      value: 0.049999997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.border.y
-      value: 0.049999997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.border.z
-      value: 0.049999997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.16
+      value: 1.64
       objectReference: {fileID: 0}
     - target: {fileID: 1750624521632135213, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.16
+      value: 1.1
       objectReference: {fileID: 0}
     - target: {fileID: 1999672390675512639, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: _assetId
@@ -66,11 +66,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3447511353222923246, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3447511353222923246, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3447511353222923246, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_LocalScale.z
@@ -116,12 +116,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4281349616985244643, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 014876d80f7c59b4ab6517e9c1d8f19e, type: 2}
     - target: {fileID: 6964260466083298150, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
       propertyPath: m_Name
       value: Boss_KingSlime
       objectReference: {fileID: 0}
+    - target: {fileID: 6964260466083298150, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 4281349616985244643, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
     - {fileID: 1327425037962911161, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -177,11 +184,12 @@ MonoBehaviour:
     m_Bits: 8
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1280
   _blockingLayer:
     serializedVersion: 2
     m_Bits: 8
   currentState: 0
   isFacingRight: 1
   _slimeMinionPrefab: {fileID: 6964260466083298150, guid: caafe4bd88081b9469c9ac4aac464f6f, type: 3}
+  _slimeScale: 0.5
   _spawnChanceOnDamage: 0.5
