@@ -12,7 +12,7 @@ public class ChunkUtils
         byte y = (byte)(index % ChunkSize);
         return (x, y);
     }
-    public static ushort ChunkCellIndex(byte x, byte y) => (ushort)(x * ChunkSize + y);
+    public static ushort ChunkCellIndex(byte x, byte y) => (ushort)(y * ChunkSize + x);
 
     public static Vector2 WorldPositionOfBlock(Vector2Int chunkCoordinates, byte x, byte y)
     {

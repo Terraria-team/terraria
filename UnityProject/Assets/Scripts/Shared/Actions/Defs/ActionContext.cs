@@ -5,6 +5,7 @@ public struct ActionContext
     public byte blockPositionX;
     public byte blockPositionY;
     public Vector2Int chunkPosition;
+    public BlockID placedBlockID;
     public Vector2 mousePosition;
     public ItemID usedItemID;
     public Vector2 userPosition;
@@ -12,7 +13,7 @@ public struct ActionContext
 
 public static class ActionFiller
 {
-    public static ActionContext GetActionContext(ItemStack usedStack)
+    public static ActionContext GetStrippedClientContext(ItemStack usedStack)
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = -Camera.main.transform.position.z;
@@ -21,7 +22,7 @@ public static class ActionFiller
         worldCoord.z = 0f;
 
         Vector3Int cellPos = ChunkManager.Instance.playerGrid.WorldToCell(worldCoord);
-
+        
         var context = new ActionContext
         {
             blockPositionX = (byte)(cellPos.x % ChunkUtils.ChunkSize),
@@ -30,10 +31,26 @@ public static class ActionFiller
                 cellPos.x / ChunkUtils.ChunkSize,
                 cellPos.y / ChunkUtils.ChunkSize
             ),
-            usedItemID = usedStack.ItemID,
             mousePosition = worldCoord
         };
         
         return context;
+    }
+
+    public static ActionContext ExpandClientContext(ActionContext clientContext, ItemStack usedStack, Vector3 userPosition)
+    {
+        clientContext.userPosition = userPosition;
+        clientContext.usedItemID = usedStack.ItemID;
+        var blockToPlace = usedStack.ItemID.ItemData.blockToPlace;
+        clientContext.placedBlockID = new BlockID(blockToPlace != null ? blockToPlace.id : (ushort)0);
+
+        return clientContext;
+    }
+
+    public static ActionContext GetFullClientContext(ItemStack usedStack, Vector3 userPosition)
+    {
+        var strippedContext = GetStrippedClientContext(usedStack);
+        
+        return ExpandClientContext(strippedContext, usedStack, userPosition);
     }
 }

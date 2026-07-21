@@ -16,4 +16,6 @@ public readonly struct BlockID : IEquatable<BlockID>, IComparable<BlockID>
     public static bool operator !=(BlockID left, BlockID right) => !left.Value.Equals(right.Value);
     public BlockData BlockData => DataManager.Blocks.Get(Value);
     public bool IsAir => Value == 0;
+    
+    public static BlockID Air => new (0);
 }
