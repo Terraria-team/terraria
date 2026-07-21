@@ -16,11 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-.AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.IncludeFields = true;
-});
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -108,9 +104,13 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddHostedService<ServerInstanceCleanupService>();
 builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+app.MapGet("/health", () => Results.Ok("Healthy"))
+    .WithName("Health")
+    .AllowAnonymous();
 
 // db migrations
 using (var scope = app.Services.CreateScope())
@@ -125,5 +125,7 @@ app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.Run();

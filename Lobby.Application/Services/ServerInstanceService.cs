@@ -17,7 +17,7 @@ public class ServerInstanceService : IServerInstanceService
 
     public async Task<List<ServerInstanceEntity>> GetAll()
     {
-        return await _repository.GetAll();
+        return await _repository.GetAllNonDeleted();
     }
 
     public async Task<ServerInstanceEntity> Create(string? name, Guid ownerId)

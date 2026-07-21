@@ -301,6 +301,12 @@ public class ServerInstanceCleanupService : BackgroundService
             dbInfo.UpdatedAt = DateTime.UtcNow;
             needsUpdate = true;
         }
+        else if (dbInfo.EmptySince == null)
+        {
+            dbInfo.EmptySince = DateTime.UtcNow;
+            dbInfo.UpdatedAt = DateTime.UtcNow;
+            needsUpdate = true;
+        }
         else if (dbInfo.PlayerCount == 0 && dbInfo.EmptySince.HasValue)
         {
             var idleTime = DateTime.UtcNow - dbInfo.EmptySince.Value;

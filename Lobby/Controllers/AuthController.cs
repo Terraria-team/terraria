@@ -24,7 +24,13 @@ public class AuthController : LobbyControllerBase
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress!.MapToIPv4();
         var res = await _authService.LoginWithGoogle(record.Code, record.RedirectUri, ipAddress.ToString());
-        return res.IsSuccessful ? Ok(res.Result) : HttpError(res.Error!);
+        return res.IsSuccessful ? 
+            Ok(new LoginTokensDto()
+        {
+            AccessToken = res.Result!.accessToken,
+            RefreshToken = res.Result!.sessionToken
+        }) 
+            : HttpError(res.Error!);
     }
     
     [HttpPost("refresh")]

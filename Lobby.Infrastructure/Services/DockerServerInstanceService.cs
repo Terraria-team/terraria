@@ -62,7 +62,7 @@ public class DockerServerInstanceService : IServerInstanceSpawner
             Image: _settings.ImageName,
             Name: name,
             Port: hostPort,
-            Status: ServerInstanceStatus.Running
+            Status: ServerInstanceStatus.Pending
         );
     }
 }
