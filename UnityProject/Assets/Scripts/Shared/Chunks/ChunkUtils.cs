@@ -8,8 +8,8 @@ public class ChunkUtils
     
     public static (byte x, byte y) ChunkCellCoordinates(ushort index)
     {
-        byte x = (byte)(index / ChunkSize);
-        byte y = (byte)(index % ChunkSize);
+        byte x = (byte)(index % ChunkSize);
+        byte y = (byte)(index / ChunkSize);
         return (x, y);
     }
     public static ushort ChunkCellIndex(byte x, byte y) => (ushort)(y * ChunkSize + x);
