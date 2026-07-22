@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab85c590da15373428aa17e94bf7e893, type: 3}
+  m_Name: Wood
+  m_EditorClassIdentifier: Shared::BlockData
+  id: 11
+  unlocalizedName: 
+  blockTexture: {fileID: 11400000, guid: 8d49c85c5d2d86949999a0abc2f5adf5, type: 2}
+  droppedItem: {fileID: 0}

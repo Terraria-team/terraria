@@ -21,11 +21,59 @@ MonoBehaviour:
     m_SerializedLabels:
     - Block
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 325850be68e6fd94d910744549fc13dd
+    m_Address: Assets/Data/WorldGeneration/Biomes/Lava.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 365c42fd34f928d40b3647b9e5f7d9ba
+    m_Address: Assets/Data/Blocks/PlatinumOre.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 39ade16061e333e4a851970d4636cfba
     m_Address: Assets/Data/Items/Pickaxe1.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ba61664f5e129a4f8e35c2c5e8bdef7
+    m_Address: Assets/Data/WorldGeneration/Biomes/ForestBiomeGenerationConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c8735c4c637dd14a9df4ea89117f381
+    m_Address: Assets/Data/WorldGeneration/Biomes/JungleCaves.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e9c35fd7132a3a43995154cda8a8ab3
+    m_Address: Assets/Data/Blocks/IronOre.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 71a00d4d350d8d145b55b7c5c803d99e
+    m_Address: Assets/Data/WorldGeneration/Biomes/Jungle.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d348bf84b65ff14b9b85fab6b5bf30c
+    m_Address: Assets/Data/Blocks/Stone.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e9acf940f63f9146b1738fe92ed23aa
+    m_Address: Assets/Data/Blocks/Water 1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 88945f5a2df83af4785a91cf27dd8b3c
     m_Address: Assets/Data/Items/Bow.asset
@@ -33,19 +81,79 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ae4a949bad5e04449d0b8a5586bb95e
+    m_Address: Assets/Data/WorldGeneration/Biomes/Caves.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4efe3ca5cb28c14599b71073b521531
+    m_Address: Assets/Data/Blocks/Stone 1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad1e5c2acd78fc54eb6163f6b23fa905
+    m_Address: Assets/Data/Blocks/JungleGrass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b18356db11c3b55459bd0b396ba8b9a2
+    m_Address: Assets/Data/WorldGeneration/SuperSmallWorldGenerationConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - WorldConfig
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b41781c61df4d9c4199f4fbb7b015c4f
     m_Address: Assets/Data/Items/Sword1.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c46c394ee8df9d24e9b7bb7340e0ba41
+    m_Address: Assets/Data/Blocks/Water.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cb22b42b7ee6de6459ab4752117ae947
     m_Address: Assets/Data/Attacks/Swings/Swing1.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb9295788a56ad24fbc1bc7aa5ae7124
+    m_Address: Assets/Data/Blocks/Dirt.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ccef8bea25fe66a47a641570fc1601d2
+    m_Address: Assets/Data/WorldGeneration/Biomes/Ocean.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cdc322b49a7a4104d9db46b0cc8dccce
+    m_Address: Assets/Data/WorldGeneration/Biomes/Desert.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Biome
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d3cec0ef711fb7646b401a0ccae7a282
     m_Address: Assets/Data/Blocks/grass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d98742cf825d4f64cb1ff78c8b601ead
+    m_Address: Assets/Data/Blocks/JungleDirt.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f90224b7de448da478d9339cd652fbd7
+    m_Address: Assets/Data/Blocks/Wood.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Block

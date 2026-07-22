@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: DefaultPlayerData
   m_EditorClassIdentifier: Shared::PlayerData
   baseSpeed: 15
+  jumpForce: 12
+  gravity: -25

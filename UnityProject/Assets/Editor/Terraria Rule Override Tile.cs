@@ -10,7 +10,6 @@ namespace Editor
     {
         private AdvancedRuleTile originalTile;
         private Texture2D newSpriteSheet;
-        private bool useAdvancedRuleOverrideTile = true;
         
         [MenuItem("Tools/Create Rule Override Tile")]
         public static void ShowWindow()
@@ -150,14 +149,14 @@ namespace Editor
             return null;
         }
 
-        private void ValidateAdvancedRuleTileIds(AdvancedRuleTile AdvancedRuleTile)
+        private void ValidateAdvancedRuleTileIds(AdvancedRuleTile advancedRuleTile)
         {
-            if (AdvancedRuleTile == null || AdvancedRuleTile.m_TilingRules == null) return;
+            if (advancedRuleTile == null || advancedRuleTile.m_TilingRules == null) return;
             
             HashSet<int> uniqueIds = new HashSet<int>();
             int startId = 0;
             bool dirty = false;
-            foreach (var rule in AdvancedRuleTile.m_TilingRules)
+            foreach (var rule in advancedRuleTile.m_TilingRules)
             {
                 if (uniqueIds.Contains(rule.m_Id))
                 {
@@ -172,7 +171,7 @@ namespace Editor
             }
             if (dirty)
             {
-                EditorUtility.SetDirty(AdvancedRuleTile);
+                EditorUtility.SetDirty(advancedRuleTile);
             }
         }
     }

@@ -10,7 +10,7 @@ public static class PlayerReachUtils
             return false;
         
         Vector2 player2D = new Vector2(context.userPosition.x + 0.5f, context.userPosition.y + 0.5f);
-        Vector2 block2D = new Vector2(context.blockPositionX + 0.5f, context.blockPositionY + 0.5f);
+        Vector2 block2D = ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY);
 
         if (IsBlockObstructingAny(block2D)) 
             return false;
@@ -30,18 +30,6 @@ public static class PlayerReachUtils
     private static bool IsBlockObstructingAny(Vector2 blockPos)
     {
         return false; // should check for all entities, not only player
-        Vector2 boxSize = Vector2.one;
-        int playerLayerMask = LayerMask.GetMask("Player");
-
-        Collider2D overlappingPlayer = Physics2D.OverlapBox(blockPos, boxSize, 0f, playerLayerMask);
-
-        if (overlappingPlayer != null)
-        {
-            Debug.LogWarning("Validation failed: A player is in the block.");
-            return true;
-        }
-
-        return false;
     }
 
 }

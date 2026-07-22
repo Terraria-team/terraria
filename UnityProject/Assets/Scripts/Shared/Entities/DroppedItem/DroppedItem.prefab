@@ -146,7 +146,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!50 &5190311551825898419
 Rigidbody2D:
@@ -164,7 +164,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8a9e204c80f0fcf4b9cc5441b5c65518, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

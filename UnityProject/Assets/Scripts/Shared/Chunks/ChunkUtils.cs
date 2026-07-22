@@ -22,4 +22,9 @@ public class ChunkUtils
         
         return chunkCoordinatesWorldPosition + blockWorldOffset;
     }
+
+    public static Vector2 WorldPositionOfChunkCenter(Vector2Int chunkCoordinates)
+    {
+        return new Vector2(chunkCoordinates.x * ChunkSize + ChunkSize / 2, chunkCoordinates.y * ChunkSize + ChunkSize / 2);
+    }
 }
