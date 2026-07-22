@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
+  m_Name: Caves
+  m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  biomeType: 3
+  associatedColor: {r: 0.4264151, g: 0.4264151, b: 0.4264151, a: 1}
+  blocks:
+  - {fileID: 11400000, guid: 7d348bf84b65ff14b9b85fab6b5bf30c, type: 2}
+  ores:
+  - {fileID: 11400000, guid: 5e9c35fd7132a3a43995154cda8a8ab3, type: 2}
+  oresFrequency: 0.035
+  oresSpread: 0.03
+  usesSurface: 0
+  baseSurfaceWeight: 1
+  noiseSurfaceWeight: 1
+  usesGrass: 0
+  grassDepth: 1
+  usesCaves: 1
+  cavesThreshold: 15
+  baseSurfaceLevel: 220
+  noiseType: 3
+  fractalType: 1
+  fractalLacunarity: 2
+  fractalGain: 0.5
+  amplitudeY: 40
+  frequencyY: 0.03
+  octavesY: 3
+  amplitudeX: 5
+  frequencyX: 0.05
+  octavesX: 7
+  caveFrequency: 0.05
+  tunnelThickness: 0.35
+  caveSeedOffset1: 100
+  caveSeedOffset2: 200

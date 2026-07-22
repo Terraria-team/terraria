@@ -21,8 +21,6 @@ public static class ActionRegistry
         {
             case ActionType.BreakBlock:
             {
-                // TODO select chunk
-                
                 if (!PlayerReachUtils.IsBlockChangeValid(context))
                     return false;
                 

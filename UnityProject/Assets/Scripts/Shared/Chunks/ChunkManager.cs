@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Core.WorldGeneration;
 using Mirror;
-using Server.SODefinitions;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -14,11 +12,14 @@ public class ChunkManager : NetworkBehaviour
     private Dictionary<Vector2Int, ChunkData> _visibleChunks = new();
     
     [SerializeField] private WorldGenerationConfig worldConfig; 
-    [SerializeField] private BiomeGenerationConfig forestConfig;  
+    
+    public Vector2Int WorldSize => new (worldConfig.Width, worldConfig.Height);
 
     public Tilemap playerGrid;
     
     private readonly Dictionary<Vector2Int, List<NetworkConnectionToClient>> _chunkTrackers = new();
+
+    public bool clientHasFinishedApplying;
     
     [Server]
     public void Place(Vector2Int chunkCoord, byte x, byte y, BlockID value)
@@ -37,7 +38,7 @@ public class ChunkManager : NetworkBehaviour
 
         if (!_chunkTrackers[chunkCoord].Contains(subscriber))
         {
-            Debug.Log($"Subscribed: {subscriber}");
+            //Debug.Log($"Subscribed: {subscriber}");
             _chunkTrackers[chunkCoord].Add(subscriber); // TODO rewrite to set
             
             var fullDelta = new SparseChunkDelta(
@@ -118,6 +119,7 @@ public class ChunkManager : NetworkBehaviour
         );
 
         playerGrid.SetTilesBlock(bounds, tiles);
+        clientHasFinishedApplying = true;
     }
     
     void Awake()
@@ -132,16 +134,11 @@ public class ChunkManager : NetworkBehaviour
     
     private void GenerateAndInjectWorldToChunkManager()
     {
-        var biomeConfigs = new Dictionary<BiomeType, IBiomeGenerationConfig>
-        {
-            { BiomeType.Forest, forestConfig }
-        };
+        MapGenerator generator = new MapGenerator();
+        Dictionary<Vector2Int, ChunkData> chunks = generator.GenerateMapChunks();
         
-        MapGenerator generator = new MapGenerator(worldConfig, biomeConfigs);
-        BlockType[,] rawMap = generator.Generate();
-        
-        _initialChunks = SliceMapIntoChunks(rawMap);
-        _visibleChunks = SliceMapIntoChunks(rawMap);
+        _initialChunks = new Dictionary<Vector2Int, ChunkData>(chunks);;
+        _visibleChunks = new Dictionary<Vector2Int, ChunkData>(chunks);;
     }
     
     private void Start()
@@ -169,34 +166,28 @@ public class ChunkManager : NetworkBehaviour
     {
         return _visibleChunks[chunkCoordinates];
     }
-    
-    private Dictionary<Vector2Int, ChunkData> SliceMapIntoChunks(BlockType[,] rawMap)
+
+    public Vector3 GetCastPositionFromChunk(Vector2Int chunkCoordinates)
     {
-        var result = new Dictionary<Vector2Int, ChunkData>();
+        var x = (byte)(ChunkUtils.ChunkSize / 2 + 1);
 
-        int worldHeightInChunks = worldConfig.Height / ChunkUtils.ChunkSize;
-        int worldWidthInChunks = worldConfig.Width / ChunkUtils.ChunkSize;
-
-        for (int chunkX = 0; chunkX < worldWidthInChunks; chunkX++)
+        for (int yCoords = WorldSize.y - 1; yCoords >= 0; yCoords--)
         {
-            for (int chunkY = 0; chunkY < worldHeightInChunks; chunkY++)
+            chunkCoordinates.y = yCoords;
+            
+            for (byte y = ChunkUtils.ChunkSize - 1; y > 0; y--)
             {
-                ChunkData newChunk = new ChunkData(new BlockID(0));
-                
-                for (byte localX = 0; localX < 64; localX++)
+                var block = _initialChunks[chunkCoordinates].Get(x, y);
+
+                if (!block.IsAir)
                 {
-                    for (byte localY = 0; localY < 64; localY++)
-                    {
-                        int globalX = chunkX * 64 + localX;
-                        int globalY = chunkY * 64 + localY;
-                        
-                        ushort blockValue = (ushort)rawMap[globalX, globalY];
-                        newChunk.Set(localX, localY, new BlockID(blockValue));
-                    }
+                    return ChunkUtils.WorldPositionOfBlock(chunkCoordinates, x, y) + Vector2.up;
                 }
-                result.Add(new Vector2Int(chunkX, chunkY), newChunk);
             }
         }
-        return result;
+        
+        chunkCoordinates.y = WorldSize.y - 1;
+        Debug.LogError("No free spawn position found");
+        return ChunkUtils.WorldPositionOfBlock(chunkCoordinates, x, 63);
     }
 }

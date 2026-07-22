@@ -130,16 +130,21 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer) return;
         
         // TODO rewrite to actually scan chunks around player and only request ones within range.
-        _chunkManager.CmdSubscribeToChunk(new Vector2Int(0, 0));
-        
+        for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
+        {
+            for (int y = 0; y < ChunkManager.Instance.WorldSize.y; y++)
+            {
+                _chunkManager.CmdSubscribeToChunk(new Vector2Int(x, y));
+            }
+        }
         TrySwitchingInventorySlot();
 
         if (!_hasSpawnedOnSurface)
         {
-            if (_chunkManager != null)
+            if (_chunkManager != null && _chunkManager.clientHasFinishedApplying)
             {
                 _rb.bodyType = RigidbodyType2D.Dynamic; // Enable physics now that the map is ready
-                RepositionToSurface();
+                //RepositionToSurface();
                 _hasSpawnedOnSurface = true;
             }
             else

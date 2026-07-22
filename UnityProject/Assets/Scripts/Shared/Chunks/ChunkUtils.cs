@@ -8,8 +8,8 @@ public class ChunkUtils
     
     public static (byte x, byte y) ChunkCellCoordinates(ushort index)
     {
-        byte x = (byte)(index / ChunkSize);
-        byte y = (byte)(index % ChunkSize);
+        byte x = (byte)(index % ChunkSize);
+        byte y = (byte)(index / ChunkSize);
         return (x, y);
     }
     public static ushort ChunkCellIndex(byte x, byte y) => (ushort)(y * ChunkSize + x);
@@ -21,5 +21,10 @@ public class ChunkUtils
         Vector2 blockWorldOffset = new Vector2(x + 0.5f, y + 0.5f);
         
         return chunkCoordinatesWorldPosition + blockWorldOffset;
+    }
+
+    public static Vector2 WorldPositionOfChunkCenter(Vector2Int chunkCoordinates)
+    {
+        return new Vector2(chunkCoordinates.x * ChunkSize + ChunkSize / 2, chunkCoordinates.y * ChunkSize + ChunkSize / 2);
     }
 }
