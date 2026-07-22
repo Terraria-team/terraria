@@ -10,6 +10,7 @@ namespace Shared.Components
     {
         public event Action OnDamageFlashed;
         public event Action OnHealingFlashed;
+        public event Action<int> OnDamageTakenServer;
         
         [Header("Health Stats")]
         [SerializeField][SyncVar(hook = "OnHealthChange")]
@@ -19,6 +20,7 @@ namespace Shared.Components
         private int MaxHealth = 100;
 
         public int HealthNow => CurrentHealth;
+        public int HealthMax => MaxHealth;
         
         void OnHealthChange(int oldHealth, int newHealth)
         {
@@ -35,6 +37,8 @@ namespace Shared.Components
             }
 
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+            
+            OnDamageTakenServer?.Invoke(amount);
             
             RpcTriggerDamageFlash();
         }

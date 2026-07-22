@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6852065256925418072}
   - component: {fileID: 3796824913582314546}
   - component: {fileID: 2086900823903662058}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 1278980426699285513}
   - component: {fileID: 5475066628247078929}
   - component: {fileID: 8492867728617995885}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,9 +259,9 @@ GameObject:
   - component: {fileID: -8428757503571760790}
   - component: {fileID: -5807446401820172822}
   - component: {fileID: 2342717509115296667}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player_2d
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -506,7 +506,7 @@ GameObject:
   - component: {fileID: 2279086084958204583}
   - component: {fileID: 2954491323016807364}
   - component: {fileID: 5559279292929855351}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: Triangle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
