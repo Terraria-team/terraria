@@ -15,4 +15,4 @@ MonoBehaviour:
   id: 11
   unlocalizedName: 
   blockTexture: {fileID: 11400000, guid: 8d49c85c5d2d86949999a0abc2f5adf5, type: 2}
-  droppedItem: {fileID: 0}
+  droppedItem: {fileID: 11400000, guid: 8a5432036d837b24780a3a42ac19781d, type: 2}

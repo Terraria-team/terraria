@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: cdcc6ad4dc38b004188dbc67824168a1
   m_SerializeEntries:
+  - m_GUID: 0f2a036920dc53d489265f220e26d9c6
+    m_Address: Assets/Data/Items/PlatinumOre.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21c4aa08a31edbb428824232ab317a12
     m_Address: Assets/Data/Blocks/air.asset
     m_ReadOnly: 0
@@ -39,6 +45,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4089b587d0987a44a9538c116fd4a7b1
+    m_Address: Assets/Data/Items/JungleDirt.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ba61664f5e129a4f8e35c2c5e8bdef7
     m_Address: Assets/Data/WorldGeneration/Biomes/ForestBiomeGenerationConfig.asset
     m_ReadOnly: 0
@@ -50,6 +62,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Biome
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e49eebfff1c8d34e985534486cab688
+    m_Address: Assets/Data/Items/Sand.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e9c35fd7132a3a43995154cda8a8ab3
     m_Address: Assets/Data/Blocks/IronOre.asset
@@ -81,6 +99,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a5432036d837b24780a3a42ac19781d
+    m_Address: Assets/Data/Items/Wood.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ae4a949bad5e04449d0b8a5586bb95e
     m_Address: Assets/Data/WorldGeneration/Biomes/Caves.asset
     m_ReadOnly: 0
@@ -99,6 +123,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Block
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af4e4469410035b4ba5853bcc9eaadc5
+    m_Address: Assets/Data/Items/IronOre.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b18356db11c3b55459bd0b396ba8b9a2
     m_Address: Assets/Data/WorldGeneration/SuperSmallWorldGenerationConfig.asset
     m_ReadOnly: 0
@@ -107,6 +137,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b41781c61df4d9c4199f4fbb7b015c4f
     m_Address: Assets/Data/Items/Sword1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd7d90fc95bc0c949a0ef2e44ad2fb77
+    m_Address: Assets/Data/Items/Stone.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
