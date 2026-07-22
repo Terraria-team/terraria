@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
+  m_Name: Jungle
+  m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  biomeType: 4
+  associatedColor: {r: 0.5959052, g: 0.7433963, b: 0.57087225, a: 1}
+  blocks:
+  - {fileID: 11400000, guid: ad1e5c2acd78fc54eb6163f6b23fa905, type: 2}
+  - {fileID: 11400000, guid: d98742cf825d4f64cb1ff78c8b601ead, type: 2}
+  ores: []
+  oresNoise: 0
+  usesSurface: 1
+  baseSurfaceWeight: 1
+  noiseSurfaceWeight: 1
+  usesGrass: 1
+  grassDepth: 6
+  usesCaves: 1
+  cavesThreshold: 35
+  baseSurfaceLevel: 320
+  noiseType: 3
+  fractalType: 1
+  fractalLacunarity: 2
+  fractalGain: 0.5
+  amplitudeY: 15
+  frequencyY: 0.03
+  octavesY: 3
+  amplitudeX: 5
+  frequencyX: 0.05
+  octavesX: 7
+  caveFrequency: 0.07
+  tunnelThickness: 0.3
+  caveSeedOffset1: 100
+  caveSeedOffset2: 200

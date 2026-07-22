@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6bcb0da58d4b8ba9e99afc6ac60568, type: 3}
   m_Name: SuperSmallWorldGenerationConfig
   m_EditorClassIdentifier: Server::Server.SODefinitions.WorldGenerationConfig
-  width: 512
-  height: 512
+  width: 12
+  height: 6
   seed: 1337

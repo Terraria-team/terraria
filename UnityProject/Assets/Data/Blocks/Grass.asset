@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Shared::BlockData
   id: 1
   unlocalizedName: 
-  sprite: {fileID: -226667626, guid: 88159294d3774d44b8523ab7dcf91888, type: 3}
-  blockTexture: {fileID: 11400000, guid: 182b5021277e2d74db0f895280313f06, type: 2}
+  blockTexture: {fileID: 11400000, guid: 28a4757cef2417e4d8d31768cb191ced, type: 2}
+  droppedItem: {fileID: 11400000, guid: ff4128e1d77197e40abe5578f049b9fe, type: 2}

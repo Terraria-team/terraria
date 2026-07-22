@@ -22,7 +22,7 @@ namespace Shared.Components
         
         void OnHealthChange(int oldHealth, int newHealth)
         {
-            Debug.Log($"Current health: {newHealth}");
+            
         }
 
         [Command(requiresAuthority = false)]

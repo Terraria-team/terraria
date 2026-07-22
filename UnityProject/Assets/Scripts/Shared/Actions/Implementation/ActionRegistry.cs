@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Mirror;
 using Shared.Components;
 using UnityEngine;
@@ -16,32 +15,68 @@ public enum ActionType
 public static class ActionRegistry
 {
     private static ActionsSettings Settings => ActionsSettings.Instance;
-    public static void ExecuteAction(ActionType action, ActionContext context)
+    public static bool ExecuteAction(ActionType action, ActionContext context)
     {
         switch (action)
         {
             case ActionType.BreakBlock:
             {
-                // TODO select chunk
+                if (!PlayerReachUtils.IsBlockChangeValid(context))
+                    return false;
+                
+                var currentBlock = ChunkManager.Instance.GetChunkAt(
+                    context.chunkPosition    
+                ).Get(context.blockPositionX, context.blockPositionY);
+
+                // Cannot mine air
+                if (currentBlock.IsAir)
+                    return false;
+
+                var droppedItemData = currentBlock.BlockData.droppedItem;
                 
                 ChunkManager.Instance.Place(
                     context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
-                    new BlockID(0)
+                    BlockID.Air
                 );
+
+                if (droppedItemData != null)
+                {
+                    var droppedItem = Object.Instantiate(
+                        Settings.DroppedItemPrefab,
+                        ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY),
+                        Quaternion.identity
+                    );
+                    NetworkServer.Spawn(droppedItem);
+                
+                    droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(new ItemStack(
+                        new ItemID(droppedItemData.id)    
+                    ));
+                }
+                
+                
                 break;
             }
 
             case ActionType.PlaceBlock:
             {
                 // TODO select chunk
+                if (!PlayerReachUtils.IsBlockChangeValid(context))
+                    return false;
+                
+                var currentBlock = ChunkManager.Instance.GetChunkAt(
+                    context.chunkPosition    
+                ).Get(context.blockPositionX, context.blockPositionY);
+                
+                if (!currentBlock.IsAir)
+                    return false;
                 
                 ChunkManager.Instance.Place(
                     context.chunkPosition,
                     context.blockPositionX, 
                     context.blockPositionY, 
-                    new BlockID(1)
+                    context.placedBlockID
                 );
                 break;
             }
@@ -108,5 +143,7 @@ public static class ActionRegistry
                 break;
             }
         }
+
+        return true;
     }
 }

@@ -129,3 +129,6 @@ app.UseAuthorization();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+// Для видимості у WebApplicationFactory<Program> в інтеграційних тестах.
+public partial class Program { }

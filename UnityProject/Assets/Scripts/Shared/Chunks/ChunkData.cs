@@ -1,24 +1,17 @@
 using System;
-using UnityEngine;
-using Random = System.Random;
 
 public readonly struct ChunkData
 {
-    public ChunkData(BlockID initialValue, bool randomize)
+    public ChunkData(BlockID initialValue)
     {
         _matrix = new BlockID[ChunkUtils.ChunkMaxIndex];
         
         Array.Fill(_matrix, initialValue);
-        
-        if (!randomize)
-            return;
-        
-        Random rand = new Random();
-        for (int i = 0; i < ChunkUtils.ChunkMaxIndex / 2; i++)
-        {
-            int index = rand.Next(0, ChunkUtils.ChunkMaxIndex);
-            _matrix[index] = new BlockID(0);
-        }
+    }
+
+    public ChunkData(BlockID[] matrix)
+    {
+        _matrix = matrix;
     }
     
     private readonly BlockID[] _matrix;
@@ -30,5 +23,10 @@ public readonly struct ChunkData
     {
         get => _matrix[index];
         set => _matrix[index] = value;
+    }
+
+    public ChunkData Clone()
+    {        
+        return new ChunkData((BlockID[])_matrix.Clone());
     }
 }

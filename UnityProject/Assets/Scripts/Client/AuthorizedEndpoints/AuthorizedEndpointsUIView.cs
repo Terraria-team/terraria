@@ -43,6 +43,11 @@ namespace Client.AuthorizedEndpoints
             SetLoadingState(false);
         }
 
+        public void TriggerServerListRefresh()
+        {
+            OnGetServersClicked?.Invoke();
+        }
+
         private void OnDestroy()
         {
             _presenter?.Dispose();
