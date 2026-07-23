@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4869464154170834874}
   - component: {fileID: 3300251247417093339}
   m_Layer: 0
-  m_Name: EnemyProjectile_L2
+  m_Name: EnemyProjectile_L1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,12 +85,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 8533281683547905364, guid: d483913cf1a09e047911bb13fd33e657, type: 3}
+  m_Sprite: {fileID: 8533281683547905364, guid: 65680650fe011fc47a709c9892658be2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.1, y: 0.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -156,17 +156,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.000000029802322, y: 0.0012641251}
+  m_Offset: {x: 0, y: 0.0018005222}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.1, y: 0.2}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 0.1, y: 0.2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.11513764, y: 0.21879315}
+  m_Size: {x: 0.1573807, y: 0.35543218}
   m_EdgeRadius: 0
 --- !u!114 &4869464154170834874
 MonoBehaviour:
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 68783276
+  _assetId: 2820732013
   serverOnly: 0
   visibility: 0
   hasSpawned: 0

@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: cdcc6ad4dc38b004188dbc67824168a1
   m_SerializeEntries:
+  - m_GUID: 09bfe1570749be344b8b90a66f6240be
+    m_Address: Assets/Data/Enemies/D1_ManEater.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0f2a036920dc53d489265f220e26d9c6
     m_Address: Assets/Data/Items/PlatinumOre.asset
     m_ReadOnly: 0
@@ -51,6 +57,24 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a2b37d37b14c3b419448dda8b080976
+    m_Address: Assets/Data/Enemies/Boss_QueenBee.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4c653df9a0298a24cb7aba8fcd712ca2
+    m_Address: Assets/Data/Enemies/Boss_KingSlime.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5393a1eb97cb6df4eb4c85e5ace59d2c
+    m_Address: Assets/Data/Enemies/P2_SkeletonArcher.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ba61664f5e129a4f8e35c2c5e8bdef7
     m_Address: Assets/Data/WorldGeneration/Biomes/ForestBiomeGenerationConfig.asset
     m_ReadOnly: 0
@@ -81,6 +105,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Biome
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76f281e74615f0540b5cd9f3516b4f10
+    m_Address: Assets/Data/Enemies/Boss_EyeofCthulhu.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d348bf84b65ff14b9b85fab6b5bf30c
     m_Address: Assets/Data/Blocks/Stone.asset
     m_ReadOnly: 0
@@ -92,6 +122,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84dc5fc10425f8641a2a965624910e8f
+    m_Address: Assets/Data/Enemies/L1_DemonEye.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 88945f5a2df83af4785a91cf27dd8b3c
     m_Address: Assets/Data/Items/Bow.asset
@@ -117,11 +153,23 @@ MonoBehaviour:
     m_SerializedLabels:
     - Block
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a72072b7f051701439017896a9c8d2a0
+    m_Address: Assets/Data/Enemies/P3_DarkCaster.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ad1e5c2acd78fc54eb6163f6b23fa905
     m_Address: Assets/Data/Blocks/JungleGrass.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aee69fa049729e74f94d978bd46f9664
+    m_Address: Assets/Data/Enemies/P1_Skeleton.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: af4e4469410035b4ba5853bcc9eaadc5
     m_Address: Assets/Data/Items/IronOre.asset
@@ -188,11 +236,29 @@ MonoBehaviour:
     m_SerializedLabels:
     - Block
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3300eb02487b094e99acb850c8150a1
+    m_Address: Assets/Data/Enemies/N1_Zombie.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f90224b7de448da478d9339cd652fbd7
     m_Address: Assets/Data/Blocks/Wood.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f98335f0ba67d9d47a56febc73536762
+    m_Address: Assets/Data/Enemies/L2_MossHornet.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc46537fb9595854f82a91bebd50ef4e
+    m_Address: Assets/Data/Enemies/N1_Slime.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Enemy
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ff4128e1d77197e40abe5578f049b9fe
     m_Address: Assets/Data/Items/Block1.asset

@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: cdcc6ad4dc38b004188dbc67824168a1
   m_currentHash:
     serializedVersion: 2
-    Hash: c58689c7aba91db31ab4fb5db0af8856
+    Hash: 4ed67ace6a519991e8d4b03fe737a2c9
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -108,6 +108,7 @@ MonoBehaviour:
     - Entity
     - Biome
     - WorldConfig
+    - Enemy
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 25a57fcdfe5d6ae4ea6ae6c9c30c42a9, type: 2}

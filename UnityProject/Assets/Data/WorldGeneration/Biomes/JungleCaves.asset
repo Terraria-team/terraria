@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
   biomeType: 5
   associatedColor: {r: 0.13089179, g: 0.2528302, b: 0.11019579, a: 1}
+  allowedEnemies:
+  - {fileID: 11400000, guid: 09bfe1570749be344b8b90a66f6240be, type: 2}
+  - {fileID: 11400000, guid: 5393a1eb97cb6df4eb4c85e5ace59d2c, type: 2}
+  - {fileID: 11400000, guid: a72072b7f051701439017896a9c8d2a0, type: 2}
   blocks:
   - {fileID: 11400000, guid: 7d348bf84b65ff14b9b85fab6b5bf30c, type: 2}
   ores:

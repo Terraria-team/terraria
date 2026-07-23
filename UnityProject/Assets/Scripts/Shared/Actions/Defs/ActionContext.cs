@@ -27,10 +27,7 @@ public static class ActionFiller
         {
             blockPositionX = (byte)(cellPos.x % ChunkUtils.ChunkSize),
             blockPositionY = (byte)(cellPos.y % ChunkUtils.ChunkSize),
-            chunkPosition = new Vector2Int(
-                cellPos.x / ChunkUtils.ChunkSize,
-                cellPos.y / ChunkUtils.ChunkSize
-            ),
+            chunkPosition = ChunkUtils.ChunkCoordsAtWorldPosition(new Vector2(cellPos.x, cellPos.y)),
             mousePosition = worldCoord
         };
         

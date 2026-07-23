@@ -6,6 +6,8 @@ namespace Shared.DataDefinitions
     [CreateAssetMenu(fileName = "EnemyData", menuName = "Scriptable Objects/EnemyData")]
     public class EnemyData : ScriptableObject
     {
+        public GameObject Prefab => EnemiesPrefabsSettings.Instance.GetEnemy(enemyName);
+        
         [Header("Identity")]
         public string enemyName = "Enemy";
         public EnemyBehaviorType behaviorType = EnemyBehaviorType.Fighter;

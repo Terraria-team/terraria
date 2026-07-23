@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Core.WorldGeneration;
+using Shared.DataDefinitions;
 
 [CreateAssetMenu(fileName = "NewBiomeGenerationConfig", menuName = "Terrain/BiomeGenerationConfig")]
 public class BiomeGenerationData : ScriptableObject
@@ -8,6 +10,9 @@ public class BiomeGenerationData : ScriptableObject
     public BiomeType BiomeType => biomeType;
 
     public Color associatedColor;
+    
+    [Header("Enemies")]
+    public EnemyData[] allowedEnemies;
     
     [Header("Blocks")]
     public BlockData[] blocks;

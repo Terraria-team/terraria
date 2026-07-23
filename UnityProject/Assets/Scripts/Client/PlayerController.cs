@@ -1,7 +1,11 @@
+using System;
+using Core.WorldGeneration;
 using Mirror;
 using Shared.Components;
 using TMPro;
 using UnityEngine;
+using UnityEngine.XR;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -120,8 +124,55 @@ public class PlayerController : NetworkBehaviour
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
     
+    [SerializeField] private float cooldown = 3f;
+    private float lastSpawnTime = -Mathf.Infinity;
+
+    void TrySpawningAround()
+    {
+        const float visionRange = 96;
+
+        if (Time.time - lastSpawnTime >= cooldown)
+            lastSpawnTime = Time.time;
+        else
+            return;
+
+        for (int i = 0; i < 100; i++)
+        {
+            float spawnAngle = Random.Range(0, 6.283f);
+            Vector3 pos = transform.position + visionRange * new Vector3((float)Math.Cos(spawnAngle), (float)Math.Sin(spawnAngle), 0);
+        
+            var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(pos));
+            var data = DataManager.Biomes[type];
+        
+            int randomIndex = Random.Range(0, data.allowedEnemies.Length);
+            var randomEnemy = data.allowedEnemies[randomIndex];
+            
+            Bounds bounds = randomEnemy.Prefab.GetComponent<Collider2D>().bounds;
+            Collider2D[] results = new Collider2D[1];
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.useTriggers = false;
+
+            int hitCount = Physics2D.OverlapBox(pos, bounds.size, 0f, filter, results);
+            
+            if (hitCount != 0)
+                continue;
+        
+            var spawned = Instantiate(randomEnemy.Prefab,
+                pos,
+                Quaternion.identity
+            );
+            NetworkServer.Spawn(spawned);
+            break;
+        }
+    }
+    
     void Update()
     {
+        if (isServer)
+        {
+            TrySpawningAround();    
+        }
+        
         if (_healthComponent != null)
         {
             healthBar.text = _healthComponent.HealthNow.ToString();
@@ -129,14 +180,17 @@ public class PlayerController : NetworkBehaviour
         
         if (!isLocalPlayer) return;
         
-        // TODO rewrite to actually scan chunks around player and only request ones within range.
         for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
         {
             for (int y = 0; y < ChunkManager.Instance.WorldSize.y; y++)
             {
-                _chunkManager.CmdSubscribeToChunk(new Vector2Int(x, y));
+                Vector2Int chunkCoords = new Vector2Int(x, y);
+                
+                if (ChunkManager.IsChunkRelevantFor(chunkCoords, transform.position))
+                    _chunkManager.CmdSubscribeToChunk(new Vector2Int(x, y));
             }
         }
+        
         TrySwitchingInventorySlot();
 
         if (!_hasSpawnedOnSurface)
