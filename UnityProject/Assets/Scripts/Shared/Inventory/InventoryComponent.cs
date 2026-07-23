@@ -73,6 +73,29 @@ public class InventoryComponent : NetworkBehaviour
         var clientGeneratedContext = ActionFiller.GetStrippedClientContext(_slots[SelectedSlot].ItemStack);
         
         CmdUseSelectedItem(SelectedSlot, clientGeneratedContext);
+
+        // Client-side hit detection for melee (Swing) attacks
+        var itemData = _slots[SelectedSlot].ItemStack.ItemID.ItemData;
+        if (itemData.primaryAction == ActionType.Swing && itemData.swingData != null)
+        {
+            float swingDamage = itemData.swingData.swingDamage;
+            float swingRange = itemData.swingData.swingSize;
+
+            // Detect nearby enemies around the player
+            var colliders = Physics2D.OverlapCircleAll(transform.position, swingRange > 0 ? swingRange : 2f);
+            foreach (var col in colliders)
+            {
+                // Skip self
+                if (col.transform.IsChildOf(transform) || col.gameObject == gameObject)
+                    continue;
+
+                var health = col.GetComponent<Shared.Components.HealthComponent>();
+                if (health != null)
+                {
+                    health.ApplyDamageServerRpc(Mathf.Max(1, (int)swingDamage));
+                }
+            }
+        }
     }
 
     [Command]

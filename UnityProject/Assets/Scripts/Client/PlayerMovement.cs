@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -18,6 +19,17 @@ public class PlayerMovement : MonoBehaviour
     private float _jumpBufferCounter = 0f;
     private float _coyoteTimeCounter = 0f;
     private float _jumpCooldownTimer = 0f;
+
+    // ── Fall Damage ──────────────────────────────────────────
+    /// <summary>Fired when the player lands with enough velocity to take damage. Parameter is the damage amount.</summary>
+    public event Action<int> OnFallDamage;
+
+    [SerializeField]
+    private const float FallDamageVelocityThreshold = -15f; // safe landing speed
+    [SerializeField]
+    private const float FallDamageMultiplier = 2f;           // damage per unit of excess velocity
+    private bool _wasGroundedLastFrame = true;
+    private float _velocityYBeforeLanding;
 
     public void Initialize(PlayerData playerData, PlayerRenderer playerRenderer)
     {
@@ -48,7 +60,26 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_enabled) return;
 
+        // Capture velocity BEFORE we check ground so we know impact speed.
+        _velocityYBeforeLanding = _rb.linearVelocity.y;
+
+        bool wasGrounded = _isGrounded;
         _isGrounded = CheckGrounded() && _jumpCooldownTimer <= 0f;
+
+        // ── Fall Damage Detection ────────────────────────────
+        if (_isGrounded && !_wasGroundedLastFrame)
+        {
+            if (_velocityYBeforeLanding < FallDamageVelocityThreshold)
+            {
+                float excessSpeed = Mathf.Abs(_velocityYBeforeLanding) - Mathf.Abs(FallDamageVelocityThreshold);
+                int damage = Mathf.CeilToInt(excessSpeed * FallDamageMultiplier);
+                if (damage > 0)
+                {
+                    OnFallDamage?.Invoke(damage);
+                }
+            }
+        }
+        _wasGroundedLastFrame = _isGrounded;
 
         // Store the current Y velocity that Unity's gravity engine calculated.
         float currentVelocityY = _rb.linearVelocity.y;
