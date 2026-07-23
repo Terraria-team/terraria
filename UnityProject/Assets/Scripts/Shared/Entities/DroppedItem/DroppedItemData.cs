@@ -26,6 +26,9 @@ public class DroppedItemData : NetworkBehaviour
         {
             var inventoryComponent = other.gameObject.GetComponentInParent<InventoryComponent>();
 
+            if (inventoryComponent == null)
+                return;
+                
             while (ItemStack.Count > 0)
             {
                 int canAdd = inventoryComponent.HowMuchCanAddOf(ItemStack);
