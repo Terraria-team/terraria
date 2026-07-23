@@ -1,12 +1,12 @@
-using Lobby.Application.Entities;
-using Lobby.Infrastructure.Repositories;
+using Lobby.Application.Domain;
+using Lobby.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lobby.Tests.Integration;
 
 /// <summary>
 /// Перевірки для CRUD, зайнятості email, пагінації,
-/// завантаження Google-логіна та каскадне видалення пов'язаних сутностей.
+/// завантаження зовнішніх ідентичностей та каскадне видалення пов'язаних сутностей.
 /// </summary>
 [Collection(PostgresCollection.Name)]
 public class EfPlayerRepositoryTests : IAsyncLifetime
@@ -63,12 +63,15 @@ public class EfPlayerRepositoryTests : IAsyncLifetime
         Assert.False(await repository.IsEmailTakenAsync("free@example.com", Guid.NewGuid()));
     }
 
-    // GetByEmail повертає гравця разом із приєднаним Google-логіном (Include).
+    // GetByEmail повертає гравця разом із приєднаними зовнішніми ідентичностями (Include).
     [DockerFact]
-    public async Task GetByEmail_IncludesGoogleLogin()
+    public async Task GetByEmail_IncludesExternalIdentities()
     {
         var player = Player("google@example.com");
-        player.GoogleLogin = new PlayerGoogleLoginEntity { PlayerId = player.Id, GoogleId = "google-42" };
+        player.ExternalIdentities.Add(new PlayerExternalIdentityEntity
+        {
+            PlayerId = player.Id, Provider = "Google", ExternalId = "google-42"
+        });
         await using (var context = _db.CreateContext())
         {
             context.Players.Add(player);
@@ -79,8 +82,9 @@ public class EfPlayerRepositoryTests : IAsyncLifetime
         var found = await new EfPlayerRepository(readContext).GetByEmail("google@example.com");
 
         Assert.NotNull(found);
-        Assert.NotNull(found.GoogleLogin);
-        Assert.Equal("google-42", found.GoogleLogin.GoogleId);
+        var identity = Assert.Single(found.ExternalIdentities);
+        Assert.Equal("Google", identity.Provider);
+        Assert.Equal("google-42", identity.ExternalId);
     }
 
     // GetAll сортує за Id та коректно застосовує skip/take.
@@ -144,12 +148,15 @@ public class EfPlayerRepositoryTests : IAsyncLifetime
         Assert.Null(await repository.Update(Player("ghost@example.com")));
     }
 
-    // Видалення гравця каскадно видаляє його refresh-токени та Google-логін.
+    // Видалення гравця каскадно видаляє його refresh-токени та зовнішні ідентичності.
     [DockerFact]
-    public async Task Delete_CascadesToTokensAndGoogleLogin()
+    public async Task Delete_CascadesToTokensAndExternalIdentities()
     {
         var player = Player("cascade@example.com");
-        player.GoogleLogin = new PlayerGoogleLoginEntity { PlayerId = player.Id, GoogleId = "google-cascade" };
+        player.ExternalIdentities.Add(new PlayerExternalIdentityEntity
+        {
+            PlayerId = player.Id, Provider = "Google", ExternalId = "google-cascade"
+        });
         await using (var context = _db.CreateContext())
         {
             context.Players.Add(player);
@@ -174,7 +181,7 @@ public class EfPlayerRepositoryTests : IAsyncLifetime
         await using var readContext = _db.CreateContext();
         Assert.False(await readContext.Players.AnyAsync());
         Assert.False(await readContext.RefreshTokens.AnyAsync());
-        Assert.False(await readContext.PlayerGoogleLogins.AnyAsync());
+        Assert.False(await readContext.PlayerExternalIdentities.AnyAsync());
     }
 
     // Видалення неіснуючого гравця повертає false і нічого не змінює.

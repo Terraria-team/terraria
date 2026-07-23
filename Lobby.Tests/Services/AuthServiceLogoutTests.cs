@@ -1,8 +1,8 @@
-using Lobby.Application.Contracts;
-using Lobby.Application.Entities;
+using Lobby.Application.Contracts.ExternalServices;
+using Lobby.Application.Contracts.Repositories;
+using Lobby.Application.Domain;
 using Lobby.Application.Models;
-using Lobby.Application.Services;
-using Lobby.Application.Settings;
+using Lobby.Application.UseCases;
 using Moq;
 
 namespace Lobby.Tests.Services;
@@ -26,13 +26,13 @@ public class AuthServiceLogoutTests
     }
 
     private AuthService CreateSut() => new(
-        googleAuthService: Mock.Of<IGoogleAuthService>(),
+        externalAuthProvider: Mock.Of<IExternalAuthProvider>(),
         jwtService: Mock.Of<IJwtService>(),
-        googleLoginRepository: Mock.Of<IPlayerGoogleLoginRepository>(),
+        identityRepository: Mock.Of<IPlayerExternalIdentityRepository>(),
         playerRepository: Mock.Of<IPlayerRepository>(),
         refreshTokenRepository: _refreshTokenRepository.Object,
         tokenService: _tokenService.Object,
-        jwtSettings: new JwtSettings());
+        refreshTokenSettings: new RefreshTokenSettings());
 
     private static RefreshTokenEntity Token(Guid playerId, DateTime expiresAt) => new()
     {
