@@ -10,7 +10,6 @@ namespace Lobby.Tests.Integration;
 [Collection(PostgresCollection.Name)]
 public class EfServerInstanceRepositoryTests : IAsyncLifetime
 {
-    // Дублює fallback-порт із EfServerInstanceRepository.GetFreeInstancePort().
     private const int BasePort = 7777;
 
     private readonly PostgresDatabaseFixture _db;
@@ -20,10 +19,11 @@ public class EfServerInstanceRepositoryTests : IAsyncLifetime
     public Task InitializeAsync() => _db.ResetAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
-    // Оновлено для використання ініціалізатора об'єкта (class) замість позиційного конструктора (record)
     private static ServerInstanceEntity Instance(int port)
     {
         var worldId = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
+
         return new ServerInstanceEntity
         {
             Id = Guid.NewGuid(),
@@ -41,9 +41,16 @@ public class EfServerInstanceRepositoryTests : IAsyncLifetime
             World = new TerrariaWorldEntity
             {
                 Id = worldId,
-                OwnerId = Guid.NewGuid(),
+                OwnerId = ownerId,
                 Name = $"World_For_Port_{port}",
-                StorageId = null
+                StorageId = null,
+                Owner = new PlayerEntity
+                {
+                    Id = ownerId,
+                    Email = $"owner_{port}@example.com",
+                    Name = $"Test Owner {port}",
+                    Role = "User"
+                }
             }
         };
     }
