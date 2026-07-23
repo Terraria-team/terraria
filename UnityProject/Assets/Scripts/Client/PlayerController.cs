@@ -217,14 +217,14 @@ public class PlayerController : NetworkBehaviour
             healthBar.text = _healthComponent.HealthNow.ToString();
         }
         
+        if (!isLocalPlayer || _isDead) return;
+        
         var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(transform.position));
         var data = DataManager.Biomes[type];
         
-        if (data.background != null)
+        if (data.background != null && backgroundRenderer != null)
             backgroundRenderer.sprite = data.background;
 
-        if (!isLocalPlayer || _isDead) return;
-        
         for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
         {
             for (int y = 0; y < ChunkManager.Instance.WorldSize.y; y++)
