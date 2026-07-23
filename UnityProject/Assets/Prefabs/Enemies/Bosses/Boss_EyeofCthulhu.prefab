@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5237735334699380760
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1394249355202679006, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: _assetId
+      value: 3158140507
+      objectReference: {fileID: 0}
+    - target: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Name
+      value: Boss_EyeofCthulhu
+      objectReference: {fileID: 0}
+    - target: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711025427336029470, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 28439c81dab397d44999599316849245, type: 2}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5352245587915773318, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Size.x
+      value: 1.1282045
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Size.y
+      value: 1.5643657
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.00020295382
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.002246201
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383042892863472340, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1.54
+      objectReference: {fileID: 0}
+    - target: {fileID: 8695039532267123485, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6520936677976288497, guid: dc930694af080814d805f56777eafa05, type: 3}
+    - target: {fileID: 8695039532267123485, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8695039532267123485, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 707692612065227362, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5679865443543845697}
+    - targetCorrespondingSourceObject: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6520773056187294099}
+  m_SourcePrefab: {fileID: 100100000, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+--- !u!1 &7623545234685879382 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+  m_PrefabInstance: {fileID: 5237735334699380760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5679865443543845697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7623545234685879382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3887c3f3db40d3bef302d1ba6587c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shared::Shared.Components.HealthComponent
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  CurrentHealth: 0
+  MaxHealth: 2800
+--- !u!114 &6520773056187294099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7623545234685879382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0caf8f06ae47cee4a97c6e8bac9a5635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Server::Server.AI.Bosses.EyeOfCthulhuController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Data: {fileID: 11400000, guid: 76f281e74615f0540b5cd9f3516b4f10, type: 2}
+  _projectilePrefab: {fileID: 0}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  _playerLayer:
+    serializedVersion: 2
+    m_Bits: 1280
+  _blockingLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  currentState: 0
+  isFacingRight: 1
+  _servantPrefab: {fileID: 2412919458824082510, guid: 9dd6deeaae779c743825105d8b33b63d, type: 3}
+  _servantScale: 0.3
+  _phase2HealthThreshold: 0.5
+  _phase2MoveSpeed: 8
+  _phase2AttackCooldown: 0.4
+  _servantSpawnInterval: 8

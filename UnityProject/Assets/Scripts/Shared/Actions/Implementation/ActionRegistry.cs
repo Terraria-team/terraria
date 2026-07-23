@@ -14,7 +14,7 @@ public enum ActionType
 
 public static class ActionRegistry
 {
-    private static ActionsSettings Settings => ActionsSettings.Instance;
+    private static ActionsPrefabsSettings PrefabsSettings => ActionsPrefabsSettings.Instance;
     public static bool ExecuteAction(ActionType action, ActionContext context)
     {
         switch (action)
@@ -44,7 +44,7 @@ public static class ActionRegistry
                 if (droppedItemData != null)
                 {
                     var droppedItem = Object.Instantiate(
-                        Settings.DroppedItemPrefab,
+                        PrefabsSettings.droppedItemPrefab,
                         ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY),
                         Quaternion.identity
                     );
@@ -89,7 +89,7 @@ public static class ActionRegistry
                 Vector2 projectileLocation = context.userPosition + projectileDirection * 1.5f;
                 
                 var projectile = Object.Instantiate(
-                    Settings.ProjectilePrefab,
+                    PrefabsSettings.projectilePrefab,
                     projectileLocation,
                     Quaternion.identity
                 );
@@ -117,7 +117,7 @@ public static class ActionRegistry
                 Vector2 swingLocation = context.userPosition + swingDirection * swingDistance;
                 
                 var swingObject = Object.Instantiate(
-                    Settings.SwingPrefab,
+                    PrefabsSettings.swingPrefab,
                     swingLocation,
                     Quaternion.identity
                 );

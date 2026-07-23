@@ -17,6 +17,7 @@ MonoBehaviour:
   unlocalizedName: 
   stackSize: 5
   primaryAction: 1
+  consumeOnAction: 1
   blockToPlace: {fileID: 11400000, guid: 5e9c35fd7132a3a43995154cda8a8ab3, type: 2}
   projectileToSpawn: 0
   swingData: {fileID: 0}

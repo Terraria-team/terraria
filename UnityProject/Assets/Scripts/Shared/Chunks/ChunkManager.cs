@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Core.WorldGeneration;
 using Mirror;
@@ -30,7 +31,9 @@ public class ChunkManager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CmdSubscribeToChunk(Vector2Int chunkCoord, NetworkConnectionToClient subscriber = null)
     {
-        // TODO check whether subscription is valid
+        if (!IsChunkRelevantFor(chunkCoord, subscriber.identity.gameObject.transform.position))
+            return;
+        
         // TODO validate coordinates
         
         if (!_chunkTrackers.ContainsKey(chunkCoord))
@@ -48,6 +51,11 @@ public class ChunkManager : NetworkBehaviour
 
             TargetReceiveChunkDelta(subscriber, chunkCoord, fullDelta);
         }
+    }
+
+    public static bool IsChunkRelevantFor(Vector2Int chunkCoords, Vector3 position)
+    {
+        return (ChunkUtils.WorldPositionOfChunkCenter(chunkCoords) - new Vector2(position.x, position.y)).magnitude < 64;
     }
     
     [Server]
@@ -69,6 +77,7 @@ public class ChunkManager : NetworkBehaviour
         }
         
         _visibleChunks[chunkCoord] = delta.Apply(_visibleChunks[chunkCoord]);
+        UpdateTileVisualBulk(chunkCoord, _visibleChunks[chunkCoord]);
 
         var fullDelta = new SparseChunkDelta(
             _initialChunks[chunkCoord],
@@ -78,11 +87,23 @@ public class ChunkManager : NetworkBehaviour
         if (!_chunkTrackers.ContainsKey(chunkCoord))
             _chunkTrackers[chunkCoord] = new List<NetworkConnectionToClient>();
         
-        foreach (var tracker in _chunkTrackers[chunkCoord])
+        var trackers = _chunkTrackers[chunkCoord];
+        var toRemove = new List<NetworkConnectionToClient>();
+
+        foreach (var tracker in trackers)
         {
-            // TODO check whether subscription is still valid and remove if out of range
-            
+            if (!IsChunkRelevantFor(chunkCoord, tracker.identity.gameObject.transform.position))
+            {
+                toRemove.Add(tracker);
+                continue;
+            }
+
             TargetReceiveChunkDelta(tracker, chunkCoord, fullDelta);
+        }
+
+        foreach (var tracker in toRemove)
+        {
+            trackers.Remove(tracker);
         }
     }
 
@@ -140,7 +161,24 @@ public class ChunkManager : NetworkBehaviour
         _initialChunks = new Dictionary<Vector2Int, ChunkData>(chunks);;
         _visibleChunks = new Dictionary<Vector2Int, ChunkData>(chunks);;
     }
-    
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        
+        if (NetworkServer.active)
+        {
+            for (int x = 0; x < WorldSize.x; x++)
+            {
+                for (int y = 0; y < WorldSize.y; y++)
+                {
+                    Vector2Int chunkCoords = new Vector2Int(x, y);
+                
+                    UpdateTileVisualBulk(chunkCoords, _visibleChunks[chunkCoords]);
+                }
+            }
+        }
+    }
+
     private void Start()
     {
         // TODO revisit. Might not be needed as server handles this on connection

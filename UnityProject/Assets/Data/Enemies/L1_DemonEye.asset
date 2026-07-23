@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae9c9298f5df0745b0c4f9d784a4094, type: 3}
+  m_Name: L1_DemonEye
+  m_EditorClassIdentifier: 
+  enemyName: Demon Eye
+  behaviorType: 1
+  sprite: {fileID: -4887698836003496542, guid: 30c7ac039d762404f80af7539b697c8d, type: 3}
+  moveSpeed: 2
+  jumpForce: 0
+  detectionRange: 10
+  loseTargetRange: 16
+  attackRange: 1.2
+  attackCooldown: 1.2
+  attackDamage: 8
+  stepCheckDistance: 0.7
+  gapCheckDepth: 2.5
+  wallCheckHeight: 0.5
+  headClearHeight: 2.2
+  useSinusoidalFlight: 1
+  sinFrequency: 3
+  sinAmplitude: 2
+  preferredShootDistance: 6
+  projectileSpeed: 8
+  projectileLifetime: 4
+  projectilePassesThroughWalls: 0
