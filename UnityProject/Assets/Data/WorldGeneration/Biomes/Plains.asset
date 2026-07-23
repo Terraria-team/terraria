@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: Plains
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: -4080826950943035868, guid: 8237637d50407d44aa1932d7a645b3f1, type: 3}
   biomeType: 0
   associatedColor: {r: 0.14532095, g: 1, b: 0, a: 1}
   allowedEnemies:

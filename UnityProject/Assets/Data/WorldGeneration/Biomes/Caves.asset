@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: Caves
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: 4491541389571779225, guid: 6d7357ec1c248fb4484f946390ec7de7, type: 3}
   biomeType: 3
   associatedColor: {r: 0.4264151, g: 0.4264151, b: 0.4264151, a: 1}
   allowedEnemies:

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: Lava
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: -6134996046765574710, guid: 20b6b1f6165e2484792a629d97906261, type: 3}
   biomeType: 6
   associatedColor: {r: 1, g: 0.016336443, b: 0, a: 1}
   allowedEnemies:

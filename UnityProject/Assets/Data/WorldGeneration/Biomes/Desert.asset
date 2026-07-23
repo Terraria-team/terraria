@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: Desert
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: -1437452193226301509, guid: b3f37aa765f634c49a5c5c2d47802b21, type: 3}
   biomeType: 1
   associatedColor: {r: 1, g: 0.98686194, b: 0, a: 1}
   allowedEnemies:

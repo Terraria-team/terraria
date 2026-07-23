@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
         _playerData = playerData;
         _playerRenderer = playerRenderer;
         _rb = GetComponent<Rigidbody2D>();
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _collider = GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();
         _enabled = true;

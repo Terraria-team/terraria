@@ -314,9 +314,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  backgroundRenderer: {fileID: 0}
   healthBar: {fileID: 8492867728617995885}
   uiPrefab: {fileID: 8176624637013669728, guid: bc90622679ea93941abab2e7f06e36c3, type: 3}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
+  playerName: 
+  cooldown: 3
 --- !u!114 &8650986358743929723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +401,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &1851186625785558539
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

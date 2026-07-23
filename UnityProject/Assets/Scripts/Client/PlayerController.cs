@@ -12,6 +12,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private SpriteRenderer backgroundRenderer;
     [SerializeField] private TextMeshProUGUI healthBar;
     [SerializeField] private GameObject uiPrefab;
 
@@ -61,6 +62,8 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer)
             return;
             
+        backgroundRenderer = GameObject.FindWithTag("Background").GetComponent<SpriteRenderer>();
+        
         string myName = Client.Auth.AuthService.Instance.CurrentNickname;
         if (string.IsNullOrEmpty(myName)) myName = "Player";
         CmdSetName(myName);
@@ -142,7 +145,7 @@ public class PlayerController : NetworkBehaviour
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
     
-    [SerializeField] private float cooldown = 3f;
+    [SerializeField] private float cooldown = 9f;
     private float lastSpawnTime = -Mathf.Infinity;
 
     void TrySpawningAround()
@@ -202,6 +205,12 @@ public class PlayerController : NetworkBehaviour
         }
         
         if (!isLocalPlayer) return;
+        
+        var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(transform.position));
+        var data = DataManager.Biomes[type];
+        
+        if (data.background != null)
+            backgroundRenderer.sprite = data.background;
         
         for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
         {
