@@ -1,3 +1,4 @@
+using Lobby.Application.Entities;
 using Lobby.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
@@ -9,7 +10,8 @@ namespace Lobby.Tests.Integration;
 /// </summary>
 public sealed class PostgresDatabaseFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:17-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
+        .WithImage("postgres:17-alpine")
         .Build();
 
     public async Task InitializeAsync()
@@ -29,8 +31,9 @@ public sealed class PostgresDatabaseFixture : IAsyncLifetime
         await using var context = CreateContext();
         await context.RefreshTokens.ExecuteDeleteAsync();
         await context.PlayerGoogleLogins.ExecuteDeleteAsync();
-        await context.Players.ExecuteDeleteAsync();
         await context.ServerInstances.ExecuteDeleteAsync();
+        await context.Set<TerrariaWorldEntity>().ExecuteDeleteAsync();
+        await context.Players.ExecuteDeleteAsync();
     }
 
     public async Task DisposeAsync() => await _container.DisposeAsync();

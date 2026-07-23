@@ -210,6 +210,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -335,6 +336,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba5017426f2a3429ca6a908f29cb14a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Client::BiomeBackground
+  transitionSpeed: 2
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3800,7 +3814,7 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 6026004524852160811, guid: b7aa8cdf5d2d2944da14b260bd9b4949, type: 3}
+  playerPrefab: {fileID: 601497370789672367, guid: a6faf859f42625e4d8d1a7d06b35d672, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
@@ -3820,7 +3834,6 @@ MonoBehaviour:
   - {fileID: 5979367603353593055, guid: 3f3ca058cd35807439bbecff13bf13fb, type: 3}
   - {fileID: 7014284000785131102, guid: ea7fa9a758a9c0a418b27b217452daf7, type: 3}
   - {fileID: 7857928852023087912, guid: e22f07ae9067bc44480167582b056410, type: 3}
-  - {fileID: 6026004524852160811, guid: b7aa8cdf5d2d2944da14b260bd9b4949, type: 3}
   - {fileID: 492539786732240098, guid: a8544341a41c4e241b67e5d403d80b47, type: 3}
   - {fileID: 6265147207640750725, guid: 0edcb09e117ab3f49897f6b1399d762e, type: 3}
   exceptionsDisconnect: 1

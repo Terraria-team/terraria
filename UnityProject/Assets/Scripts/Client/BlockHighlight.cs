@@ -35,7 +35,7 @@ public class BlockHighlight : MonoBehaviour
     
         highlightTileMap = tilemapGo.AddComponent<Tilemap>();
         TilemapRenderer tr = tilemapGo.AddComponent<TilemapRenderer>();
-        tr.sortingLayerName = "UI";
+        tr.sortingLayerName = "Highlight";
         tr.sortingOrder = 0;
     }
     

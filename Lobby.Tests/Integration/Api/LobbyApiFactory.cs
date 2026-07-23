@@ -59,13 +59,18 @@ public sealed class FakeServerInstanceSpawner : IServerInstanceSpawner
 {
     public const string ContainerIdPrefix = "fake-container-";
 
-    public Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(int port, string name) =>
-        Task.FromResult(new ServerInstanceSpawnInfoEntity(
+    public Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(Guid id, string name)
+    {
+        // Додано порт, оскільки раніше змінна не була оголошена
+        const int port = 7777; 
+        
+        return Task.FromResult(new ServerInstanceSpawnInfoEntity(
             ContainerId: $"{ContainerIdPrefix}{port}",
             Image: "fake/terraria-server:test",
             Name: name,
             Port: port,
             Status: ServerInstanceStatus.Running));
+    }
 }
 
 /// <summary>
