@@ -27,4 +27,12 @@ public class ChunkUtils
     {
         return new Vector2(chunkCoordinates.x * ChunkSize + ChunkSize / 2, chunkCoordinates.y * ChunkSize + ChunkSize / 2);
     }
+
+    public static Vector2Int ChunkCoordsAtWorldPosition(Vector2 worldPosition)
+    {
+        return new Vector2Int(
+            (int)worldPosition.x / ChunkSize,
+            (int)worldPosition.y / ChunkSize
+        );
+    }
 }

@@ -45,6 +45,7 @@ public class InventoryComponent : NetworkBehaviour
             _slots[1] = new ItemStack(new ItemID(1));
             _slots[2] = new ItemStack(new ItemID(2));
             _slots[3] = new ItemStack(new ItemID(3));
+            _slots[4] = new ItemStack(new ItemID(6));
         }
 
         if (isLocalPlayer)
@@ -91,7 +92,7 @@ public class InventoryComponent : NetworkBehaviour
         
         bool result = ActionRegistry.ExecuteAction(_slots[selectedSlot].ItemStack.ItemID.ItemData.primaryAction, context);
         
-        if (_slots[selectedSlot].ItemStack.ItemID.Value == 1 && result)
+        if (_slots[selectedSlot].ItemStack.ItemID.ItemData.consumeOnAction && result)
         {
             if (_slots[selectedSlot].ItemStack.Count == 1)
                 _slots[selectedSlot] = new NullableItemStack();

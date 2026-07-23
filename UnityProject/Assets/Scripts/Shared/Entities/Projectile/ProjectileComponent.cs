@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProjectileComponent : MonoBehaviour
 {
-    private static ActionsSettings Settings => ActionsSettings.Instance;
+    private static ActionsPrefabsSettings PrefabsSettings => ActionsPrefabsSettings.Instance;
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (NetworkServer.active)
@@ -15,7 +15,7 @@ public class ProjectileComponent : MonoBehaviour
             }
             
             var explosion = Object.Instantiate(
-                Settings.SwingPrefab,
+                PrefabsSettings.swingPrefab,
                 transform.position,
                 Quaternion.identity
             );

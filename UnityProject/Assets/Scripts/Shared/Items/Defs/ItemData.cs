@@ -9,7 +9,11 @@ public class ItemData : ScriptableObject
 
     public int stackSize = 1;
     
+    [Space]
+    [Header("Usage")]
+    
     public ActionType primaryAction;
+    public bool consumeOnAction;
 
     [Space] 
     [Header("Specialized data")] 

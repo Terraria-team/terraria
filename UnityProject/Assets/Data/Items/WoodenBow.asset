@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebe69a55c7f55d2409e851144eca918b, type: 3}
-  m_Name: WoodenPickaxe
+  m_Name: WoodenBow
   m_EditorClassIdentifier: Shared::ItemData
-  id: 0
-  icon: {fileID: 21300000, guid: 71c7058171540274ba4d5a881b938341, type: 3}
+  id: 2
+  icon: {fileID: 21300000, guid: 3bdcce0feb379ef42a928a46e788ae43, type: 3}
   unlocalizedName: 
   stackSize: 1
-  primaryAction: 0
+  primaryAction: 2
+  consumeOnAction: 0
   blockToPlace: {fileID: 0}
   projectileToSpawn: 0
   swingData: {fileID: 0}

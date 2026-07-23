@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
   biomeType: 1
   associatedColor: {r: 1, g: 0.98686194, b: 0, a: 1}
+  allowedEnemies:
+  - {fileID: 11400000, guid: 84dc5fc10425f8641a2a965624910e8f, type: 2}
   blocks:
   - {fileID: 11400000, guid: a4efe3ca5cb28c14599b71073b521531, type: 2}
   ores: []
-  oresNoise: 0
+  oresFrequency: 0
+  oresSpread: 0
   usesSurface: 1
   baseSurfaceWeight: 1
   noiseSurfaceWeight: 1

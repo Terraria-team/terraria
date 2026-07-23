@@ -11,7 +11,7 @@ public class PlayerRenderer : NetworkBehaviour
     public Color playerColor = Color.white;
 
     [SyncVar(hook = nameof(OnRotationChanged))]
-    public bool playerFacingLeft = false;
+    public bool playerFacingLeft = true;
 
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private int damageFlashTime = 15;
@@ -38,34 +38,10 @@ public class PlayerRenderer : NetworkBehaviour
         }
     }
     
-    public void ChangeColor()
-    {
-        CmdChangeColor();
-    }
-    
-    // 2. COMMAND: Called by a Client, but executed ONLY on the Server.
-    // Method names must start with "Cmd".
-    [Command]
-    void CmdChangeColor()
-    {
-        // The server generates a random color and updates the SyncVar.
-        // Because it's a SyncVar, this automatically pushes the new color to all clients.
-        playerColor = new Color(Random.value, Random.value, Random.value);
-
-        // The server also triggers an RPC to send a message to everyone.
-        RpcLogChange("A player changed their color!");
-    }
-    
     [Command]
     void CmdChangeDirection(bool newDirection)
     {
         playerFacingLeft = newDirection;
-    }
-    
-    [ClientRpc]
-    void RpcLogChange(string message)
-    {
-        Debug.Log($"[Server says]: {message}");
     }
 
     [Command]
@@ -109,7 +85,7 @@ public class PlayerRenderer : NetworkBehaviour
     {
         if (playerRenderer != null)
         {
-            playerRenderer.flipY = newRotation;
+            playerRenderer.flipX = !newRotation;
         }
     }
 }
