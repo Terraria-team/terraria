@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Lobby.Infrastructure.Services;
+using Lobby.Infrastructure.ExternalServices;
 
 namespace Lobby.Tests.Services;
 

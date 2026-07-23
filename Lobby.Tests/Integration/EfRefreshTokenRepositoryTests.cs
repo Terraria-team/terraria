@@ -1,5 +1,5 @@
-using Lobby.Application.Entities;
-using Lobby.Infrastructure.Repositories;
+using Lobby.Application.Domain;
+using Lobby.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lobby.Tests.Integration;

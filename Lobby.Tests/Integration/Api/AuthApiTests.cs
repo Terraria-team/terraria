@@ -47,9 +47,10 @@ public class AuthApiTests : IAsyncLifetime
     [DockerFact]
     public async Task GoogleLogin_FirstLogin_ReturnsTokensAndCreatesPlayer()
     {
-        _api.Factory.GoogleAuth.NextResult = new PlayerGoogleLoginModel
+        _api.Factory.GoogleAuth.NextResult = new PlayerExternalIdentityModel
         {
-            GoogleId = "google-1",
+            ExternalId = "google-1",
+            Provider = "Google",
             Email = "new@example.com",
             Name = "New Player",
             Role = "User"
@@ -66,9 +67,11 @@ public class AuthApiTests : IAsyncLifetime
 
         await _api.WithDb(async db =>
         {
-            var player = await db.Players.Include(p => p.GoogleLogin).SingleAsync();
+            var player = await db.Players.Include(p => p.ExternalIdentities).SingleAsync();
             Assert.Equal("new@example.com", player.Email);
-            Assert.Equal("google-1", player.GoogleLogin!.GoogleId);
+            var identity = Assert.Single(player.ExternalIdentities);
+            Assert.Equal("Google", identity.Provider);
+            Assert.Equal("google-1", identity.ExternalId);
             Assert.Equal(1, await db.RefreshTokens.CountAsync());
         });
     }

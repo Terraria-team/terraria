@@ -32,51 +32,74 @@ open TestResults/CoverageReport/index.html
 
 ## Backend
 
-**Станом на:** 20.07.2026 · 50 тестів (20 юніт + 30 інтеграційних) · xUnit, запускаються в CI
+**Станом на:** 23.07.2026 · 50 тестів (20 юніт + 30 інтеграційних) · xUnit, запускаються в CI
+
+Тести адаптовано під нову DDD-структуру (`Domain` / `UseCases` / `Persistence` /
+`ExternalServices`) і під заміну Google-специфіки на узагальнений `IExternalAuthProvider`.
 
 ### Загальні метрики
 
-| Метрика | Значення | Що означає |
+| Метрика | Значення | Було 20.07 | Що означає |
+|---|---|---|---|
+| **Line coverage** | **64.4%** (639 / 992) | 79.9% (481 / 602) | скільки рядків виконалось хоч раз |
+| **Branch coverage** | **21.8%** (43 / 197) | 64.5% (31 / 48) | скільки гілок `if`/`switch`/`&&` пройдено (обидва напрямки) |
+| **Method coverage** | **77%** (181 / 235) | 85% (136 / 160) | скільки методів викликано хоч раз |
+| **Full method coverage** | **74%** (174 / 235) | 81.8% (131 / 160) | скільки методів покрито *повністю* |
+
+| Клас | Line | Гілок покрито |
 |---|---|---|
-| **Line coverage** | **79.9%** (481 / 602) | скільки рядків виконалось хоч раз |
-| **Branch coverage** | **64.5%** (31 / 48) | скільки гілок `if`/`switch`/`&&` пройдено (обидва напрямки) |
-| **Method coverage** | **85%** (136 / 160) | скільки методів викликано хоч раз |
-| **Full method coverage** | **81.8%** (131 / 160) | скільки методів покрито *повністю* |
+| `ServerInstanceCleanupService` | 13% | 2 / 72 |
+| `ServerInstanceContainerProcessor` | 0% | 0 / 26 |
+| `DockerServerInstanceService` | 0% | 0 / 10 |
+| `LobbyToServerAuthFilter` | 0% | 0 / 4 |
+| `InternalServerInstancesController` | 0% | 0 / 4 |
+| `ContainerAction` | 0% | — |
+
+Тобто **branch coverage 21.8% — це метрика нетестованої підсистеми контейнерів**, а не
+регрес автентифікації: `AuthService` тримає 100% рядків і 14 / 14 гілок.
 
 ### За збірками
 
-| Збірка | Line coverage |
-|---|---|
-| `Lobby.Application` | 90.5% |
-| `Lobby` | 85% |
-| `Lobby.Infrastructure` | 68.8% |
-| `LobbyUnityShared` | 100% |
+| Збірка | Line coverage | Було 20.07 |
+|---|---|---|
+| `Lobby.Application` | 84.3% | 90.5% |
+| `Lobby` | **45.8%** | 85% |
+| `Lobby.Infrastructure` | 66.9% | 68.8% |
+| `LobbyUnityShared` | 94.7% | 100% |
+
+Обвал `Lobby` з 85% до 45.8% — це цілком hosted services і внутрішній API контейнерів.
 
 ### Покрито повністю (100%)
 
 | Клас | Чим покрито |
 |---|---|
-| `AuthService` | юніт-тести (**28 / 28 гілок** — усі шляхи помилок) |
-| `ServerInstanceService` | юніт-тести |
+| `AuthService` | юніт-тести (**14 / 14 гілок** — усі шляхи помилок) |
 | `JwtService`, `TokenService` | юніт-тести |
 | `EfRefreshTokenRepository` | інтеграційні (Testcontainers + PostgreSQL) |
-| `EfServerInstanceRepository` | інтеграційні |
-| `EfPlayerGoogleLoginRepository` | інтеграційні |
-| `ServerInstancesController` | API-тести (`WebApplicationFactory`) |
-| усі 4 EF-конфігурації + `LobbyDbContext` | інтеграційні |
+| `EfPlayerExternalIdentityRepository` | інтеграційні (замінив `EfPlayerGoogleLoginRepository`) |
+| усі 6 EF-конфігурацій + `LobbyDbContext` | інтеграційні |
+| `ResultModel`, `ResultModel<T>`, `ServerInstanceModel`, `LoginTokensModel`, `PlayerExternalIdentityModel` | юніт + API-тести |
+
+`ServerInstanceModel` раніше значився тут як **мертвий код (0%)** — після рефакторингу
+`ServerInstanceService` повертає моделі замість сутностей, і клас став живим і повністю покритим.
 
 ### Непокрите — з поясненням причини
 
 | Клас | Line | Причина |
 |---|---|---|
-| `GoogleAuthService` | 0% | Test 14 скасовано: тонка обгортка над бібліотекою Google; жива взаємодія недетермінована в CI. Контракт `IGoogleAuthService` покритий з обох боків (мок + фейк) |
+| `ServerInstanceContainerProcessor`, `ContainerAction`, `InternalServerInstancesController`, `LobbyToServerAuthFilter` | 0% | нові класи керування контейнерами; тестів не було написано взагалі |
+| `ServerInstanceCleanupService` | 13% | покритий лише старт сервісу (його піднімають API-тести), уся логіка очистки — ні |
+| `GoogleAuthAdapter` | 0% | тонка обгортка над бібліотекою Google; жива взаємодія недетермінована в CI. Контракт `IExternalAuthProvider` покритий з обох боків (мок + фейк `FakeExternalAuthProvider`) |
 | `DockerServerInstanceService` | 0% | справжній спавнер Docker-контейнерів; у тестах свідомо підмінений `FakeServerInstanceSpawner` |
-| `ServerInstanceModel` | 0% | **мертвий код** — не використовується ніде в бекенді |
-| `LobbyControllerBase` | 42.8% | `HttpError` має 5 гілок, API реально повертає лише 2 (`Validation`, `Unauthorized`); `Conflict`/`NotFound` не використовує жоден сервіс |
-| `TokenCleanupBackgroundService` | 54.5% | старт сервісу покритий (його піднімають API-тести), тіло очистки — ні → це **Test 9** |
-| `ErrorModel` | 62.5% | фабрики типів помилок, які наразі не використовуються |
-| `EfPlayerRepository` | 94.8% | лишились дрібні краєві гілки |
-| `AuthController` | 91.6% | лишились гілки невалідного claim'а |
+| `PlayerGoogleLoginModel` | 0% | **мертвий код** — його замінив `PlayerExternalIdentityModel`, посилань не лишилось |
+| `EfServerInstanceRepository` | 51.5% | нові методи (`GetById`, `GetByContainerId`, `Update`, `UpdateMany`, `CreateMany`) використовує лише непокритий cleanup-сервіс |
+| `ServerInstanceService` | 80.9% (5 / 18 гілок) | `UpdatePlayerCount` не покритий зовсім; у `Create` не пройдено гілку `name == null` (світ без імені) |
+| `LobbyControllerBase` | 37.5% | `HttpError` має 6 гілок, API реально повертає лише 2 (`Validation`, `Unauthorized`) |
+| `TokenCleanupBackgroundService` | 54.5% | старт сервісу покритий, тіло очистки — ні |
+| `ErrorModel` | 66.6% | фабрики типів помилок, які наразі не використовуються |
+| `ServerInstanceEntity` | 44.8% | методи станів (`MarkAsDead`, `MarkAsRunning`, `IsIdleFor`) кличе лише непокритий cleanup-сервіс |
+| `AuthController` | 93.3% | лишились гілки невалідного claim'а |
+| `EfPlayerRepository` | 94.5% | не покритий `PlayerExists` |
 
 ### Що виключено з вимірювання
 
@@ -84,8 +107,8 @@ open TestResults/CoverageReport/index.html
 
 - **EF-міграції** (`**/Migrations/*.cs`) — згенеровані; «виконуються» через `MigrateAsync`
   і штучно **завищували** line coverage
-- **Сорс-генератор `Microsoft.AspNetCore.OpenApi`** — 404 гілки, які ніколи не виконуються
-  в тестах і штучно **занижували** branch coverage (12% замість 64.5%)
+- **Сорс-генератор `Microsoft.AspNetCore.OpenApi`** — сотні гілок, які ніколи не виконуються
+  в тестах і штучно **занижували** branch coverage у рази
 
 > `CompilerGeneratedAttribute` навмисно **не** виключається: він позначає стейт-машини
 > `async`-методів, і його виключення викинуло б з вимірювання майже весь реальний код.
