@@ -41,8 +41,8 @@ namespace Shared.Components
             }
         }
 
-        [Command(requiresAuthority = false)]
-        public void ApplyDamageServerRpc(int amount)
+        [Server]
+        public void ApplyDamageServer(int amount)
         {
             if (_isDead) return;
             
@@ -71,6 +71,12 @@ namespace Shared.Components
             {
                 RpcTriggerDamageFlash();
             }
+        }
+        
+        [Command(requiresAuthority = false)]
+        public void ApplyDamageServerRpc(int amount)
+        {
+            ApplyDamageServer(amount);
         }
 
         [ClientRpc]
