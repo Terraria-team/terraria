@@ -26,8 +26,4 @@
     <ProjectReference Include="..\Lobby.Infrastructure\Lobby.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-  </ItemGroup>
-
 </Project>

@@ -1,14 +1,13 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using Docker.DotNet;
-using Lobby.Application.Contracts;
-using Lobby.Application.Services;
-using Lobby.Application.Settings;
+using Lobby.Application.Contracts.ExternalServices;
+using Lobby.Application.Contracts.Repositories;
+using Lobby.Application.UseCases;
 using Lobby.HostedServices;
-using Lobby.Infrastructure.Data;
-using Lobby.Infrastructure.Repositories;
-using Lobby.Infrastructure.Services;
-using Lobby.Infrastructure.Settings;
+using Lobby.Infrastructure.ExternalServices;
+using Lobby.Infrastructure.ExternalServices.Settings;
+using Lobby.Infrastructure.Persistence;
 using Lobby.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +19,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// services
+// use cases
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IServerInstanceService, ServerInstanceService>();
+
+//external Service Adapters
+builder.Services.AddScoped<IExternalAuthProvider, GoogleAuthAdapter>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IServerInstanceSpawner, DockerServerInstanceService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// repos
-builder.Services.AddScoped<IPlayerGoogleLoginRepository, EfPlayerGoogleLoginRepository>();
+//repositories
+builder.Services.AddScoped<IPlayerExternalIdentityRepository, EfPlayerExternalIdentityRepository>();
 builder.Services.AddScoped<IPlayerRepository, EfPlayerRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();
 builder.Services.AddScoped<IServerInstanceRepository, EfServerInstanceRepository>();
@@ -39,17 +40,23 @@ builder.Services.AddScoped<IServerInstanceRepository, EfServerInstanceRepository
 var dockerSettings = builder.Configuration.GetSection(DockerServerSettings.SettingsName).Get<DockerServerSettings>()!;
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SettingsName).Get<JwtSettings>()!;
 var googleSettings = builder.Configuration.GetSection(GoogleSettings.SettingsName).Get<GoogleSettings>()!;
+var apiSecuritySettings = builder.Configuration.GetSection(ApiSecuritySettings.SettingsName).Get<ApiSecuritySettings>()!;
 var serverToLobbyAuthSettings = builder.Configuration.GetSection(ServerToLobbyAuthSettings.SettingsName).Get<ServerToLobbyAuthSettings>()!;
 var serverInstanceServiceSettings = builder.Configuration.GetSection(ServerInstanceServiceSettings.SettingsName).Get<ServerInstanceServiceSettings>()!;
+var refreshTokenSettings = builder.Configuration.GetSection(RefreshTokenSettings.SettingsName).Get<RefreshTokenSettings>()!;
 
 builder.Services.AddSingleton(dockerSettings);
 builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddSingleton(googleSettings);
+builder.Services.AddSingleton(apiSecuritySettings);
 builder.Services.AddSingleton(serverToLobbyAuthSettings);
 builder.Services.AddSingleton(serverInstanceServiceSettings);
+builder.Services.AddSingleton(refreshTokenSettings);
 
-builder.Services.Configure<ServerInstanceCleanupSettings>(builder.Configuration.GetSection(ServerInstanceCleanupSettings.SettingsName));
-builder.Services.Configure<TokenCleanupSettings>(builder.Configuration.GetSection(TokenCleanupSettings.SettingsName));
+builder.Services.Configure<ServerInstanceCleanupSettings>(
+    builder.Configuration.GetSection(ServerInstanceCleanupSettings.SettingsName));
+builder.Services.Configure<TokenCleanupSettings>(
+    builder.Configuration.GetSection(TokenCleanupSettings.SettingsName));
 
 // db
 builder.Services.AddDbContext<LobbyDbContext>(options =>
@@ -60,10 +67,7 @@ builder.Services.AddDbContext<LobbyDbContext>(options =>
 builder.Services.AddSingleton<IDockerClient>(provider =>
 {
     bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-    Uri dockerUri = isWindows 
-        ? new Uri("npipe://./pipe/docker_engine") 
-        : new Uri("unix:///var/run/docker.sock");
-
+    Uri dockerUri = isWindows ? new Uri("npipe://./pipe/docker_engine") : new Uri("unix:///var/run/docker.sock");
     return new DockerClientConfiguration(dockerUri).CreateClient();
 });
 

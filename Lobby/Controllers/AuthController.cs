@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Lobby.Application.Contracts;
+using Lobby.Application.UseCases;
 using LobbyUnityShared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

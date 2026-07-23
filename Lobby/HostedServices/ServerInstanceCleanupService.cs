@@ -1,7 +1,7 @@
 using Docker.DotNet;
 using Docker.DotNet.Models;
-using Lobby.Application.Contracts;
-using Lobby.Application.Entities;
+using Lobby.Application.Contracts.Repositories;
+using Lobby.Application.Domain;
 using Lobby.Settings;
 using Microsoft.Extensions.Options;
 
@@ -13,31 +13,14 @@ public class ServerInstanceCleanupService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IDockerClient _dockerClient;
 
-    public ServerInstanceCleanupService(IServiceScopeFactory scopeFactory, ILogger<ServerInstanceCleanupService> logger,
+    public ServerInstanceCleanupService(
+        IServiceScopeFactory scopeFactory,
+        ILogger<ServerInstanceCleanupService> logger,
         IDockerClient dockerClient)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
         _dockerClient = dockerClient;
-    }
-    
-    private readonly record struct ContainerAction(
-        ServerInstanceEntity? ToCreate = null,
-        bool NeedsUpdate = false,
-        bool NeedsContainerRemoval = false,
-        bool NeedsGracefulShutdown = false)
-    {
-        public static readonly ContainerAction None = new();
-
-        public static ContainerAction Create(ServerInstanceEntity entity) => new(ToCreate: entity);
-
-        public static ContainerAction Update() => new(NeedsUpdate: true);
-
-        public static ContainerAction UpdateAndRemove() => new(NeedsUpdate: true, NeedsContainerRemoval: true);
-
-        public static ContainerAction Remove() => new(NeedsContainerRemoval: true);
-
-        public static ContainerAction GracefulShutdown() => new(NeedsGracefulShutdown: true);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -77,8 +60,7 @@ public class ServerInstanceCleanupService : BackgroundService
                         if (serverInstanceContainers.ContainsKey(serverInstanceEntity.Value.ContainerId)) continue;
 
                         var dbEntity = serverInstanceEntity.Value;
-                        dbEntity.Status = ServerInstanceStatus.Deleted;
-                        dbEntity.UpdatedAt = DateTime.UtcNow;
+                        dbEntity.MarkAsDeleted();
 
                         dbEntitiesToUpdate.Add(dbEntity);
                     }
@@ -96,12 +78,12 @@ public class ServerInstanceCleanupService : BackgroundService
                         {
                             dbInfo = await repository.GetByContainerId(containerId);
                         }
-                        
+
                         ContainerAction action = dockerState switch
                         {
-                            "exited" or "dead" => ProcessDeadContainer(containerId, containerData, dbInfo),
-                            "paused" or "created" or "restarting" or "removing" => ProcessPendingContainer(containerId, containerData, dbInfo, settings),
-                            "running" => ProcessRunningContainer(containerId, containerData, dbInfo, settings),
+                            "exited" or "dead" => ServerInstanceContainerProcessor.ProcessDeadContainer(containerId, containerData, dbInfo),
+                            "paused" or "created" or "restarting" or "removing" => ServerInstanceContainerProcessor.ProcessPendingContainer(containerId, containerData, dbInfo, settings),
+                            "running" => ServerInstanceContainerProcessor.ProcessRunningContainer(containerId, containerData, dbInfo, settings),
                             _ => ContainerAction.None
                         };
 
@@ -158,8 +140,7 @@ public class ServerInstanceCleanupService : BackgroundService
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogWarning(ex, "Failed to forcefully remove container {ContainerId}",
-                                    containerId);
+                                _logger.LogWarning(ex, "Failed to forcefully remove container {ContainerId}", containerId);
                                 return null; // Deletion failed!
                             }
                         });
@@ -174,17 +155,14 @@ public class ServerInstanceCleanupService : BackgroundService
                             var plannedCreation = dbEntitiesToCreate.FirstOrDefault(c => c.ContainerId == containerId);
                             if (plannedCreation != null)
                             {
-                                plannedCreation.Status = ServerInstanceStatus.Deleted;
-                                plannedCreation.UpdatedAt = DateTime.UtcNow;
+                                plannedCreation.MarkAsDeleted();
                                 continue;
                             }
 
                             var plannedUpdate = dbEntitiesToUpdate.FirstOrDefault(c => c.ContainerId == containerId);
                             if (plannedUpdate != null)
                             {
-                                plannedUpdate.Status = ServerInstanceStatus.Deleted;
-                                plannedUpdate.UpdatedAt = DateTime.UtcNow;
-
+                                plannedUpdate.MarkAsDeleted();
                                 dbEntitiesToUpdate.Add(plannedUpdate);
                             }
                         }
@@ -207,117 +185,5 @@ public class ServerInstanceCleanupService : BackgroundService
                 }
             }
         }
-    }
-
-    private ServerInstanceEntity CreateNewEntity(
-        string containerId, 
-        ContainerListResponse containerData, 
-        ServerInstanceStatus initialStatus, 
-        DateTime? pendingSince,
-        DateTime? emptySince)
-    {
-        var containerName = containerData.Names?.FirstOrDefault() ?? "Unnamed";
-        var hostPort = containerData.Ports?.FirstOrDefault()?.PublicPort ?? 0;
-
-        return new ServerInstanceEntity
-        {
-            Id = Guid.NewGuid(),
-            WorldId = Guid.Empty, // empty guid = default world guid?
-            ContainerId = containerId,
-            Image = containerData.Image,
-            Name = containerName,
-            Port = hostPort,
-            PlayerCount = 0,
-            EmptySince = emptySince,
-            PendingSince = pendingSince,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Status = initialStatus
-        };
-    }
-
-      private ContainerAction ProcessDeadContainer(
-        string containerId, ContainerListResponse containerData, ServerInstanceEntity? dbInfo)
-    {
-        if (dbInfo is null)
-        {
-            var newEntity = CreateNewEntity(containerId, containerData, ServerInstanceStatus.Dead, null, null);
-            return ContainerAction.Create(newEntity) with { NeedsContainerRemoval = true };
-        }
-
-        dbInfo.Status = ServerInstanceStatus.Dead;
-        dbInfo.UpdatedAt = DateTime.UtcNow;
-        return ContainerAction.UpdateAndRemove();
-    }
-
-    private ContainerAction ProcessPendingContainer(
-        string containerId, ContainerListResponse containerData, ServerInstanceEntity? dbInfo, ServerInstanceCleanupSettings settings)
-    {
-        if (dbInfo is null)
-        {
-            var newEntity = CreateNewEntity(containerId, containerData, ServerInstanceStatus.Pending, DateTime.UtcNow, null);
-            return ContainerAction.Create(newEntity);
-        }
-
-        if (dbInfo.Status == ServerInstanceStatus.Pending && dbInfo.PendingSince.HasValue)
-        {
-            var pendingTime = DateTime.UtcNow - dbInfo.PendingSince.Value;
-            var timeoutLimit = TimeSpan.FromSeconds(settings.PendingTimeoutSeconds);
-
-            if (pendingTime > timeoutLimit)
-            {
-                return ContainerAction.GracefulShutdown();
-            }
-        }
-        else
-        {
-            dbInfo.Status = ServerInstanceStatus.Pending;
-            dbInfo.PendingSince = DateTime.UtcNow;
-            dbInfo.UpdatedAt = DateTime.UtcNow;
-            return ContainerAction.Update();
-        }
-
-        return ContainerAction.None;
-    }
-
-    private ContainerAction ProcessRunningContainer(
-        string containerId, ContainerListResponse containerData, ServerInstanceEntity? dbInfo, ServerInstanceCleanupSettings settings)
-    {
-        if (dbInfo is null)
-        {
-            var newEntity = CreateNewEntity(containerId, containerData, ServerInstanceStatus.Running, null, DateTime.UtcNow);
-            return ContainerAction.Create(newEntity);
-        }
-
-        bool needsUpdate = false;
-        bool needsGracefulShutdown = false;
-
-        if (dbInfo.Status != ServerInstanceStatus.Running)
-        {
-            dbInfo.Status = ServerInstanceStatus.Running;
-            dbInfo.PendingSince = null;
-            dbInfo.PlayerCount = 0;
-            dbInfo.EmptySince = DateTime.UtcNow;
-            dbInfo.UpdatedAt = DateTime.UtcNow;
-            needsUpdate = true;
-        }
-        else if (dbInfo.EmptySince == null)
-        {
-            dbInfo.EmptySince = DateTime.UtcNow;
-            dbInfo.UpdatedAt = DateTime.UtcNow;
-            needsUpdate = true;
-        }
-        else if (dbInfo.PlayerCount == 0 && dbInfo.EmptySince.HasValue)
-        {
-            var idleTime = DateTime.UtcNow - dbInfo.EmptySince.Value;
-            var idleLimit = TimeSpan.FromSeconds(settings.IdleTimeoutSeconds);
-
-            if (idleTime > idleLimit)
-            {
-                needsGracefulShutdown = true;
-            }
-        }
-
-        return new ContainerAction(NeedsUpdate: needsUpdate, NeedsGracefulShutdown: needsGracefulShutdown);
     }
 }

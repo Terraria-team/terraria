@@ -1,4 +1,4 @@
-using Lobby.Infrastructure.Settings;
+using Lobby.Settings;
 using LobbyUnityShared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -7,9 +7,9 @@ namespace Lobby.Filters;
 
 public class LobbyToServerAuthFilter : ActionFilterAttribute
 {
-    private readonly ServerToLobbyAuthSettings _settings;
+    private readonly ApiSecuritySettings _settings;
 
-    public LobbyToServerAuthFilter(ServerToLobbyAuthSettings settings)
+    public LobbyToServerAuthFilter(ApiSecuritySettings settings)
     {
         _settings = settings;
     }
