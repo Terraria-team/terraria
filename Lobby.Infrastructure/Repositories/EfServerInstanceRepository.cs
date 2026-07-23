@@ -31,6 +31,11 @@ public class EfServerInstanceRepository : IServerInstanceRepository
         return await _context.ServerInstances.Where(s => s.Status != ServerInstanceStatus.Deleted).ToListAsync();
     }
 
+    public async Task<int> GetAllNonDeletedCount()
+    {
+        return await _context.ServerInstances.Where(s => s.Status != ServerInstanceStatus.Deleted).CountAsync();
+    }
+
     public async Task<ServerInstanceEntity?> GetByContainerId(string id)
     {
         return await _context.ServerInstances.FirstOrDefaultAsync(s => s.ContainerId == id);

@@ -40,11 +40,13 @@ var dockerSettings = builder.Configuration.GetSection(DockerServerSettings.Setti
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SettingsName).Get<JwtSettings>()!;
 var googleSettings = builder.Configuration.GetSection(GoogleSettings.SettingsName).Get<GoogleSettings>()!;
 var serverToLobbyAuthSettings = builder.Configuration.GetSection(ServerToLobbyAuthSettings.SettingsName).Get<ServerToLobbyAuthSettings>()!;
+var serverInstanceServiceSettings = builder.Configuration.GetSection(ServerInstanceServiceSettings.SettingsName).Get<ServerInstanceServiceSettings>()!;
 
 builder.Services.AddSingleton(dockerSettings);
 builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddSingleton(googleSettings);
 builder.Services.AddSingleton(serverToLobbyAuthSettings);
+builder.Services.AddSingleton(serverInstanceServiceSettings);
 
 builder.Services.Configure<ServerInstanceCleanupSettings>(builder.Configuration.GetSection(ServerInstanceCleanupSettings.SettingsName));
 builder.Services.Configure<TokenCleanupSettings>(builder.Configuration.GetSection(TokenCleanupSettings.SettingsName));

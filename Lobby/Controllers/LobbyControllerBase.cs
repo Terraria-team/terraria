@@ -21,6 +21,8 @@ public class LobbyControllerBase : ControllerBase
                 return BadRequest(error.ErrorMessage);
             case ErrorType.UnexpectedError:
                 return StatusCode(500, "Internal Server Error");
+            case ErrorType.ResourceExhausted:
+                return StatusCode(503, error.ErrorMessage);
             default:
                 return StatusCode(500, "Internal Server Error");
         }

@@ -7,7 +7,7 @@ public interface IServerInstanceService
 {
     Task<List<ServerInstanceEntity>> GetAll();
 
-    Task<ServerInstanceEntity> Create(string? name, Guid ownerId);
+    Task<ResultModel<ServerInstanceEntity>> Create(string? name, Guid ownerId);
 
     Task<ResultModel<ServerInstanceEntity>> UpdatePlayerCount(Guid id, int playerCount);
 }

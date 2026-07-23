@@ -8,11 +8,14 @@ public class ServerInstanceService : IServerInstanceService
 {
     private readonly IServerInstanceRepository _repository;
     private readonly IServerInstanceSpawner _serverInstanceSpawner;
+    private readonly ServerInstanceServiceSettings _settings;
 
-    public ServerInstanceService(IServerInstanceRepository repository, IServerInstanceSpawner serverInstanceSpawner)
+    public ServerInstanceService(IServerInstanceRepository repository, IServerInstanceSpawner serverInstanceSpawner, 
+        ServerInstanceServiceSettings settings)
     {
         _repository = repository;
         _serverInstanceSpawner = serverInstanceSpawner;
+        _settings = settings;
     }
 
     public async Task<List<ServerInstanceEntity>> GetAll()
@@ -20,8 +23,11 @@ public class ServerInstanceService : IServerInstanceService
         return await _repository.GetAllNonDeleted();
     }
 
-    public async Task<ServerInstanceEntity> Create(string? name, Guid ownerId)
+    public async Task<ResultModel<ServerInstanceEntity>> Create(string? name, Guid ownerId)
     {
+        if (await _repository.GetAllNonDeletedCount() > _settings.ServerInstanceMaxCount)
+            return ErrorModel.ResourceExhausted("Currently running max amount of server instances. Can't spawn more.");
+        
         var id = Guid.NewGuid();
         var info = await _serverInstanceSpawner
             .CreateNewServerInstance(id, name ?? id.ToString()); 

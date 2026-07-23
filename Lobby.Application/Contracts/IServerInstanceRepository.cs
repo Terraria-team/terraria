@@ -9,6 +9,8 @@ public interface IServerInstanceRepository
     
     Task<List<ServerInstanceEntity>> GetAllNonDeleted();
 
+    Task<int> GetAllNonDeletedCount();
+
     Task<ServerInstanceEntity?> GetByContainerId(string id);
 
     Task CreateMany(HashSet<ServerInstanceEntity> entities);

@@ -15,8 +15,9 @@ public class ServerInstanceServiceTests
 {
     private readonly Mock<IServerInstanceRepository> _repository = new();
     private readonly Mock<IServerInstanceSpawner> _spawner = new();
+    private readonly ServerInstanceServiceSettings _settings = new();
 
-    private ServerInstanceService CreateSut() => new(_repository.Object, _spawner.Object);
+    private ServerInstanceService CreateSut() => new(_repository.Object, _spawner.Object, _settings);
 
     // GetAll просто делегує виклик репозиторію й повертає його результат.
     [Fact]

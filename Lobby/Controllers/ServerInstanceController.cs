@@ -40,6 +40,6 @@ public class ServerInstancesController : LobbyControllerBase
         }
         
         var created = await _instanceService.Create(dto.Name, playerId);
-        return Created($"/server-instances/{created.Id}", ServerInstanceMapper.Map(created)); 
+        return created.IsSuccessful? Created($"/server-instances/{created.Result!.Id}", ServerInstanceMapper.Map(created.Result)) : HttpError(created.Error!); 
     }
 }
