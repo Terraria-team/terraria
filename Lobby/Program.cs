@@ -16,11 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-.AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.IncludeFields = true;
-});
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -43,12 +39,17 @@ builder.Services.AddScoped<IServerInstanceRepository, EfServerInstanceRepository
 var dockerSettings = builder.Configuration.GetSection(DockerServerSettings.SettingsName).Get<DockerServerSettings>()!;
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SettingsName).Get<JwtSettings>()!;
 var googleSettings = builder.Configuration.GetSection(GoogleSettings.SettingsName).Get<GoogleSettings>()!;
+var serverToLobbyAuthSettings = builder.Configuration.GetSection(ServerToLobbyAuthSettings.SettingsName).Get<ServerToLobbyAuthSettings>()!;
+var serverInstanceServiceSettings = builder.Configuration.GetSection(ServerInstanceServiceSettings.SettingsName).Get<ServerInstanceServiceSettings>()!;
 
 builder.Services.AddSingleton(dockerSettings);
 builder.Services.AddSingleton(jwtSettings);
 builder.Services.AddSingleton(googleSettings);
+builder.Services.AddSingleton(serverToLobbyAuthSettings);
+builder.Services.AddSingleton(serverInstanceServiceSettings);
 
-builder.Services.Configure<BackgroundServicesSettings>(builder.Configuration.GetSection(BackgroundServicesSettings.SettingsName));
+builder.Services.Configure<ServerInstanceCleanupSettings>(builder.Configuration.GetSection(ServerInstanceCleanupSettings.SettingsName));
+builder.Services.Configure<TokenCleanupSettings>(builder.Configuration.GetSection(TokenCleanupSettings.SettingsName));
 
 // db
 builder.Services.AddDbContext<LobbyDbContext>(options =>
@@ -102,12 +103,16 @@ builder.Services.AddAuthentication(opt =>
 
 
 // hosted services
-//builder.Services.AddHostedService<ServerInstanceCleanupService>();
+builder.Services.AddHostedService<ServerInstanceCleanupService>();
 builder.Services.AddHostedService<TokenCleanupBackgroundService>();
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
+app.MapGet("/health", () => Results.Ok("Healthy"))
+    .WithName("Health")
+    .AllowAnonymous();
 
 // db migrations
 using (var scope = app.Services.CreateScope())
@@ -122,6 +127,8 @@ app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.Run();
 

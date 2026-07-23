@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lobby.Infrastructure.Data;
 
-public class ServerInstanseConfiguration : IEntityTypeConfiguration<ServerInstanceEntity>
+public class ServerInstanceConfiguration : IEntityTypeConfiguration<ServerInstanceEntity>
 {
     public void Configure(EntityTypeBuilder<ServerInstanceEntity> builder)
     {
@@ -27,11 +27,25 @@ public class ServerInstanseConfiguration : IEntityTypeConfiguration<ServerInstan
         builder.Property(en => en.Name)
             .IsRequired()
             .HasMaxLength(100);
-        
-        builder.HasIndex(en => en.Port)
-            .IsUnique();
 
+        builder.Property(en => en.PlayerCount)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.Property(en => en.EmptySince);
+        builder.Property(en => en.PendingSince);
+        builder.Property(en => en.CreatedAt).IsRequired();
+        builder.Property(en => en.UpdatedAt);
+
+        builder.HasIndex(en => en.Port).IsUnique();
         builder.HasIndex(en => en.Status);
         builder.HasIndex(en => en.EmptySince);
+
+        builder.Property(en => en.WorldId).IsRequired();
+        
+        builder.HasOne(en => en.World)
+            .WithMany(tw => tw.ServerInstances)
+            .HasForeignKey(en => en.WorldId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

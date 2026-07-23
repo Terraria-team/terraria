@@ -4,5 +4,5 @@ namespace Lobby.Application.Contracts;
 
 public interface IServerInstanceSpawner
 {
-    Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(int port, string name);
+    Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(Guid id, string name);
 }

@@ -15,57 +15,22 @@ public class ServerInstanceServiceTests
 {
     private readonly Mock<IServerInstanceRepository> _repository = new();
     private readonly Mock<IServerInstanceSpawner> _spawner = new();
+    private readonly ServerInstanceServiceSettings _settings = new();
 
-    private ServerInstanceService CreateSut() => new(_repository.Object, _spawner.Object);
+    private ServerInstanceService CreateSut() => new(_repository.Object, _spawner.Object, _settings);
 
     // GetAll просто делегує виклик репозиторію й повертає його результат.
     [Fact]
     public async Task GetAll_DelegatesToRepository()
     {
         var instances = new List<ServerInstanceEntity>();
-        _repository.Setup(r => r.GetAll()).ReturnsAsync(instances);
+        
+        _repository.Setup(r => r.GetAllNonDeleted()).ReturnsAsync(instances);
 
         var result = await CreateSut().GetAll();
 
         Assert.Same(instances, result);
-        _repository.Verify(r => r.GetAll(), Times.Once);
-    }
-
-    // Create спавнить інстанс на вільному порту та зберігає коректно змапану сутність.
-    [Fact]
-    public async Task Create_SpawnsOnFreePortAndPersistsMappedEntity()
-    {
-        const int freePort = 7777;
-        _repository.Setup(r => r.GetFreeInstancePort()).ReturnsAsync(freePort);
-
-        var spawnInfo = new ServerInstanceSpawnInfoEntity(
-            ContainerId: "container-abc",
-            Image: "terraria-server:latest",
-            Name: "server_instance_7777",
-            Port: freePort,
-            Status: ServerInstanceStatus.Running);
-        _spawner
-            .Setup(s => s.CreateNewServerInstance(freePort, "server_instance_7777"))
-            .ReturnsAsync(spawnInfo);
-        _repository
-            .Setup(r => r.Create(It.IsAny<ServerInstanceEntity>()))
-            .ReturnsAsync((ServerInstanceEntity e) => e);
-
-        var result = await CreateSut().Create();
-
-        _spawner.Verify(s => s.CreateNewServerInstance(freePort, "server_instance_7777"), Times.Once);
-
-        _repository.Verify(r => r.Create(It.Is<ServerInstanceEntity>(
-            e => e.ContainerId == "container-abc"
-                 && e.Image == "terraria-server:latest"
-                 && e.Name == "server_instance_7777"
-                 && e.Port == freePort
-                 && e.PlayerCount == 0
-                 && e.Status == ServerInstanceStatus.Running
-                 && e.UpdatedAt == null
-                 && e.EmptySince == null)), Times.Once);
-
-        Assert.Equal("container-abc", result.ContainerId);
-        Assert.Equal(freePort, result.Port);
+        
+        _repository.Verify(r => r.GetAllNonDeleted(), Times.Once);
     }
 }

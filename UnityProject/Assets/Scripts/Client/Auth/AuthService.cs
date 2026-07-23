@@ -1,9 +1,9 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Api;
 using LobbyUnityShared.DTOs;
 using Client.Config;
+using Shared.Api;
 using UnityEngine;
 
 namespace Client.Auth
@@ -132,9 +132,9 @@ namespace Client.Auth
         private async Task<bool> ExchangeCodeWithBackendAsync(string code, string redirectUri)
         {
             string url = _baseUrl + _googleLoginEndpoint;
-            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new { code, redirectUri });
+            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new GoogleLoginDto { Code = code, RedirectUri = redirectUri });
 
-            if (tokens == null || string.IsNullOrEmpty(tokens.accesstoken))
+            if (tokens == null || string.IsNullOrEmpty(tokens.AccessToken))
             {
                 OnAuthFailed?.Invoke("Backend token exchange failed or returned an empty access token.");
                 return false;
@@ -149,8 +149,8 @@ namespace Client.Auth
             if (string.IsNullOrEmpty(CurrentRefreshToken)) return false;
 
             string url = _baseUrl + _refreshEndpoint;
-            var (content, statusCode, error) = await HttpUtil.SendRawAsync(url, "POST", new { refreshToken = CurrentRefreshToken });
-
+            var (content, statusCode, error) = await HttpUtil.SendRawAsync(url, "POST", new RefreshTokenDto { RefreshToken = CurrentRefreshToken });
+            
             if (statusCode == 400 || statusCode == 401)
             {
                 Debug.LogWarning($"[AuthService] Refresh token rejected by server ({statusCode}). Wiping saved session.");
@@ -163,7 +163,7 @@ namespace Client.Auth
             try
             {
                 var tokens = Newtonsoft.Json.JsonConvert.DeserializeObject<LoginTokensDto>(content);
-                if (tokens == null || string.IsNullOrEmpty(tokens.accesstoken)) return false;
+                if (tokens == null || string.IsNullOrEmpty(tokens.AccessToken)) return false;
 
                 UpdateTokens(tokens);
                 return true;
@@ -179,15 +179,15 @@ namespace Client.Auth
             if (string.IsNullOrEmpty(CurrentRefreshToken)) return;
 
             string url = _baseUrl + _logoutEndpoint;
-            await HttpUtil.SendRawAsync(url, "POST", new { refreshToken = CurrentRefreshToken }, CurrentAccessToken);
+            await HttpUtil.SendRawAsync(url, "POST", new RefreshTokenDto { RefreshToken = CurrentRefreshToken }, CurrentAccessToken);
 
             ClearTokens();
         }
 
         private void UpdateTokens(LoginTokensDto tokens)
         {
-            CurrentAccessToken  = tokens.accesstoken;
-            CurrentRefreshToken = tokens.sessiontoken;
+            CurrentAccessToken  = tokens.AccessToken;
+            CurrentRefreshToken = tokens.RefreshToken;
 
             ExtractNickname(CurrentAccessToken);
 

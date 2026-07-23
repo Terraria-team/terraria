@@ -11,6 +11,8 @@ public class LobbyDbContext : DbContext
     public DbSet<PlayerEntity> Players { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<PlayerGoogleLoginEntity> PlayerGoogleLogins { get; set; }
+    public DbSet<TerrariaWorldEntity> TerrariaWorlds { get; set; }
+    public DbSet<TerrariaWorldStorageEntity> TerrariaWorldStorages { get; set; }
 
     public LobbyDbContext(DbContextOptions<LobbyDbContext> options) : base(options)
     {

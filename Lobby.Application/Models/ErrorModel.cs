@@ -9,6 +9,7 @@ public class ErrorModel(string? errorMessage, ErrorType errorType)
     public static ErrorModel Validation(string? message = "Invalid arguments were passed") => new(message, ErrorType.Validation);
     public static ErrorModel Unauthorized(string? message = "Unauthorized access") => new(message, ErrorType.Unauthorized);
     public static ErrorModel UnexpectedError(string? message = "Failed to do the operation") => new(message, ErrorType.UnexpectedError);
+    public static ErrorModel ResourceExhausted(string? message = "Maximum server capacity reached. No available container slots.") => new(message, ErrorType.ResourceExhausted);
 }
 
 public enum ErrorType
@@ -17,5 +18,6 @@ public enum ErrorType
     Conflict,
     Validation,
     Unauthorized,
-    UnexpectedError
+    UnexpectedError,
+    ResourceExhausted
 }
