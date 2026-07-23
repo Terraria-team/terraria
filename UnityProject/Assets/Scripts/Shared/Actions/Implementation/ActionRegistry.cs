@@ -126,20 +126,6 @@ public static class ActionRegistry
                 //swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
                 NetworkServer.Spawn(swingObject);
                 
-                // Scan for damage
-                var colliders = Physics2D.OverlapCircleAll(swingLocation, 1);
-
-                Debug.Log(swingLocation);
-                
-                foreach (var collider in colliders)
-                {
-                    Debug.Log(collider.gameObject.name);
-                    if (collider.TryGetComponent<HealthComponent>(out var component))
-                    {
-                        component.ApplyDamageServerRpc(10); 
-                    }
-                }
-                
                 break;
             }
         }

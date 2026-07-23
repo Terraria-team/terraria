@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using Shared.Components;
 using Shared.DataDefinitions;
 
 namespace Server.AI
@@ -9,9 +10,10 @@ namespace Server.AI
     [RequireComponent(typeof(NetworkIdentity))]
     public class ServerEnemyController : NetworkBehaviour
     {
-        // ── Components ────────────────────────────────────────────────
+        // ── Components ───────────────────────────────────────────────
         public Rigidbody2D Rb { get; private set; }
         public Collider2D Col { get; private set; }
+        private HealthComponent _healthComponent;
 
         // ── Inspector ─────────────────────────────────────────────────
         [Header("Config")]
@@ -55,12 +57,44 @@ namespace Server.AI
             
             if (Data != null)
                 Data = Instantiate(Data);
+
+            _healthComponent = GetComponent<HealthComponent>();
         }
 
         public override void OnStartServer()
         {
             base.OnStartServer();
             DispatchInitialState();
+
+            // Subscribe to death event so the enemy is destroyed when health reaches 0
+            if (_healthComponent != null)
+            {
+                _healthComponent.OnDeath += HandleDeath;
+            }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (_healthComponent != null)
+            {
+                _healthComponent.OnDeath -= HandleDeath;
+            }
+        }
+
+        [Server]
+        private void HandleDeath()
+        {
+            // Stop AI
+            _currentState?.ExitState();
+            _currentState = null;
+
+            // Stop physics
+            if (Rb != null)
+                Rb.linearVelocity = Vector2.zero;
+
+            // TODO: Drop loot here when item drop system is ready
+
+            NetworkServer.Destroy(gameObject);
         }
 
         [ServerCallback]

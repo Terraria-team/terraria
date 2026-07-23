@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Core.WorldGeneration;
 using Mirror;
 using Shared.Components;
@@ -28,6 +29,11 @@ public class PlayerController : NetworkBehaviour
     private BlockHighlight _blockHighlight;
     private Rigidbody2D _rb;
     private bool _hasSpawnedOnSurface = false;
+    private bool _isDead = false;
+
+    [Header("Respawn")]
+    [SerializeField] private float respawnDelay = 3f;
+    [SerializeField] private Vector3 spawnPosition;
 
     void Start()
     {
@@ -59,6 +65,8 @@ public class PlayerController : NetworkBehaviour
 
         _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
         _healthComponent.OnHealingFlashed += _playerRenderer.HealingFlash;
+        _healthComponent.OnDeath += HandleLocalPlayerDeath;
+        _movementComponent.OnFallDamage += HandleFallDamage;
     }
     
     void OnDestroy()
@@ -68,6 +76,11 @@ public class PlayerController : NetworkBehaviour
         {
             _healthComponent.OnDamageFlashed -= _playerRenderer.DamageFlash;
             _healthComponent.OnHealingFlashed -= _playerRenderer.HealingFlash;
+            _healthComponent.OnDeath -= HandleLocalPlayerDeath;
+        }
+        if (_movementComponent != null)
+        {
+            _movementComponent.OnFallDamage -= HandleFallDamage;
         }
     }
 
@@ -178,7 +191,7 @@ public class PlayerController : NetworkBehaviour
             healthBar.text = _healthComponent.HealthNow.ToString();
         }
         
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer || _isDead) return;
         
         for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
         {
@@ -269,5 +282,85 @@ public class PlayerController : NetworkBehaviour
             _inventoryComponent.ChangeSelection(8);
         }
     }
-    
+
+    // ── Fall Damage ──────────────────────────────────────────────
+    private void HandleFallDamage(int damage)
+    {
+        if (_healthComponent != null && !_healthComponent.IsDead)
+        {
+            CmdApplyFallDamage(damage);
+        }
+    }
+
+    [Command]
+    private void CmdApplyFallDamage(int damage)
+    {
+        if (_healthComponent != null)
+        {
+            _healthComponent.ApplyDamageServerRpc(damage);
+        }
+    }
+
+    // ── Death / Respawn ──────────────────────────────────────────
+    private void HandleLocalPlayerDeath()
+    {
+        _isDead = true;
+        // Disable input
+        if (_movementComponent != null)
+            _movementComponent.enabled = false;
+        if (_blockHighlight != null)
+            _blockHighlight.enabled = false;
+
+        // Immediately hide the player sprite
+        if (_playerRenderer != null)
+            _playerRenderer.SetVisible(false);
+
+        StartCoroutine(RespawnAfterDelay());
+    }
+
+    private IEnumerator RespawnAfterDelay()
+    {
+        yield return new WaitForSeconds(respawnDelay);
+        CmdRequestRespawn();
+    }
+
+    [Command]
+    private void CmdRequestRespawn()
+    {
+        if (_healthComponent == null) return;
+
+        // Reset health on server (SyncVar propagates to clients)
+        _healthComponent.ResetHealth();
+
+        // Teleport to the developer-defined spawn position
+        transform.position = spawnPosition;
+
+        // Notify the client to re-enable controls
+        RpcCompleteRespawn();
+    }
+
+    [ClientRpc]
+    private void RpcCompleteRespawn()
+    {
+        _isDead = false;
+
+        // Show the player sprite again
+        if (_playerRenderer != null)
+            _playerRenderer.SetVisible(true);
+
+        if (!isLocalPlayer) return;
+
+        // Re-enable input
+        if (_movementComponent != null)
+            _movementComponent.enabled = true;
+        if (_blockHighlight != null)
+        {
+            _blockHighlight.enabled = true;
+            _blockHighlight.InitializeHighlight();
+        }
+
+        // Reset physics so the player doesn't keep falling
+        if (_rb != null)
+            _rb.linearVelocity = Vector2.zero;
+    }
 }

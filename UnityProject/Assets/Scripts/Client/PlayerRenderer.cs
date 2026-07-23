@@ -88,4 +88,10 @@ public class PlayerRenderer : NetworkBehaviour
             playerRenderer.flipX = !newRotation;
         }
     }
+
+    public void SetVisible(bool visible)
+    {
+        if (playerRenderer != null)
+            playerRenderer.enabled = visible;
+    }
 }
