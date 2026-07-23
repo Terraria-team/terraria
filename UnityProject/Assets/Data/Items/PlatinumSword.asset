@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebe69a55c7f55d2409e851144eca918b, type: 3}
-  m_Name: Dirt
+  m_Name: PlatinumSword
   m_EditorClassIdentifier: Shared::ItemData
-  id: 1
-  icon: {fileID: 21300000, guid: 8f2caba4fb8806341b9effe5a94d4438, type: 3}
+  id: 33
+  icon: {fileID: 21300000, guid: 80b9508b6e6e5f04db675b37ad6f2eab, type: 3}
   unlocalizedName: 
-  stackSize: 5
-  primaryAction: 2
-  consumeOnAction: 1
-  blockToPlace: {fileID: 11400000, guid: cb9295788a56ad24fbc1bc7aa5ae7124, type: 2}
+  stackSize: 1
+  primaryAction: 4
+  consumeOnAction: 0
+  blockToPlace: {fileID: 0}
   projectileToSpawn: 0
-  swingData: {fileID: 0}
+  swingData: {fileID: 11400000, guid: cb22b42b7ee6de6459ab4752117ae947, type: 2}

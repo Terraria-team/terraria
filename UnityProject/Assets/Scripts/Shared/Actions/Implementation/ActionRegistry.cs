@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 
 public enum ActionType
 {
+    None,
     BreakBlock,
     PlaceBlock,
     SpawnProjectile,
@@ -19,6 +20,8 @@ public static class ActionRegistry
     {
         switch (action)
         {
+            case ActionType.None:
+                return true;
             case ActionType.BreakBlock:
             {
                 if (!PlayerReachUtils.IsBlockChangeValid(context))
@@ -54,7 +57,6 @@ public static class ActionRegistry
                         new ItemID(droppedItemData.id)    
                     ));
                 }
-                
                 
                 break;
             }

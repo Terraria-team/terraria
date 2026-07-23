@@ -11,14 +11,13 @@ GameObject:
   - component: {fileID: 706315657216513218}
   - component: {fileID: 4489534132370940347}
   - component: {fileID: 6731429684716376329}
-  - component: {fileID: 8842371496505669394}
   m_Layer: 5
   m_Name: ItemSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &706315657216513218
 RectTransform:
   m_ObjectHideFlags: 0
@@ -76,22 +75,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8842371496505669394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2756732041498417530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 247d1f4ad40864348b50fd2473dc7356, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Client::InventorySlotUI
-  itemSpriteDisplay: {fileID: 0}
-  itemCountText: {fileID: 0}
-  itemSelection: {fileID: 0}
-  TEMPORARY_itemSprites: []
 --- !u!1 &4095186794095959919
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,14 +137,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -372949452097032247, guid: a49f0e63a62a5564eac7520b985021b9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -186,10 +169,6 @@ MonoBehaviour:
   itemSpriteDisplay: {fileID: 6731429684716376329}
   itemCountText: {fileID: 7632961241559302763}
   itemSelection: {fileID: 6420933612784590461}
-  TEMPORARY_itemSprites:
-  - {fileID: 7259517905286814884, guid: ff0b9dcc830396e40aee677f27262153, type: 3}
-  - {fileID: -5786701871830134525, guid: 9f66345a39fecb442bf2f30d2adfbe25, type: 3}
-  - {fileID: -9117800893854747789, guid: 2b97a2d4cde09cb459869ae873f188fa, type: 3}
 --- !u!1 &6420933612784590461
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,14 +227,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.8126813, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 1561433874991539610, guid: 3852c8c624373244daf4622de72a48d6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -299,7 +278,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 67.3, y: -6.8}
+  m_AnchoredPosition: {x: 67.3, y: -58.4}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &839740827222286385

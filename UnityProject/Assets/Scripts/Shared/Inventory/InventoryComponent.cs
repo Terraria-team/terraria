@@ -40,12 +40,7 @@ public class InventoryComponent : NetworkBehaviour
                 _slots.Add(new NullableItemStack());
             }
 
-            // TODO for test only, remove
             _slots[0] = new ItemStack(new ItemID(0));
-            _slots[1] = new ItemStack(new ItemID(1));
-            _slots[2] = new ItemStack(new ItemID(2));
-            _slots[3] = new ItemStack(new ItemID(3));
-            _slots[4] = new ItemStack(new ItemID(6));
         }
 
         if (isLocalPlayer)
@@ -93,18 +88,16 @@ public class InventoryComponent : NetworkBehaviour
         bool result = ActionRegistry.ExecuteAction(_slots[selectedSlot].ItemStack.ItemID.ItemData.primaryAction, context);
         
         if (_slots[selectedSlot].ItemStack.ItemID.ItemData.consumeOnAction && result)
-        {
-            if (_slots[selectedSlot].ItemStack.Count == 1)
-                _slots[selectedSlot] = new NullableItemStack();
-            else
-                _slots[selectedSlot] = new NullableItemStack(_slots[selectedSlot].ItemStack.Decremented());
-        }
+            SubtractFromSlot(selectedSlot);
     }
 
-    [ClientRpc]
-    public void RpcUseSelectedItem(ItemStack stack, ActionContext context)
+    [Server]
+    private void SubtractFromSlot(int slotID)
     {
-        
+        if (_slots[slotID].ItemStack.Count == 1)
+            _slots[slotID] = new NullableItemStack();
+        else
+            _slots[slotID] = new NullableItemStack(_slots[slotID].ItemStack.Decremented());
     }
 
     [Server]
@@ -173,5 +166,91 @@ public class InventoryComponent : NetworkBehaviour
         
         Debug.LogError("Trying to add item but no place found. Make sure you've checked whether it can fit first");
     }
+
+    [Server]
+    private int GetCountOf(ItemID item)
+    {
+        int count = 0;
+        
+        for (var i = 0; i < _slots.Count; i++)
+        {
+            var slot = _slots[i];
+            
+            if (!slot.HasValue)
+                continue;
+            
+            var stack = slot.ItemStack;
+                
+            if (stack.ItemID != item)
+                continue;
+
+            count += stack.Count;
+        }
+        
+        return count;
+    }
     
+    [Server]
+    private bool HasIngredientsFor(CraftData data)
+    {
+        for (int i = 0; i < data.ingredients.Length; i++)
+        {
+            var ingredient = data.ingredients[i].id;
+            var amount = data.ingredientAmounts[i];
+
+            if (GetCountOf(new ItemID(ingredient)) < amount)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void RemoveIngredients(CraftData data)
+    {
+        for (int i = 0; i < data.ingredients.Length; i++)
+        {
+            var ingredient = data.ingredients[i].id;
+            var amount = data.ingredientAmounts[i];
+
+            for (int j = 0; j < _slots.Count; j++)
+            {
+                var slot = _slots[j];
+                
+                if (!slot.HasValue)
+                    continue;
+                
+                var stack = slot.ItemStack;
+                
+                if (stack.ItemID != new ItemID(ingredient))
+                    continue;
+
+                while (_slots[j].HasValue && amount > 0)
+                {
+                    SubtractFromSlot(j);
+                    amount--;
+                }
+            }
+        }
+    }
+    
+    [Command]
+    public void TryCrafting(int craftID)
+    {
+        var data = DataManager.Crafts[craftID];
+        var stack = new ItemStack(new ItemID(data.result.id), data.resultAmount);
+        
+        if (HowMuchCanAddOf(stack) < data.resultAmount)
+            return;
+            
+        if (!HasIngredientsFor(data))
+            return;
+        
+        RemoveIngredients(data);
+        
+        if (HowMuchCanAddOf(stack) >= data.resultAmount)
+            for (int i = 0; i < data.resultAmount; i++)
+            {
+                AddItem(stack.ItemID);
+            }
+    }
 }

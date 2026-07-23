@@ -16,7 +16,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: f090b9403e6e11447a0b4d25c28b125d, type: 3}
   unlocalizedName: 
   stackSize: 5
-  primaryAction: 1
+  primaryAction: 2
   consumeOnAction: 1
   blockToPlace: {fileID: 11400000, guid: a4efe3ca5cb28c14599b71073b521531, type: 2}
   projectileToSpawn: 0
