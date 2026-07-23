@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private PlayerRenderer _playerRenderer;
     private Rigidbody2D _rb;
     private Collider2D _collider;
+    private Animator _animator;
 
     private bool _enabled = false; // controlled by PlayerController
 
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
         _playerRenderer = playerRenderer;
         _rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
+        _animator = GetComponent<Animator>();
         _enabled = true;
     }
 
@@ -33,6 +35,12 @@ public class PlayerMovement : MonoBehaviour
 
         ReadHorizontalInput();
         ReadJumpInput();
+
+        if (_animator != null)
+        {
+            _animator.SetFloat("Speed", Mathf.Abs(_horizontalInput));
+            _animator.SetBool("IsGrounded", _isGrounded);
+        }
     }
 
     void FixedUpdate()
