@@ -21,21 +21,32 @@ public class EfServerInstanceRepositoryTests : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     // Оновлено для використання ініціалізатора об'єкта (class) замість позиційного конструктора (record)
-    private static ServerInstanceEntity Instance(int port) => new ServerInstanceEntity
+    private static ServerInstanceEntity Instance(int port)
     {
-        Id = Guid.NewGuid(),
-        WorldId = Guid.NewGuid(), // Додано нове поле з сутності
-        ContainerId = $"container-{port}",
-        Image = "terraria-server:latest",
-        Name = $"server_instance_{port}",
-        Port = port,
-        Status = ServerInstanceStatus.Running,
-        PlayerCount = 0,
-        EmptySince = null,
-        PendingSince = null, // Додано нове поле з сутності
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = null
-    };
+        var worldId = Guid.NewGuid();
+        return new ServerInstanceEntity
+        {
+            Id = Guid.NewGuid(),
+            WorldId = worldId,
+            ContainerId = $"container-{port}",
+            Image = "terraria-server:latest",
+            Name = $"server_instance_{port}",
+            Port = port,
+            Status = ServerInstanceStatus.Running,
+            PlayerCount = 0,
+            EmptySince = null,
+            PendingSince = null,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = null,
+            World = new TerrariaWorldEntity
+            {
+                Id = worldId,
+                OwnerId = Guid.NewGuid(),
+                Name = $"World_For_Port_{port}",
+                StorageId = null
+            }
+        };
+    }
 
     // Створений інстанс читається назад через GetAll з усіма полями.
     [DockerFact]
