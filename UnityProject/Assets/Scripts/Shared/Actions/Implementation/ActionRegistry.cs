@@ -128,6 +128,23 @@ public static class ActionRegistry
                 //swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
                 NetworkServer.Spawn(swingObject);
                 
+                float swingDamage = context.usedItemID.ItemData.swingData.swingDamage;
+                float swingRange = context.usedItemID.ItemData.swingData.swingSize;
+
+                var colliders = Physics2D.OverlapCircleAll(swingLocation, swingRange);
+                foreach (var col in colliders)
+                {
+                    // Skip self
+                    //if (col.transform.IsChildOf(context.) || col.gameObject == gameObject)
+                    //    continue;
+
+                    var health = col.GetComponent<HealthComponent>();
+                    if (health != null)
+                    {
+                        health.ApplyDamageServerRpc(Mathf.Max(1, (int)swingDamage));
+                    }
+                }
+                
                 break;
             }
         }

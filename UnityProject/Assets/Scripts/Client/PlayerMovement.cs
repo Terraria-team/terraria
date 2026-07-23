@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public event Action<int> OnFallDamage;
 
     [SerializeField]
-    private const float FallDamageVelocityThreshold = -15f; // safe landing speed
+    private const float FallDamageVelocityThreshold = -35f; // safe landing speed
     [SerializeField]
     private const float FallDamageMultiplier = 2f;           // damage per unit of excess velocity
     private bool _wasGroundedLastFrame = true;

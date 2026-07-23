@@ -17,9 +17,9 @@ MonoBehaviour:
   sprite: {fileID: -3945659445594881757, guid: 1b4c20967b591924ca1519c324ca88e4, type: 3}
   moveSpeed: 4
   jumpForce: 0
-  detectionRange: 16
-  loseTargetRange: 22
-  attackRange: 1.2
+  detectionRange: 32
+  loseTargetRange: 40
+  attackRange: 2
   attackCooldown: 1.8
   attackDamage: 30
   stepCheckDistance: 0.7
@@ -29,7 +29,7 @@ MonoBehaviour:
   useSinusoidalFlight: 0
   sinFrequency: 2
   sinAmplitude: 1.5
-  preferredShootDistance: 7
-  projectileSpeed: 9
-  projectileLifetime: 5
+  preferredShootDistance: 10
+  projectileSpeed: 8
+  projectileLifetime: 8
   projectilePassesThroughWalls: 0

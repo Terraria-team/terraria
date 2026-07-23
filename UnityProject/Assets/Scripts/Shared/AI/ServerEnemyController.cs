@@ -15,7 +15,6 @@ namespace Server.AI
         // ── Components ───────────────────────────────────────────────
         public Rigidbody2D Rb { get; private set; }
         public Collider2D Col { get; private set; }
-        private HealthComponent _healthComponent;
 
         // ── Inspector ─────────────────────────────────────────────────
         [Header("Config")]
@@ -51,7 +50,7 @@ namespace Server.AI
         private SpriteRenderer _spriteRenderer;
         
         private TextMeshPro _hpText;
-        private HealthComponent _health;
+        private HealthComponent _healthComponent;
 
         // ── Unity Lifecycle ───────────────────────────────────────────
         protected virtual void Awake()
@@ -60,8 +59,8 @@ namespace Server.AI
             Col = GetComponent<Collider2D>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             
-            _health = GetComponent<HealthComponent>();
-            if (_health != null)
+            _healthComponent = GetComponent<HealthComponent>();
+            if (_healthComponent != null)
             {
                 GameObject textObj = new GameObject("HP_Text");
                 textObj.transform.SetParent(transform);
@@ -75,8 +74,6 @@ namespace Server.AI
 
             if (Data != null)
                 Data = Instantiate(Data);
-
-            _healthComponent = GetComponent<HealthComponent>();
         }
 
         public override void OnStartServer()
@@ -128,9 +125,9 @@ namespace Server.AI
                     isFacingRight = false;
             }
 
-            if (_hpText != null && _health != null)
+            if (_hpText != null && _healthComponent != null)
             {
-                _hpText.text = _health.HealthNow.ToString();
+                _hpText.text = _healthComponent.HealthNow.ToString();
             }
         }
 

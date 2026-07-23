@@ -11,7 +11,7 @@ public class ProjectileComponent : MonoBehaviour
         {
             if (collision.collider.TryGetComponent<HealthComponent>(out var component))
             {
-                component.ApplyHealingServerRpc(25);
+                component.ApplyDamageServerRpc(15);
             }
             
             var explosion = Object.Instantiate(

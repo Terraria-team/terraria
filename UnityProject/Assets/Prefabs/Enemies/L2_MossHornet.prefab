@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3097361059154944182}
   - component: {fileID: 2526689579016802279}
   - component: {fileID: -1105449336717315117}
+  - component: {fileID: -1999209597787884172}
   m_Layer: 9
   m_Name: L2_MossHornet
   m_TagString: Untagged
@@ -236,3 +237,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1999209597787884172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4153227467817105194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3887c3f3db40d3bef302d1ba6587c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shared::Shared.Components.HealthComponent
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  CurrentHealth: 0
+  MaxHealth: 100
+  invulnerabilityDuration: 0.5

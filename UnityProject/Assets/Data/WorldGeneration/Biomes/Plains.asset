@@ -18,6 +18,7 @@ MonoBehaviour:
   allowedEnemies:
   - {fileID: 11400000, guid: e3300eb02487b094e99acb850c8150a1, type: 2}
   - {fileID: 11400000, guid: 84dc5fc10425f8641a2a965624910e8f, type: 2}
+  - {fileID: 11400000, guid: fc46537fb9595854f82a91bebd50ef4e, type: 2}
   blocks:
   - {fileID: 11400000, guid: d3cec0ef711fb7646b401a0ccae7a282, type: 2}
   - {fileID: 11400000, guid: cb9295788a56ad24fbc1bc7aa5ae7124, type: 2}

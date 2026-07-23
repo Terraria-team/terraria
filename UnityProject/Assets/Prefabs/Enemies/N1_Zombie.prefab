@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3331151144386621487}
   - component: {fileID: 4805010348312227449}
   - component: {fileID: 2286667581970406290}
+  - component: {fileID: 3360192952008854141}
   m_Layer: 9
   m_Name: N1_Zombie
   m_TagString: Untagged
@@ -236,3 +237,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3360192952008854141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3785036344300108790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3887c3f3db40d3bef302d1ba6587c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Shared::Shared.Components.HealthComponent
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  CurrentHealth: 0
+  MaxHealth: 125
+  invulnerabilityDuration: 0.5
