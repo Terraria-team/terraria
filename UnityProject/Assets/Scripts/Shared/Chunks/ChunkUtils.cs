@@ -31,8 +31,8 @@ public class ChunkUtils
     public static Vector2Int ChunkCoordsAtWorldPosition(Vector2 worldPosition)
     {
         return new Vector2Int(
-            (int)worldPosition.x / ChunkSize,
-            (int)worldPosition.y / ChunkSize
+            Mathf.FloorToInt(worldPosition.x / ChunkSize),
+            Mathf.FloorToInt(worldPosition.y / ChunkSize)
         );
     }
 }
