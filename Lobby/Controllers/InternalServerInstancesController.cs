@@ -1,4 +1,4 @@
-using Lobby.Application.Contracts;
+using Lobby.Application.UseCases;
 using Lobby.Filters;
 using Lobby.Mappers;
 using LobbyUnityShared.DTOs;

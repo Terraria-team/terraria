@@ -1,4 +1,4 @@
-﻿using Lobby.Application.Contracts;
+using Lobby.Application.Contracts.Repositories;
 using Lobby.Settings;
 using Microsoft.Extensions.Options;
 

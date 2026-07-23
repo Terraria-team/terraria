@@ -1,5 +1,4 @@
-﻿using System;
-using Lobby.Application.Entities;
+using Lobby.Application.Domain;
 
 namespace Lobby.Application.Models;
 
