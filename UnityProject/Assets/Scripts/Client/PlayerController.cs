@@ -161,7 +161,12 @@ public class PlayerController : NetworkBehaviour
         
             var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(pos));
             var data = DataManager.Biomes[type];
-        
+
+            if (data == null || data.allowedEnemies.Length == 0)
+            {
+                continue;
+            }
+
             int randomIndex = Random.Range(0, data.allowedEnemies.Length);
             var randomEnemy = data.allowedEnemies[randomIndex];
             
