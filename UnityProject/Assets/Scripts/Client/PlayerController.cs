@@ -216,14 +216,7 @@ public class PlayerController : NetworkBehaviour
         {
             _inventoryComponent.UseSelectedItem();
         }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            _playerRenderer.ChangeColor();
-        }
     }
-
-
     
     [Command]
     void CmdAffectPos(float pos)
