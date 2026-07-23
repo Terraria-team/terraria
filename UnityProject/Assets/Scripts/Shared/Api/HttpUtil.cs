@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Client.Api
+namespace Shared.Api
 {
     public static class HttpUtil
     {
@@ -14,7 +15,8 @@ namespace Client.Api
                 string url,
                 string method,
                 object jsonBody = null,
-                string bearerToken = null
+                string bearerToken = null,
+                Dictionary<string, string> headers = null
             )
         {
             using var request = new UnityWebRequest(url, method);
@@ -28,6 +30,14 @@ namespace Client.Api
                 request.SetRequestHeader("Content-Type", "application/json");
             }
 
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    request.SetRequestHeader(header.Key, header.Value);
+                }
+            }
+            
             if (!string.IsNullOrEmpty(bearerToken))
             {
                 request.SetRequestHeader("Authorization", $"Bearer {bearerToken}");

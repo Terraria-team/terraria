@@ -140,8 +140,13 @@ namespace Lobby.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<DateTime?>("PendingSince")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("PlayerCount")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("Port")
                         .HasColumnType("integer");
@@ -154,6 +159,9 @@ namespace Lobby.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("WorldId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmptySince");
@@ -163,7 +171,52 @@ namespace Lobby.Migrations
 
                     b.HasIndex("Status");
 
+                    b.HasIndex("WorldId");
+
                     b.ToTable("server_instances", (string)null);
+                });
+
+            modelBuilder.Entity("Lobby.Application.Entities.TerrariaWorldEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("StorageId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("StorageId")
+                        .IsUnique();
+
+                    b.ToTable("terraria_worlds", (string)null);
+                });
+
+            modelBuilder.Entity("Lobby.Application.Entities.TerrariaWorldStorageEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AbsolutePathOnTheDisk")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("terraria_world_storages", (string)null);
                 });
 
             modelBuilder.Entity("Lobby.Application.Entities.PlayerGoogleLoginEntity", b =>
@@ -188,11 +241,52 @@ namespace Lobby.Migrations
                     b.Navigation("Player");
                 });
 
+            modelBuilder.Entity("Lobby.Application.Entities.ServerInstanceEntity", b =>
+                {
+                    b.HasOne("Lobby.Application.Entities.TerrariaWorldEntity", "World")
+                        .WithMany("ServerInstances")
+                        .HasForeignKey("WorldId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("World");
+                });
+
+            modelBuilder.Entity("Lobby.Application.Entities.TerrariaWorldEntity", b =>
+                {
+                    b.HasOne("Lobby.Application.Entities.PlayerEntity", "Owner")
+                        .WithMany("OwnedWorlds")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Lobby.Application.Entities.TerrariaWorldStorageEntity", "Storage")
+                        .WithOne("World")
+                        .HasForeignKey("Lobby.Application.Entities.TerrariaWorldEntity", "StorageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Storage");
+                });
+
             modelBuilder.Entity("Lobby.Application.Entities.PlayerEntity", b =>
                 {
                     b.Navigation("GoogleLogin");
 
+                    b.Navigation("OwnedWorlds");
+
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Lobby.Application.Entities.TerrariaWorldEntity", b =>
+                {
+                    b.Navigation("ServerInstances");
+                });
+
+            modelBuilder.Entity("Lobby.Application.Entities.TerrariaWorldStorageEntity", b =>
+                {
+                    b.Navigation("World");
                 });
 #pragma warning restore 612, 618
         }

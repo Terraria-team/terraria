@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Client.Api;
 using Client.Auth;
 using Client.Config;
 using UnityEngine;

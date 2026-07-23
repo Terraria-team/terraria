@@ -5,13 +5,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Lobby.Tests.Integration;
 
 /// <summary>
-/// Тетси, що перевіряють логіку вибору вільного порту (max+1, fallback на порожній таблиці),
-/// збереження інстансів та унікальний індекс на порту.
+/// Тетси, що перевіряють логіку збереження інстансів
 /// </summary>
 [Collection(PostgresCollection.Name)]
 public class EfServerInstanceRepositoryTests : IAsyncLifetime
 {
-    // Дублює fallback-порт із EfServerInstanceRepository.GetFreeInstancePort().
     private const int BasePort = 7777;
 
     private readonly PostgresDatabaseFixture _db;
@@ -21,47 +19,40 @@ public class EfServerInstanceRepositoryTests : IAsyncLifetime
     public Task InitializeAsync() => _db.ResetAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
-    private static ServerInstanceEntity Instance(int port) => new(
-        Id: Guid.NewGuid(),
-        ContainerId: $"container-{port}",
-        Image: "terraria-server:latest",
-        Name: $"server_instance_{port}",
-        Port: port,
-        PlayerCount: 0,
-        EmptySince: null,
-        CreatedAt: DateTime.UtcNow,
-        UpdatedAt: null,
-        Status: ServerInstanceStatus.Running);
-
-    // На порожній таблиці вільний порт — це fallback BasePort + 1.
-    [DockerFact]
-    public async Task GetFreeInstancePort_WhenTableEmpty_ReturnsBasePortPlusOne()
+    private static ServerInstanceEntity Instance(int port)
     {
-        await using var context = _db.CreateContext();
+        var worldId = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
 
-        var port = await new EfServerInstanceRepository(context).GetFreeInstancePort();
-
-        Assert.Equal(BasePort + 1, port);
-    }
-
-    // За наявності інстансів вільний порт — максимальний зайнятий + 1.
-    [DockerFact]
-    public async Task GetFreeInstancePort_ReturnsMaxPortPlusOne()
-    {
-        const int highestPort = BasePort + 24;
-        await using (var context = _db.CreateContext())
+        return new ServerInstanceEntity
         {
-            context.ServerInstances.AddRange(
-                Instance(BasePort + 1),
-                Instance(highestPort),
-                Instance(BasePort + 3));
-            await context.SaveChangesAsync();
-        }
-
-        await using var readContext = _db.CreateContext();
-        var port = await new EfServerInstanceRepository(readContext).GetFreeInstancePort();
-
-        Assert.Equal(highestPort + 1, port);
+            Id = Guid.NewGuid(),
+            WorldId = worldId,
+            ContainerId = $"container-{port}",
+            Image = "terraria-server:latest",
+            Name = $"server_instance_{port}",
+            Port = port,
+            Status = ServerInstanceStatus.Running,
+            PlayerCount = 0,
+            EmptySince = null,
+            PendingSince = null,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = null,
+            World = new TerrariaWorldEntity
+            {
+                Id = worldId,
+                OwnerId = ownerId,
+                Name = $"World_For_Port_{port}",
+                StorageId = null,
+                Owner = new PlayerEntity
+                {
+                    Id = ownerId,
+                    Email = $"owner_{port}@example.com",
+                    Name = $"Test Owner {port}",
+                    Role = "User"
+                }
+            }
+        };
     }
 
     // Створений інстанс читається назад через GetAll з усіма полями.

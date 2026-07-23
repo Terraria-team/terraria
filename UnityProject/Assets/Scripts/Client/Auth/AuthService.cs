@@ -1,9 +1,9 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Api;
 using LobbyUnityShared.DTOs;
 using Client.Config;
+using Shared.Api;
 using UnityEngine;
 
 namespace Client.Auth
@@ -21,6 +21,7 @@ namespace Client.Auth
 
         public string CurrentAccessToken { get; private set; }
         public string CurrentRefreshToken { get; private set; }
+        public string CurrentNickname { get; private set; }
 
         public event Action OnAuthStarted;
         public event Action<string> OnAuthStatusUpdated;
@@ -131,9 +132,9 @@ namespace Client.Auth
         private async Task<bool> ExchangeCodeWithBackendAsync(string code, string redirectUri)
         {
             string url = _baseUrl + _googleLoginEndpoint;
-            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new { code, redirectUri });
+            var tokens = await HttpUtil.SendAsync<LoginTokensDto>(url, "POST", new GoogleLoginDto { Code = code, RedirectUri = redirectUri });
 
-            if (tokens == null || string.IsNullOrEmpty(tokens.accesstoken))
+            if (tokens == null || string.IsNullOrEmpty(tokens.AccessToken))
             {
                 OnAuthFailed?.Invoke("Backend token exchange failed or returned an empty access token.");
                 return false;
@@ -148,8 +149,8 @@ namespace Client.Auth
             if (string.IsNullOrEmpty(CurrentRefreshToken)) return false;
 
             string url = _baseUrl + _refreshEndpoint;
-            var (content, statusCode, error) = await HttpUtil.SendRawAsync(url, "POST", new { refreshToken = CurrentRefreshToken });
-
+            var (content, statusCode, error) = await HttpUtil.SendRawAsync(url, "POST", new RefreshTokenDto { RefreshToken = CurrentRefreshToken });
+            
             if (statusCode == 400 || statusCode == 401)
             {
                 Debug.LogWarning($"[AuthService] Refresh token rejected by server ({statusCode}). Wiping saved session.");
@@ -162,7 +163,7 @@ namespace Client.Auth
             try
             {
                 var tokens = Newtonsoft.Json.JsonConvert.DeserializeObject<LoginTokensDto>(content);
-                if (tokens == null || string.IsNullOrEmpty(tokens.accesstoken)) return false;
+                if (tokens == null || string.IsNullOrEmpty(tokens.AccessToken)) return false;
 
                 UpdateTokens(tokens);
                 return true;
@@ -178,18 +179,59 @@ namespace Client.Auth
             if (string.IsNullOrEmpty(CurrentRefreshToken)) return;
 
             string url = _baseUrl + _logoutEndpoint;
-            await HttpUtil.SendRawAsync(url, "POST", new { refreshToken = CurrentRefreshToken }, CurrentAccessToken);
+            await HttpUtil.SendRawAsync(url, "POST", new RefreshTokenDto { RefreshToken = CurrentRefreshToken }, CurrentAccessToken);
 
             ClearTokens();
         }
 
         private void UpdateTokens(LoginTokensDto tokens)
         {
-            CurrentAccessToken  = tokens.accesstoken;
-            CurrentRefreshToken = tokens.sessiontoken;
+            CurrentAccessToken  = tokens.AccessToken;
+            CurrentRefreshToken = tokens.RefreshToken;
+
+            ExtractNickname(CurrentAccessToken);
 
             PlayerPrefs.SetString("refresh_token", CurrentRefreshToken);
             PlayerPrefs.Save();
+        }
+
+        private void ExtractNickname(string jwt)
+        {
+            try 
+            {
+                var parts = jwt.Split('.');
+                if (parts.Length > 1) 
+                {
+                    var payload = parts[1];
+                    payload = payload.Replace('-', '+').Replace('_', '/');
+                    switch (payload.Length % 4) 
+                    {
+                        case 2: payload += "=="; break;
+                        case 3: payload += "="; break;
+                    }
+                    var decoded = Convert.FromBase64String(payload);
+                    var json = Encoding.UTF8.GetString(decoded);
+                    
+                    var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<string, object>>(json);
+                    if (parsed != null)
+                    {
+                        if (parsed.TryGetValue("name", out object nameObj) && nameObj != null)
+                        {
+                            CurrentNickname = nameObj.ToString();
+                        }
+                        else if (parsed.TryGetValue("email", out object emailObj) && emailObj != null)
+                        {
+                            CurrentNickname = emailObj.ToString().Split('@')[0];
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Error parsing JWT: " + ex.Message);
+            }
+            if (string.IsNullOrEmpty(CurrentNickname))
+                CurrentNickname = "Player";
         }
 
         private void ClearTokens()

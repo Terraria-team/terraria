@@ -62,7 +62,7 @@ public class AuthApiTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("accessToken").GetString()));
-        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("sessionToken").GetString()));
+        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("refreshToken").GetString()));
 
         await _api.WithDb(async db =>
         {
@@ -87,8 +87,8 @@ public class AuthApiTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("accesstoken").GetString()));
-        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("sessiontoken").GetString()));
+        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("accessToken").GetString()));
+        Assert.False(string.IsNullOrEmpty(json.RootElement.GetProperty("refreshToken").GetString()));
 
         await _api.WithDb(async db =>
         {

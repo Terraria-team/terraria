@@ -18,6 +18,10 @@ public class PlayerController : NetworkBehaviour
     public static Transform LocalPlayerTransform;
 
     public PlayerData playerData;
+    [SyncVar(hook = nameof(OnPlayerNameChanged))]
+    public string playerName = "";
+
+    private TextMeshPro _nameText;
     private PlayerRenderer _playerRenderer;
     private HealthComponent _healthComponent;
     private PlayerMovement _movementComponent;
@@ -44,8 +48,22 @@ public class PlayerController : NetworkBehaviour
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _rb.bodyType = RigidbodyType2D.Kinematic;
 
+        GameObject nameObj = new GameObject("Name_Text");
+        nameObj.transform.SetParent(transform);
+        nameObj.transform.localPosition = new Vector3(0, 2.2f, 0); // Above HP
+        _nameText = nameObj.AddComponent<TextMeshPro>();
+        _nameText.alignment = TextAlignmentOptions.Center;
+        _nameText.fontSize = 3;
+        _nameText.color = Color.white;
+        _nameText.sortingOrder = 10;
+        _nameText.text = playerName;
+
         if (!isLocalPlayer)
             return;
+            
+        string myName = Client.Auth.AuthService.Instance.CurrentNickname;
+        if (string.IsNullOrEmpty(myName)) myName = "Player";
+        CmdSetName(myName);
         
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
@@ -270,4 +288,17 @@ public class PlayerController : NetworkBehaviour
         }
     }
     
+    void OnPlayerNameChanged(string oldName, string newName)
+    {
+        if (_nameText != null)
+        {
+            _nameText.text = newName;
+        }
+    }
+
+    [Command]
+    public void CmdSetName(string newName)
+    {
+        playerName = newName;
+    }
 }
