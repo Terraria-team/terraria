@@ -1,6 +1,6 @@
-using Lobby.Application.Contracts;
-using Lobby.Application.Entities;
-using Lobby.Infrastructure.Data;
+using Lobby.Application.Contracts.ExternalServices;
+using Lobby.Application.Domain;
+using Lobby.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
@@ -40,9 +40,10 @@ public sealed class LobbyApiFixture : IAsyncLifetime
         using var scope = Factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<LobbyDbContext>();
         await db.RefreshTokens.ExecuteDeleteAsync();
-        await db.PlayerGoogleLogins.ExecuteDeleteAsync();
+        await db.PlayerExternalIdentities.ExecuteDeleteAsync();
         await db.ServerInstances.ExecuteDeleteAsync();
-        await db.Set<TerrariaWorldEntity>().ExecuteDeleteAsync();
+        await db.TerrariaWorlds.ExecuteDeleteAsync();
+        await db.TerrariaWorldStorages.ExecuteDeleteAsync();
         await db.Players.ExecuteDeleteAsync();
     }
 
