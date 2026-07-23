@@ -80,7 +80,7 @@ namespace Server.AI
             {
                 var health = other.GetComponent<HealthComponent>();
                 if (health != null)
-                    health.ApplyDamageServerRpc((int)damage);
+                    health.ApplyDamageServer((int)damage);
 
                 NetworkServer.Destroy(gameObject);
                 return;
