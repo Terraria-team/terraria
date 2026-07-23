@@ -1,6 +1,8 @@
 using UnityEngine;
 using Mirror;
 using Shared.DataDefinitions;
+using TMPro;
+using Shared.Components;
 
 namespace Server.AI
 {
@@ -45,6 +47,9 @@ namespace Server.AI
 
         protected IEnemyState _currentState;
         private SpriteRenderer _spriteRenderer;
+        
+        private TextMeshPro _hpText;
+        private HealthComponent _health;
 
         // ── Unity Lifecycle ───────────────────────────────────────────
         protected virtual void Awake()
@@ -53,6 +58,19 @@ namespace Server.AI
             Col = GetComponent<Collider2D>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             
+            _health = GetComponent<HealthComponent>();
+            if (_health != null)
+            {
+                GameObject textObj = new GameObject("HP_Text");
+                textObj.transform.SetParent(transform);
+                textObj.transform.localPosition = new Vector3(0, Col.bounds.extents.y + 0.8f, 0);
+                _hpText = textObj.AddComponent<TextMeshPro>();
+                _hpText.alignment = TextAlignmentOptions.Center;
+                _hpText.fontSize = 3;
+                _hpText.color = Color.white;
+                _hpText.sortingOrder = 10;
+            }
+
             if (Data != null)
                 Data = Instantiate(Data);
         }
@@ -63,16 +81,23 @@ namespace Server.AI
             DispatchInitialState();
         }
 
-        [ServerCallback]
         protected virtual void Update()
         {
-            _currentState?.UpdateState();
+            if (isServer)
+            {
+                _currentState?.UpdateState();
 
-            // Update facing direction based on horizontal velocity
-            if (Rb.linearVelocity.x > 0.05f && !isFacingRight)
-                isFacingRight = true;
-            else if (Rb.linearVelocity.x < -0.05f && isFacingRight)
-                isFacingRight = false;
+                // Update facing direction based on horizontal velocity
+                if (Rb.linearVelocity.x > 0.05f && !isFacingRight)
+                    isFacingRight = true;
+                else if (Rb.linearVelocity.x < -0.05f && isFacingRight)
+                    isFacingRight = false;
+            }
+
+            if (_hpText != null && _health != null)
+            {
+                _hpText.text = _health.HealthNow.ToString();
+            }
         }
 
         private void OnFacingRightChanged(bool oldVal, bool newVal)

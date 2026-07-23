@@ -21,6 +21,7 @@ namespace Client.Auth
 
         public string CurrentAccessToken { get; private set; }
         public string CurrentRefreshToken { get; private set; }
+        public string CurrentNickname { get; private set; }
 
         public event Action OnAuthStarted;
         public event Action<string> OnAuthStatusUpdated;
@@ -188,8 +189,49 @@ namespace Client.Auth
             CurrentAccessToken  = tokens.accesstoken;
             CurrentRefreshToken = tokens.sessiontoken;
 
+            ExtractNickname(CurrentAccessToken);
+
             PlayerPrefs.SetString("refresh_token", CurrentRefreshToken);
             PlayerPrefs.Save();
+        }
+
+        private void ExtractNickname(string jwt)
+        {
+            try 
+            {
+                var parts = jwt.Split('.');
+                if (parts.Length > 1) 
+                {
+                    var payload = parts[1];
+                    payload = payload.Replace('-', '+').Replace('_', '/');
+                    switch (payload.Length % 4) 
+                    {
+                        case 2: payload += "=="; break;
+                        case 3: payload += "="; break;
+                    }
+                    var decoded = Convert.FromBase64String(payload);
+                    var json = Encoding.UTF8.GetString(decoded);
+                    
+                    var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<string, object>>(json);
+                    if (parsed != null)
+                    {
+                        if (parsed.TryGetValue("name", out object nameObj) && nameObj != null)
+                        {
+                            CurrentNickname = nameObj.ToString();
+                        }
+                        else if (parsed.TryGetValue("email", out object emailObj) && emailObj != null)
+                        {
+                            CurrentNickname = emailObj.ToString().Split('@')[0];
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Error parsing JWT: " + ex.Message);
+            }
+            if (string.IsNullOrEmpty(CurrentNickname))
+                CurrentNickname = "Player";
         }
 
         private void ClearTokens()
