@@ -509,7 +509,6 @@ GameObject:
   - component: {fileID: 353596418}
   - component: {fileID: 353596417}
   - component: {fileID: 353596416}
-  - component: {fileID: 353596415}
   m_Layer: 0
   m_Name: MyNetworkManager
   m_TagString: Untagged
@@ -517,20 +516,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &353596415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 353596414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkManagerHUD
-  offsetX: 0
-  offsetY: 0
 --- !u!114 &353596416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -606,6 +591,7 @@ MonoBehaviour:
   - {fileID: 5979367603353593055, guid: 3f3ca058cd35807439bbecff13bf13fb, type: 3}
   - {fileID: 7014284000785131102, guid: ea7fa9a758a9c0a418b27b217452daf7, type: 3}
   - {fileID: 7857928852023087912, guid: e22f07ae9067bc44480167582b056410, type: 3}
+  - {fileID: 6026004524852160811, guid: b7aa8cdf5d2d2944da14b260bd9b4949, type: 3}
   - {fileID: 492539786732240098, guid: a8544341a41c4e241b67e5d403d80b47, type: 3}
   - {fileID: 6265147207640750725, guid: 0edcb09e117ab3f49897f6b1399d762e, type: 3}
   exceptionsDisconnect: 1

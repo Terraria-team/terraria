@@ -18,7 +18,6 @@ namespace Server.AI.Bosses
         [SerializeField] private float _phase2StateDurationMult = 0.7f;
         [SerializeField] private float _hornetSpawnInterval = 10f;
 
-        private HealthComponent _healthComponent;
         private bool _inPhase2 = false;
         private float _stateTimer = 0f;
         private float _hornetSpawnTimer = 0f;

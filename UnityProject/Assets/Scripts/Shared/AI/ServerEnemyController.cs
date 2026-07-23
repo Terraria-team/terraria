@@ -50,7 +50,7 @@ namespace Server.AI
         private SpriteRenderer _spriteRenderer;
         
         private TextMeshPro _hpText;
-        private HealthComponent _healthComponent;
+        protected HealthComponent _healthComponent;
 
         // ── Unity Lifecycle ───────────────────────────────────────────
         protected virtual void Awake()
