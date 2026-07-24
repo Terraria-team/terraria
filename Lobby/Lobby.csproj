@@ -26,4 +26,8 @@
     <ProjectReference Include="..\Lobby.Infrastructure\Lobby.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lobby.Tests" />
+  </ItemGroup>
+
 </Project>
