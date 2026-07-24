@@ -27,11 +27,20 @@ namespace Server
         {
             while (!token.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(60), cancellationToken: token);
-
-                int count = NetworkServer.connections.Count;
-            
-                await ServerToLobbyApiClient.Instance.PostPlayerCountAsync(count); 
+                try
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(60), cancellationToken: token);
+                    int count = NetworkServer.connections.Count;
+                    await ServerToLobbyApiClient.Instance.PostPlayerCountAsync(count); 
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[DedicatedServerStartup] Error in PlayerCountPollingLoopAsync: {e.Message}");
+                }
             }
         }
     

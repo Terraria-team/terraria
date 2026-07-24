@@ -163,7 +163,11 @@ public class ServerInstanceCleanupService : BackgroundService
                             if (plannedUpdate != null)
                             {
                                 plannedUpdate.MarkAsDeleted();
-                                dbEntitiesToUpdate.Add(plannedUpdate);
+                            }
+                            else if (allNonDeletedContainersInDb.TryGetValue(containerId, out var dbEntity))
+                            {
+                                dbEntity.MarkAsDeleted();
+                                dbEntitiesToUpdate.Add(dbEntity);
                             }
                         }
                     }

@@ -65,7 +65,7 @@ internal static class ServerInstanceContainerProcessor
             dbInfo.PlayerCount = 0;
             needsUpdate = true;
         }
-        else if (dbInfo.EmptySince == null)
+        else if (dbInfo.EmptySince == null && dbInfo.PlayerCount == 0)
         {
             dbInfo.EmptySince = DateTime.UtcNow;
             dbInfo.UpdatedAt = DateTime.UtcNow;
