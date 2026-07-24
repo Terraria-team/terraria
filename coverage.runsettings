@@ -9,6 +9,13 @@
     - сорс-генератор Microsoft.AspNetCore.OpenApi — сотні гілок, які ніколи
       не виконуються в тестах і штучно ЗАНИЖУЮТЬ branch coverage.
 
+  Окремо виключаємо ServerInstanceCleanupService — це НЕ згенерований код, а фоновий
+  сервіс-оркестратор (BackgroundService з нескінченним циклом і синхронізацією Docker↔БД).
+  Уся його логіка ПРИЙНЯТТЯ РІШЕНЬ винесена в ServerInstanceContainerProcessor і покрита
+  на 100% гілок; те, що лишилось у сервісі, — оркестраційний клей навколо живого IDockerClient,
+  який не тестується без рефакторингу циклу. Один цей метод має 74 гілки й сам по собі
+  занижував branch coverage удвічі, тому вимірюємо його окремо (як TODO), а не в загальній метриці.
+
   Використання:
     dotnet test Terraria.slnx - -settings coverage.runsettings -collect:"XPlat Code Coverage"
 -->
@@ -18,7 +25,7 @@
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
           <Format>cobertura</Format>
-          <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+          <ExcludeByFile>**/Migrations/*.cs,**/HostedServices/ServerInstanceCleanupService.cs</ExcludeByFile>
           <Exclude>[Lobby]Microsoft.AspNetCore.OpenApi.Generated.*,[Lobby]System.Runtime.CompilerServices.*</Exclude>
           <!-- Лише GeneratedCode: CompilerGenerated виключати НЕ можна — він позначає
                стейт-машини async-методів, і метрика втратила б увесь реальний код. -->

@@ -194,4 +194,28 @@ public class EfPlayerRepositoryTests : IAsyncLifetime
 
         Assert.False(deleted);
     }
+
+    // PlayerExists для засіяного гравця повертає true.
+    [DockerFact]
+    public async Task PlayerExists_WhenPlayerSeeded_ReturnsTrue()
+    {
+        var player = Player("exists@example.com");
+        await using (var context = _db.CreateContext())
+        {
+            context.Players.Add(player);
+            await context.SaveChangesAsync();
+        }
+
+        await using var readContext = _db.CreateContext();
+        Assert.True(await new EfPlayerRepository(readContext).PlayerExists(player.Id));
+    }
+
+    // PlayerExists для невідомого Id повертає false.
+    [DockerFact]
+    public async Task PlayerExists_WhenMissing_ReturnsFalse()
+    {
+        await using var context = _db.CreateContext();
+
+        Assert.False(await new EfPlayerRepository(context).PlayerExists(Guid.NewGuid()));
+    }
 }
