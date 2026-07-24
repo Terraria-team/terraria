@@ -153,7 +153,7 @@ public class ChunkManager : NetworkBehaviour
         playerGrid.SetTilesBlock(bounds, tiles);
         clientHasFinishedApplying = true;
         
-        if (isServer && Application.isBatchMode)
+        if (isServer && !isClient)
         {
             GenerateServerCollisions(chunkCoord, updatedChunk);
         }
@@ -170,6 +170,7 @@ public class ChunkManager : NetworkBehaviour
 
         GameObject colliderObj = new GameObject($"ChunkCollider_{chunkCoord.x}_{chunkCoord.y}");
         colliderObj.transform.parent = playerGrid.transform;
+        colliderObj.layer = playerGrid.gameObject.layer;
         
         for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
         {
