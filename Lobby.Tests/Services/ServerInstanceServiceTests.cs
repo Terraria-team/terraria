@@ -8,9 +8,9 @@ using Moq;
 namespace Lobby.Tests.Services;
 
 /// <summary>
-/// Юніт-тести для <see cref="ServerInstanceService"/>.
-/// Покривають <c>GetAll</c> (вибірка невидалених інстансів мапиться в моделі)
-/// та потік <c>Create</c>: інстанс спавниться зовнішнім спавнером, його метадані
+/// Юніт-тести для ServerInstanceService.
+/// Покривають GetAll (вибірка невидалених інстансів мапиться в моделі)
+/// та потік Create: інстанс спавниться зовнішнім спавнером, його метадані
 /// переносяться в сутність (нульова кількість гравців, світ власника) і зберігаються,
 /// а при досягненні ліміту повертається ResourceExhausted без звернення до спавнера.
 /// </summary>
@@ -107,5 +107,55 @@ public class ServerInstanceServiceTests
         Assert.Equal(ErrorType.ResourceExhausted, result.Error!.ErrorType);
         _spawner.Verify(s => s.CreateNewServerInstance(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
         _repository.Verify(r => r.Create(It.IsAny<ServerInstanceEntity>()), Times.Never);
+    }
+
+    // Кількість гравців падає до нуля (з ненульової) → проставляється EmptySince.
+    [Fact]
+    public async Task UpdatePlayerCount_WhenDropsToZero_SetsEmptySince()
+    {
+        var id = Guid.NewGuid();
+        var instance = Instance(id, 7777); // PlayerCount = 3, EmptySince = null
+        _repository.Setup(r => r.GetById(id)).ReturnsAsync(instance);
+        _repository.Setup(r => r.Update(It.IsAny<ServerInstanceEntity>()))
+            .ReturnsAsync((ServerInstanceEntity e) => e);
+
+        var result = await CreateSut().UpdatePlayerCount(id, 0);
+
+        Assert.True(result.IsSuccessful);
+        Assert.Equal(0, result.Result!.PlayerCount);
+        Assert.NotNull(instance.EmptySince);
+    }
+
+    // Кількість гравців стає додатною → EmptySince скидається в null.
+    [Fact]
+    public async Task UpdatePlayerCount_WhenPositive_ClearsEmptySince()
+    {
+        var id = Guid.NewGuid();
+        var instance = Instance(id, 7777);
+        instance.PlayerCount = 0;
+        instance.EmptySince = DateTime.UtcNow.AddMinutes(-5);
+        _repository.Setup(r => r.GetById(id)).ReturnsAsync(instance);
+        _repository.Setup(r => r.Update(It.IsAny<ServerInstanceEntity>()))
+            .ReturnsAsync((ServerInstanceEntity e) => e);
+
+        var result = await CreateSut().UpdatePlayerCount(id, 3);
+
+        Assert.True(result.IsSuccessful);
+        Assert.Equal(3, result.Result!.PlayerCount);
+        Assert.Null(instance.EmptySince);
+    }
+
+    // Інстанс не знайдено → NotFound, оновлення не викликається.
+    [Fact]
+    public async Task UpdatePlayerCount_WhenInstanceMissing_ReturnsNotFound()
+    {
+        var id = Guid.NewGuid();
+        _repository.Setup(r => r.GetById(id)).ReturnsAsync((ServerInstanceEntity?)null);
+
+        var result = await CreateSut().UpdatePlayerCount(id, 5);
+
+        Assert.False(result.IsSuccessful);
+        Assert.Equal(ErrorType.NotFound, result.Error!.ErrorType);
+        _repository.Verify(r => r.Update(It.IsAny<ServerInstanceEntity>()), Times.Never);
     }
 }
