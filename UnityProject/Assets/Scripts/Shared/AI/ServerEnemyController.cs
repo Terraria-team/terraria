@@ -259,7 +259,18 @@ namespace Server.AI
         public float DistanceToTarget()
         {
             if (Target == null) return float.MaxValue;
-            var targetCol = Target.GetComponent<Collider2D>();
+            var colliders = Target.GetComponents<Collider2D>();
+            Collider2D targetCol = null;
+            foreach (var c in colliders)
+            {
+                if (!c.isTrigger) 
+                {
+                    targetCol = c;
+                    break;
+                }
+            }
+            if (targetCol == null && colliders.Length > 0) targetCol = colliders[0];
+
             if (targetCol != null && Col != null)
             {
                 var distanceInfo = Physics2D.Distance(Col, targetCol);

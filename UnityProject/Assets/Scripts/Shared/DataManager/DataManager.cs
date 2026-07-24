@@ -51,7 +51,8 @@ public static class DataManager
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
-            output.Initialize(loadedData, idSelector);
+            var sortedData = System.Linq.Enumerable.ToList(System.Linq.Enumerable.OrderBy(loadedData, x => x.name));
+            output.Initialize(sortedData, idSelector);
         }
         else
         {

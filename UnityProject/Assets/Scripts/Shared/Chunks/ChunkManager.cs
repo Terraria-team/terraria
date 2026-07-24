@@ -228,4 +228,18 @@ public class ChunkManager : NetworkBehaviour
         Debug.LogError("No free spawn position found");
         return ChunkUtils.WorldPositionOfBlock(chunkCoordinates, x, 63);
     }
+
+    [Server]
+    public void SpawnDroppedItemDelayed(UnityEngine.GameObject prefab, Vector3 position, ItemStack itemStack)
+    {
+        StartCoroutine(SpawnDroppedItemCoroutine(prefab, position, itemStack));
+    }
+
+    private System.Collections.IEnumerator SpawnDroppedItemCoroutine(UnityEngine.GameObject prefab, Vector3 position, ItemStack itemStack)
+    {
+        yield return new WaitForFixedUpdate();
+        var droppedItem = Instantiate(prefab, position, Quaternion.identity);
+        NetworkServer.Spawn(droppedItem);
+        droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(itemStack);
+    }
 }

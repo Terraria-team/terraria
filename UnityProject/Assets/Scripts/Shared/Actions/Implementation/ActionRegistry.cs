@@ -46,16 +46,9 @@ public static class ActionRegistry
 
                 if (droppedItemData != null)
                 {
-                    var droppedItem = Object.Instantiate(
-                        PrefabsSettings.droppedItemPrefab,
-                        ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY),
-                        Quaternion.identity
-                    );
-                    NetworkServer.Spawn(droppedItem);
-                
-                    droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(new ItemStack(
-                        new ItemID(droppedItemData.id)    
-                    ));
+                    var itemStack = new ItemStack(new ItemID(droppedItemData.id));
+                    var pos = ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY);
+                    ChunkManager.Instance.SpawnDroppedItemDelayed(PrefabsSettings.droppedItemPrefab, pos, itemStack);
                 }
                 
                 break;
