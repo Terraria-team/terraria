@@ -2,7 +2,7 @@ using UnityEngine;
 
 public struct ItemStack
 {
-    public int Count { get; private set; }
+    public int Count;
     public readonly ItemID ItemID;
 
     public ItemStack(ItemID itemID)

@@ -141,6 +141,41 @@ public class ChunkManager : NetworkBehaviour
 
         playerGrid.SetTilesBlock(bounds, tiles);
         clientHasFinishedApplying = true;
+        
+        if (isServer && Application.isBatchMode)
+        {
+            GenerateServerCollisions(chunkCoord, updatedChunk);
+        }
+    }
+    
+    private Dictionary<Vector2Int, GameObject> _chunkColliders = new();
+
+    private void GenerateServerCollisions(Vector2Int chunkCoord, ChunkData updatedChunk)
+    {
+        if (_chunkColliders.TryGetValue(chunkCoord, out GameObject oldColliderObj))
+        {
+            Destroy(oldColliderObj);
+        }
+
+        GameObject colliderObj = new GameObject($"ChunkCollider_{chunkCoord.x}_{chunkCoord.y}");
+        colliderObj.transform.parent = playerGrid.transform;
+        
+        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        {
+            BlockID block = updatedChunk[i];
+            if (!block.IsAir)
+            {
+                var coords = ChunkUtils.ChunkCellCoordinates(i);
+                var box = colliderObj.AddComponent<BoxCollider2D>();
+                box.offset = new Vector2(
+                    chunkCoord.x * ChunkUtils.ChunkSize + coords.x + 0.5f,
+                    chunkCoord.y * ChunkUtils.ChunkSize + coords.y + 0.5f
+                );
+                box.size = Vector2.one;
+            }
+        }
+        
+        _chunkColliders[chunkCoord] = colliderObj;
     }
     
     void Awake()

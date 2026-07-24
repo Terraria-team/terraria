@@ -158,7 +158,7 @@ public class PlayerController : NetworkBehaviour
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
     
-    [SerializeField] private float cooldown = 30f;
+    [SerializeField] private float cooldown = 120f;
     private float lastSpawnTime = -Mathf.Infinity;
 
     void TrySpawningAround()
