@@ -134,7 +134,7 @@ public static class ActionRegistry
                     var health = col.GetComponent<HealthComponent>();
                     if (health != null)
                     {
-                        health.ApplyDamageServerRpc(Mathf.Max(1, (int)swingDamage));
+                        health.ApplyDamageServer(Mathf.Max(1, (int)swingDamage));
                     }
                 }
                 
