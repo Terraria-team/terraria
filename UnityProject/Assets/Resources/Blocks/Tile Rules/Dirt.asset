@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp-Editor::AdvancedRuleTile
   m_DefaultSprite: {fileID: 8388734929963797016, guid: e5a6096ba8b431645a48dbee57654281, type: 3}
   m_DefaultGameObject: {fileID: 0}
-  m_DefaultColliderType: 1
+  m_DefaultColliderType: 2
   m_TilingRules:
   - m_Id: 45
     m_Sprites:

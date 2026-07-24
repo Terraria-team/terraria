@@ -40,7 +40,7 @@ public class DroppedItemData : NetworkBehaviour
                 inventoryComponent.AddItem(ItemStack.ItemID);
             }
             
-            Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
 }
