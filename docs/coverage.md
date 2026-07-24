@@ -32,36 +32,34 @@ open TestResults/CoverageReport/index.html
 
 ## Backend
 
-**Станом на:** 24.07.2026 · 68 тестів (23 юніт + 45 інтеграційних) · xUnit, запускаються в CI ·
+**Станом на:** 24.07.2026 · 82 тести (37 юніт + 45 інтеграційних) · xUnit, запускаються в CI ·
 `ServerInstanceCleanupService` виключено з метрик (див. нижче).
 
-Дописано два рівні тестів на підсистему server-instances: Рівень 1 (PR #69, вже в `dev`) —
-юніт-тести `ServerInstanceContainerProcessor`; Рівень 2 (ця гілка) — EF-репозиторії,
+Дописано тести на підсистему server-instances: юніт-тести `ServerInstanceContainerProcessor`,
+EF-репозиторії (`GetById`, `GetByContainerId`, `Update`, батч-операції, `PlayerExists`),
 internal-ендпоінт із auth-фільтром та `ServerInstanceService.UpdatePlayerCount`.
 
 ### Загальні метрики
 
-Цифри «ця гілка» — це Рівень 2 без #69 (його тести тут відсутні); «+ #69» — комбіновано
-з уже змердженим у `dev` Рівнем 1 (`ServerInstanceContainerProcessor` покрито на 100%).
-
-| Метрика | Ця гілка | + #69 | Було 23.07 |
+| Метрика | Значення | Було 23.07 | Що означає |
 |---|---|---|---|
-| **Line coverage** | **76.9%** (674 / 877) | **83.5%** (732 / 877) | 64.4% |
-| **Branch coverage** | **48.8%** (62 / 127) | **70.9%** (90 / 127) | 21.8% |
-| **Method coverage** | **83.1%** (192 / 231) | ~90% | 77% |
+| **Line coverage** | **84.8%** (744 / 877) | 64.4% | скільки рядків виконалось хоч раз |
+| **Branch coverage** | **74%** (94 / 127) | 21.8% | скільки гілок `if`/`switch`/`&&` пройдено (обидва напрямки) |
+| **Method coverage** | **90%** (208 / 231) | 77% | скільки методів викликано хоч раз |
+| **Full method coverage** | **87.4%** | 74% | скільки методів покрито *повністю* |
 
-Стрибок відносно 23.07 має дві причини: (1) дописані тести Рівнів 1–2; (2) з метрики
-прибрано `ServerInstanceCleanupService` — один його метод мав 74 гілки й сам занижував
-branch coverage удвічі.
+Стрибок відносно 23.07 має дві причини: (1) дописані тести на підсистему server-instances;
+(2) з метрики прибрано `ServerInstanceCleanupService` — один його метод мав 74 гілки й сам
+занижував branch coverage удвічі.
 
-### За збірками (ця гілка, cleanup виключено)
+### За збірками
 
 | Збірка | Line coverage |
 |---|---|
 | `LobbyUnityShared` | 100% |
-| `Lobby.Application` | 88.9% |
+| `Lobby.Application` | 93.8% |
+| `Lobby` | 92.2% |
 | `Lobby.Infrastructure` | 72% |
-| `Lobby` | 68.9% |
 
 ### Покрито повністю (100%)
 
@@ -69,7 +67,7 @@ branch coverage удвічі.
 |---|---|
 | `AuthService` | юніт-тести (**14 / 14 гілок** — усі шляхи помилок) |
 | `JwtService`, `TokenService` | юніт-тести |
-| `ServerInstanceContainerProcessor` | юніт-тести (**28 / 28 гілок**, Рівень 1 / #69) |
+| `ServerInstanceContainerProcessor` | юніт-тести (**28 / 28 гілок** — усі стани Dead/Pending/Running) |
 | `EfServerInstanceRepository` | інтеграційні — усі методи, включно з `GetById`, `GetByContainerId`, `Update`, `CreateMany`, `UpdateMany` |
 | `EfPlayerRepository` | інтеграційні (додано `PlayerExists`) |
 | `EfRefreshTokenRepository`, `EfPlayerExternalIdentityRepository` | інтеграційні (Testcontainers + PostgreSQL) |
@@ -85,10 +83,10 @@ branch coverage удвічі.
 | `DockerServerInstanceService` | 0% | справжній спавнер Docker-контейнерів; у тестах свідомо підмінений `FakeServerInstanceSpawner` |
 | `PlayerGoogleLoginModel` | 0% | **мертвий код** — його замінив `PlayerExternalIdentityModel`, посилань не лишилось |
 | `TerrariaWorldStorageEntity` | 0% | ще не використовується — сховище світів дописується |
-| `ServerInstanceEntity` | 44.8% | методи станів (`MarkAsDead` тощо) на цій гілці кличе лише процесор із #69; після мержу покриття зросте |
 | `TokenCleanupBackgroundService` | 54.5% | старт сервісу покритий, тіло циклу очистки — ні (той самий патерн `BackgroundService`, що й cleanup) |
 | `LobbyControllerBase` | 50% | `HttpError` має 6 гілок, API реально повертає лише 3 (`Validation`, `Unauthorized`, `NotFound`) |
 | `ServerInstanceService` | 98.4% (15 / 18 гілок) | лишились дрібні краї `UpdatePlayerCount`: `&&`-умова коли лічильник уже 0, і guard `Update` → null |
+| `ServerInstanceEntity` | 89.6% | лишився невживаний метод (`MarkAsDeleted` кличе тільки виключений cleanup-сервіс) |
 | `AuthController` | 93.3% | лишились гілки невалідного claim'а |
 
 ### Що виключено з вимірювання
