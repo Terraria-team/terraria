@@ -90,9 +90,4 @@ internal sealed class FakeClientIpStartupFilter : IStartupFilter
         });
         next(app);
     };
-
-    public Empty()
-    {
-        
-    }
 }
