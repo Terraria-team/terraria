@@ -1,0 +1,335 @@
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=4194304"
+    "memorysetup-bucket-allocator-block-count=1"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=4194304"
+    "memorysetup-profiler-bucket-allocator-block-count=1"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=4194304"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+logfile: requires a parameter
+Processor: AMD EPYC-Rome Processor, 2 core(s) @ 2445 MHz 
+Available Memory: 3814 MB 
+Linux Kernel and distribution: Linux 7.0 Ubuntu 22.04 64bit
+System Language: en
+Keyboard Layout: default
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+PlayerPrefs - Creating folder: /root/.config/unity3d/DefaultCompany
+PlayerPrefs - Creating folder: /root/.config/unity3d/DefaultCompany/MyTerraria
+Unable to load player prefs
+Initialize engine version: 6000.4.8f1 (f8b72d3d7343)
+[Subsystems] Discovering subsystems at path /app/Terraria_Data/UnitySubsystems
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+UnloadTime: 0.515727 ms
+ThreadLog initialized.
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+
+Trying to access a shader but no shaders were included in the build because Dedicated Server Optimizations is enabled.
+UnityEngine.ResourcesAPIInternal:FindShaderByName(String)
+TMPro.ShaderUtilities:GetShaderPropertyIDs()
+TMPro.TextMeshProUGUI:LoadFontAsset()
+TMPro.TextMeshProUGUI:Awake()
+
+[ line -708792840]
+
+Trying to access a shader but no shaders were included in the build because Dedicated Server Optimizations is enabled.
+UnityEngine.ResourcesAPIInternal:FindShaderByName(String)
+TMPro.ShaderUtilities:GetShaderPropertyIDs()
+TMPro.TextMeshProUGUI:LoadFontAsset()
+TMPro.TextMeshProUGUI:Awake()
+
+[ line -708792840]
+
+Server listening on port 7777
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9800 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15080 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 52 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 40 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 9980 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9960 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 40 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+The referenced script (Unknown) on this Behaviour is missing!
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9972 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+Unloading 5 Unused Serialized files (Serialized files now loaded: 2)
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9800 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15092 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 15080 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 52 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 40 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 44 bytes but expected 9980 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9960 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 40 bytes but expected 9976 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script (Unknown) on this Behaviour is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+[Thread4] A scripted object (probably AdvancedRuleTile?) has a different serialization layout when loading. (Read 36 bytes but expected 9972 bytes)
+Did you #if UNITY_EDITOR a section of your serialized properties in any of your scripts?
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Mirror.ThreadLog:OnLateUpdate()
+Mirror.NetworkLoop:NetworkLateUpdate()
+
+UnloadTime: 2.215957 ms
+Error running GetAllRefreshPositions for new TilemapNullReferenceException: Object reference not set to an instance of an object.
+  at UnityEngine.Tilemaps.ITilemap.HandleRefreshPositions (System.Int32 count, Unity.Collections.NativeArray`1[T] usedTileIds, Unity.Collections.NativeArray`1[T] oldTilesIds, Unity.Collections.NativeArray`1[T] newTilesIds, Unity.Collections.NativeArray`1[T] positions) [0x00000] in <00000000000000000000000000000000>:0 
+  at UnityEngine.Tilemaps.ITilemap.FindAllRefreshPositions (UnityEngine.Tilemaps.ITilemap tilemap, System.Int32 usedTileCount, System.IntPtr usedTilesIntPtr, System.Int32 count, System.IntPtr oldTilesIntPtr, System.IntPtr newTilesIntPtr, System.IntPtr positionsIntPtr) [0x00000] in <00000000000000000000000000000000>:0 
+  at UnityEngine.Tilemaps.Tilemap.SetTilesBlock (UnityEngine.BoundsInt position, UnityEngine.Tilemaps.TileBase[] tileArray) [0x00000] in <00000000000000000000000000000000>:0 
+  at ChunkManager.UpdateTileVisualBulk (UnityEngine.Vector2Int chunkCoord, ChunkData updatedChunk) [0x00000] in <00000000000000000000000000000000>:0 
+  at ChunkManager.OnStartServer () [0x00000] in <00000000000000000000000000000000>:0 
+  at Mirror.NetworkIdentity.OnStartServer () [0x00000] in <00000000000000000000000000000000>:0 
+  at Mirror.NetworkServer.SpawnObject (UnityEngine.GameObject obj, Mirror.NetworkConnectionToClient ownerConnection) [0x00000] in <00000000000000000000000000000000>:0 
+  at Mirror.NetworkServer.SpawnObjects () [0x00000] in <00000000000000000000000000000000>:0 
+  at Mirror.NetworkManager.FinishLoadSceneServerOnly () [0x00000] in <00000000000000000000000000000000>:0 
+  at Mirror.NetworkManager.UpdateScene () [0x00000] in <00000000000000000000000000000000>:0 
+UnityEngine.Tilemaps.Tilemap:SetTilesBlock(BoundsInt, TileBase[])
+ChunkManager:UpdateTileVisualBulk(Vector2Int, ChunkData)
+ChunkManager:OnStartServer()
+Mirror.NetworkIdentity:OnStartServer()
+Mirror.NetworkServer:SpawnObject(GameObject, NetworkConnectionToClient)
+Mirror.NetworkServer:SpawnObjects()
+Mirror.NetworkManager:FinishLoadSceneServerOnly()
+Mirror.NetworkManager:UpdateScene()
+
+Unloading 2304 unused Assets to reduce memory usage. Loaded Objects now: 3514.
+Total: 9.041010 ms (FindLiveObjects: 0.436439 ms CreateObjectMapping: 0.454202 ms MarkObjects: 4.412407 ms  DeleteObjects: 3.736920 ms)
+
+Command System.Void Shared.Components.HealthComponent::ApplyDamageServerRpc(System.Int32) called on Player_character(Clone) without an active client.
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Shared.Components.HealthComponent:ApplyDamageServerRpc(Int32)
+Server.AI.MeleeAttackState:EnterState()
+Server.AI.ServerEnemyController:Update()
+
+Command System.Void Shared.Components.HealthComponent::ApplyDamageServerRpc(System.Int32) called on Player_character(Clone) without an active client.
+UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+Shared.Components.HealthComponent:ApplyDamageServerRpc(Int32)
+Server.AI.MeleeAttackState:EnterState()
+Server.AI.ServerEnemyController:Update()
+

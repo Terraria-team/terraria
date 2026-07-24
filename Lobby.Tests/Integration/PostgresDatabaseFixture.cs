@@ -1,4 +1,4 @@
-using Lobby.Infrastructure.Data;
+using Lobby.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
@@ -9,7 +9,8 @@ namespace Lobby.Tests.Integration;
 /// </summary>
 public sealed class PostgresDatabaseFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:17-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
+        .WithImage("postgres:17-alpine")
         .Build();
 
     public async Task InitializeAsync()
@@ -27,10 +28,15 @@ public sealed class PostgresDatabaseFixture : IAsyncLifetime
     public async Task ResetAsync()
     {
         await using var context = CreateContext();
+        // Порядок важливий: спершу залежні таблиці, бо світи прив'язані до інстансів
+        // через Restrict, а сховища — до світів.
+        
         await context.RefreshTokens.ExecuteDeleteAsync();
-        await context.PlayerGoogleLogins.ExecuteDeleteAsync();
-        await context.Players.ExecuteDeleteAsync();
+        await context.PlayerExternalIdentities.ExecuteDeleteAsync();
         await context.ServerInstances.ExecuteDeleteAsync();
+        await context.TerrariaWorlds.ExecuteDeleteAsync();
+        await context.TerrariaWorldStorages.ExecuteDeleteAsync();
+        await context.Players.ExecuteDeleteAsync();
     }
 
     public async Task DisposeAsync() => await _container.DisposeAsync();

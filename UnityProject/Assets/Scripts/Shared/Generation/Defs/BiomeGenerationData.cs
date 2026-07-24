@@ -6,6 +6,8 @@ using Shared.DataDefinitions;
 [CreateAssetMenu(fileName = "NewBiomeGenerationConfig", menuName = "Terrain/BiomeGenerationConfig")]
 public class BiomeGenerationData : ScriptableObject
 {
+    public Sprite background;
+    
     [SerializeField] private BiomeType biomeType = BiomeType.Plains;
     public BiomeType BiomeType => biomeType;
 

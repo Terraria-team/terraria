@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,11 +12,13 @@ public class InventorySlotUI : MonoBehaviour
     {
         if (itemStack.HasValue)
         {
+            itemSpriteDisplay.gameObject.SetActive(true);
             itemSpriteDisplay.sprite = itemStack.ItemStack.ItemID.ItemData.icon;
             itemCountText.text = itemStack.ItemStack.Count.ToString();
         }
         else
         {
+            itemSpriteDisplay.gameObject.SetActive(false);
             itemSpriteDisplay.sprite = null;
             itemCountText.text = "";
         }

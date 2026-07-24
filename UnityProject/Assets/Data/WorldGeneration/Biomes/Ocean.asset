@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: Ocean
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: -2152033144111284149, guid: a801505dce6312e4796ed8df6acc74d6, type: 3}
   biomeType: 2
   associatedColor: {r: 0, g: 0.09738016, b: 1, a: 1}
   allowedEnemies:

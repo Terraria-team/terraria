@@ -1,4 +1,4 @@
-﻿using Lobby.Application.Contracts;
+using Lobby.Application.Contracts.Repositories;
 using Lobby.Settings;
 using Microsoft.Extensions.Options;
 
@@ -25,7 +25,7 @@ public class TokenCleanupBackgroundService : BackgroundService
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var settings = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<BackgroundServicesSettings>>().Value;
+                var settings = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<TokenCleanupSettings>>().Value;
                 
                 await Task.Delay(TimeSpan.FromSeconds(settings.CleanupIntervalSeconds), stoppingToken);
 

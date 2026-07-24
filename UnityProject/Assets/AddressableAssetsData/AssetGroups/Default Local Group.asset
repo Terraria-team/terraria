@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 120335c959b135e49b48ca1f136416bd
+    m_Address: Assets/Data/Items/Glass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21c4aa08a31edbb428824232ab317a12
     m_Address: Assets/Data/Blocks/air.asset
     m_ReadOnly: 0
@@ -45,8 +51,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - Block
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 37828e99f48f303448183c661c810b9d
+    m_Address: Assets/Data/Crafts/CraftingStation.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 39ade16061e333e4a851970d4636cfba
     m_Address: Assets/Data/Items/Pickaxe1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d20e271280808d4db0a9177a0d8a16e
+    m_Address: Assets/Data/Items/IronBow.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
@@ -57,11 +75,35 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44f427080c8c4614583c577a7b405df9
+    m_Address: Assets/Data/Items/IronSword.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 471deff10721f9843b74ae58a927be9b
+    m_Address: Assets/Data/Crafts/PlatinumBow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4a2b37d37b14c3b419448dda8b080976
     m_Address: Assets/Data/Enemies/Boss_QueenBee.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4af56dc88c330684197d8b4373af4e8d
+    m_Address: Assets/Data/Crafts/PlatinumSword.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b2504ce09b6ffa418b82e06087f41f5
+    m_Address: Assets/Data/Crafts/IronIngot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4c653df9a0298a24cb7aba8fcd712ca2
     m_Address: Assets/Data/Enemies/Boss_KingSlime.asset
@@ -87,6 +129,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Biome
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5d93b10255f6ff345812e65c5f7181d8
+    m_Address: Assets/Data/Crafts/PlatinumIngot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5e49eebfff1c8d34e985534486cab688
     m_Address: Assets/Data/Items/Sand.asset
     m_ReadOnly: 0
@@ -98,6 +146,24 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Block
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 617917eb51a6556419ed1f7103c012a9
+    m_Address: Assets/Data/Items/IronIngot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6aa0490361b20e541aeab59fe894b365
+    m_Address: Assets/Data/Items/PlatinumBow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fb80e2b39b01c343bff56b33e9b26b5
+    m_Address: Assets/Data/Crafts/IronBow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 71a00d4d350d8d145b55b7c5c803d99e
     m_Address: Assets/Data/WorldGeneration/Biomes/Jungle.asset
@@ -135,11 +201,23 @@ MonoBehaviour:
     m_SerializedLabels:
     - Item
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a21bc9fe70860b4383a3d8a01d8b7f1
+    m_Address: Assets/Data/Items/PlatinumIngot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a5432036d837b24780a3a42ac19781d
     m_Address: Assets/Data/Items/Wood.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d7f314af5d77184fa0b6fcd2782b819
+    m_Address: Assets/Data/Blocks/Glass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Block
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ae4a949bad5e04449d0b8a5586bb95e
     m_Address: Assets/Data/WorldGeneration/Biomes/Caves.asset
@@ -188,6 +266,18 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Item
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b6817bd5fe9382e47a19b3d25ad13a5c
+    m_Address: Assets/Data/Crafts/IronSword.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bae66447596dc6e458f7259cfd756f6f
+    m_Address: Assets/Data/Crafts/Glass.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bd7d90fc95bc0c949a0ef2e44ad2fb77
     m_Address: Assets/Data/Items/Stone.asset
@@ -241,6 +331,24 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Enemy
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e98c203490aad154988c50a5d9fe5c27
+    m_Address: Assets/Data/Crafts/WoodenBow.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebff229c28cb8754ea21480a28eded41
+    m_Address: Assets/Data/Crafts/WoodenSword.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Craft
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee57581fea261aa469b9b69ec87d2e53
+    m_Address: Assets/Data/Items/PlatinumSword.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Item
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f90224b7de448da478d9339cd652fbd7
     m_Address: Assets/Data/Blocks/Wood.asset

@@ -141,6 +141,42 @@ public class ChunkManager : NetworkBehaviour
 
         playerGrid.SetTilesBlock(bounds, tiles);
         clientHasFinishedApplying = true;
+        
+        if (isServer && !isClient)
+        {
+            GenerateServerCollisions(chunkCoord, updatedChunk);
+        }
+    }
+    
+    private Dictionary<Vector2Int, GameObject> _chunkColliders = new();
+
+    private void GenerateServerCollisions(Vector2Int chunkCoord, ChunkData updatedChunk)
+    {
+        if (_chunkColliders.TryGetValue(chunkCoord, out GameObject oldColliderObj))
+        {
+            Destroy(oldColliderObj);
+        }
+
+        GameObject colliderObj = new GameObject($"ChunkCollider_{chunkCoord.x}_{chunkCoord.y}");
+        colliderObj.transform.parent = playerGrid.transform;
+        colliderObj.layer = playerGrid.gameObject.layer;
+        
+        for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
+        {
+            BlockID block = updatedChunk[i];
+            if (!block.IsAir)
+            {
+                var coords = ChunkUtils.ChunkCellCoordinates(i);
+                var box = colliderObj.AddComponent<BoxCollider2D>();
+                box.offset = new Vector2(
+                    chunkCoord.x * ChunkUtils.ChunkSize + coords.x + 0.5f,
+                    chunkCoord.y * ChunkUtils.ChunkSize + coords.y + 0.5f
+                );
+                box.size = Vector2.one;
+            }
+        }
+        
+        _chunkColliders[chunkCoord] = colliderObj;
     }
     
     void Awake()
@@ -227,5 +263,19 @@ public class ChunkManager : NetworkBehaviour
         chunkCoordinates.y = WorldSize.y - 1;
         Debug.LogError("No free spawn position found");
         return ChunkUtils.WorldPositionOfBlock(chunkCoordinates, x, 63);
+    }
+
+    [Server]
+    public void SpawnDroppedItemDelayed(UnityEngine.GameObject prefab, Vector3 position, ItemStack itemStack)
+    {
+        StartCoroutine(SpawnDroppedItemCoroutine(prefab, position, itemStack));
+    }
+
+    private System.Collections.IEnumerator SpawnDroppedItemCoroutine(UnityEngine.GameObject prefab, Vector3 position, ItemStack itemStack)
+    {
+        yield return new WaitForFixedUpdate();
+        var droppedItem = Instantiate(prefab, position, Quaternion.identity);
+        NetworkServer.Spawn(droppedItem);
+        droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(itemStack);
     }
 }

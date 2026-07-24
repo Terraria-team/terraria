@@ -21,8 +21,9 @@ namespace Server.AI.Bosses
             }
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             var health = GetComponent<HealthComponent>();
             if (health != null)
             {

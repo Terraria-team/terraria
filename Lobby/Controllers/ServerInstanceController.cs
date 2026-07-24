@@ -1,5 +1,8 @@
-using Lobby.Application.Contracts;
+using System.Security.Claims;
+using Lobby.Application.UseCases;
+using Lobby.Filters;
 using Lobby.Mappers;
+using LobbyUnityShared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,9 +30,16 @@ public class ServerInstancesController : LobbyControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create([FromBody] CreateServerDto dto)
     {
-        var created = await _instanceService.Create();
-        return Created($"/server-instances", created);
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid playerId))
+        {
+            return Unauthorized("Invalid or missing user ID in token.");
+        }
+        
+        var created = await _instanceService.Create(dto.Name, playerId);
+        return created.IsSuccessful? Created($"/server-instances/{created.Result!.Id}", ServerInstanceMapper.Map(created.Result)) : HttpError(created.Error!); 
     }
 }

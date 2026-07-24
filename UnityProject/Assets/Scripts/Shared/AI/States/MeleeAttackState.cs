@@ -35,7 +35,7 @@ namespace Server.AI
                     var health = _enemy.Target.GetComponentInParent<HealthComponent>();
                     if (health != null)
                     {
-                        health.ApplyDamageServerRpc((int)_enemy.Data.attackDamage);
+                        health.ApplyDamageServer((int)_enemy.Data.attackDamage);
                     }
                 }
             }

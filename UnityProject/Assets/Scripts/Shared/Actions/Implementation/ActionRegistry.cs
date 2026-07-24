@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 
 public enum ActionType
 {
+    None,
     BreakBlock,
     PlaceBlock,
     SpawnProjectile,
@@ -19,6 +20,8 @@ public static class ActionRegistry
     {
         switch (action)
         {
+            case ActionType.None:
+                return true;
             case ActionType.BreakBlock:
             {
                 if (!PlayerReachUtils.IsBlockChangeValid(context))
@@ -43,18 +46,10 @@ public static class ActionRegistry
 
                 if (droppedItemData != null)
                 {
-                    var droppedItem = Object.Instantiate(
-                        PrefabsSettings.droppedItemPrefab,
-                        ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY),
-                        Quaternion.identity
-                    );
-                    NetworkServer.Spawn(droppedItem);
-                
-                    droppedItem.GetComponent<DroppedItemData>().ServerSetItemStack(new ItemStack(
-                        new ItemID(droppedItemData.id)    
-                    ));
+                    var itemStack = new ItemStack(new ItemID(droppedItemData.id));
+                    var pos = ChunkUtils.WorldPositionOfBlock(context.chunkPosition, context.blockPositionX, context.blockPositionY);
+                    ChunkManager.Instance.SpawnDroppedItemDelayed(PrefabsSettings.droppedItemPrefab, pos, itemStack);
                 }
-                
                 
                 break;
             }
@@ -126,17 +121,20 @@ public static class ActionRegistry
                 //swingObject.GetComponent<SpriteAnimator>().Play(swingData.swingSprites);
                 NetworkServer.Spawn(swingObject);
                 
-                // Scan for damage
-                var colliders = Physics2D.OverlapCircleAll(swingLocation, 1);
+                float swingDamage = context.usedItemID.ItemData.swingData.swingDamage;
+                float swingRange = context.usedItemID.ItemData.swingData.swingSize;
 
-                Debug.Log(swingLocation);
-                
-                foreach (var collider in colliders)
+                var colliders = Physics2D.OverlapCircleAll(swingLocation, swingRange);
+                foreach (var col in colliders)
                 {
-                    Debug.Log(collider.gameObject.name);
-                    if (collider.TryGetComponent<HealthComponent>(out var component))
+                    // Skip self
+                    //if (col.transform.IsChildOf(context.) || col.gameObject == gameObject)
+                    //    continue;
+
+                    var health = col.GetComponent<HealthComponent>();
+                    if (health != null)
                     {
-                        component.ApplyDamageServerRpc(10); 
+                        health.ApplyDamageServer(Mathf.Max(1, (int)swingDamage));
                     }
                 }
                 

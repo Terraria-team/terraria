@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ad933e518f7f94bb7a7ef926e28f1a, type: 3}
   m_Name: JungleCaves
   m_EditorClassIdentifier: Server::Server.SODefinitions.BiomeGenerationConfig
+  background: {fileID: 5324748066650417607, guid: 3e9388f564886e347aecc492ccb5107b, type: 3}
   biomeType: 5
   associatedColor: {r: 0.13089179, g: 0.2528302, b: 0.11019579, a: 1}
   allowedEnemies:

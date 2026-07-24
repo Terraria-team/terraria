@@ -5,8 +5,8 @@ namespace LobbyUnityShared.DTOs
     [Serializable]
     public class LoginTokensDto
     {
-        public string sessiontoken = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
 
-        public string accesstoken = string.Empty;
+        public string AccessToken { get; set; }= string.Empty;
     }
 }

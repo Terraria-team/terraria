@@ -30,8 +30,6 @@ namespace Server.AI
             {
                 transform.up = _direction;
             }
-            
-            Debug.Log($"[Projectile] Initialized. passesThroughWalls={this.passesThroughWalls}, layer={_blockingLayer.value}");
         }
 
         void Awake()
@@ -50,7 +48,6 @@ namespace Server.AI
             _timer += Time.deltaTime;
             if (_timer >= lifetime)
             {
-                Debug.Log($"[Projectile] Destroyed by lifetime expiry");
                 NetworkServer.Destroy(gameObject);
             }
         }
@@ -71,7 +68,6 @@ namespace Server.AI
                 );
                 if (hit.collider != null)
                 {
-                    Debug.Log($"[Projectile] Destroyed by Raycast hitting {hit.collider.name}");
                     NetworkServer.Destroy(gameObject);
                 }
             }
@@ -84,9 +80,8 @@ namespace Server.AI
             {
                 var health = other.GetComponent<HealthComponent>();
                 if (health != null)
-                    health.ApplyDamageServerRpc((int)damage);
+                    health.ApplyDamageServer((int)damage);
 
-                Debug.Log($"[Projectile] Destroyed by hitting Player {other.name}");
                 NetworkServer.Destroy(gameObject);
                 return;
             }
@@ -95,7 +90,6 @@ namespace Server.AI
             {
                 if (((1 << other.gameObject.layer) & _blockingLayer) != 0)
                 {
-                    Debug.Log($"[Projectile] Destroyed by OnTriggerEnter hitting wall {other.name}");
                     NetworkServer.Destroy(gameObject);
                 }
             }

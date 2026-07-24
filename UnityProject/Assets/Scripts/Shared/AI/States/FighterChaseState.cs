@@ -84,7 +84,7 @@ namespace Server.AI
             float currentY = _enemy.Rb.linearVelocity.y;
             
             // Prevent clipping into tile corners when falling
-            if (currentY < 0f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
+            if (!grounded && currentY < -0.1f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
             {
                 speedX = 0f;
             }

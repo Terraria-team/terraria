@@ -14,7 +14,6 @@ namespace Server.AI.Bosses
         [SerializeField] private float _phase2AttackCooldown = 0.4f;
         [SerializeField] private float _servantSpawnInterval = 8f;
 
-        private HealthComponent _healthComponent;
         private bool _inPhase2 = false;
         private float _servantSpawnTimer = 0f;
 

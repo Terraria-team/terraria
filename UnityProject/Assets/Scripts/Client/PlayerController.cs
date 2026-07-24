@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using Core.WorldGeneration;
 using Mirror;
+using Server.AI;
 using Shared.Components;
 using TMPro;
 using UnityEngine;
@@ -12,12 +14,17 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private SpriteRenderer backgroundRenderer;
     [SerializeField] private TextMeshProUGUI healthBar;
     [SerializeField] private GameObject uiPrefab;
 
     public static Transform LocalPlayerTransform;
 
     public PlayerData playerData;
+    [SyncVar(hook = nameof(OnPlayerNameChanged))]
+    public string playerName = "";
+
+    private TextMeshPro _nameText;
     private PlayerRenderer _playerRenderer;
     private HealthComponent _healthComponent;
     private PlayerMovement _movementComponent;
@@ -28,6 +35,11 @@ public class PlayerController : NetworkBehaviour
     private BlockHighlight _blockHighlight;
     private Rigidbody2D _rb;
     private bool _hasSpawnedOnSurface = false;
+    private bool _isDead = false;
+
+    [Header("Respawn")]
+    [SerializeField] private float respawnDelay = 3f;
+    [SerializeField] private Vector3 spawnPosition;
 
     void Start()
     {
@@ -44,8 +56,24 @@ public class PlayerController : NetworkBehaviour
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _rb.bodyType = RigidbodyType2D.Kinematic;
 
+        GameObject nameObj = new GameObject("Name_Text");
+        nameObj.transform.SetParent(transform);
+        nameObj.transform.localPosition = new Vector3(0, 2.2f, 0); // Above HP
+        _nameText = nameObj.AddComponent<TextMeshPro>();
+        _nameText.alignment = TextAlignmentOptions.Center;
+        _nameText.fontSize = 3;
+        _nameText.color = Color.white;
+        _nameText.sortingOrder = 10;
+        _nameText.text = playerName;
+
         if (!isLocalPlayer)
             return;
+            
+        backgroundRenderer = GameObject.FindWithTag("Background").GetComponent<SpriteRenderer>();
+        
+        string myName = Client.Auth.AuthService.Instance.CurrentNickname;
+        if (string.IsNullOrEmpty(myName)) myName = "Player";
+        CmdSetName(myName);
         
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
@@ -59,6 +87,8 @@ public class PlayerController : NetworkBehaviour
 
         _healthComponent.OnDamageFlashed += _playerRenderer.DamageFlash;
         _healthComponent.OnHealingFlashed += _playerRenderer.HealingFlash;
+        _healthComponent.OnDeath += HandleLocalPlayerDeath;
+        _movementComponent.OnFallDamage += HandleFallDamage;
     }
     
     void OnDestroy()
@@ -68,6 +98,11 @@ public class PlayerController : NetworkBehaviour
         {
             _healthComponent.OnDamageFlashed -= _playerRenderer.DamageFlash;
             _healthComponent.OnHealingFlashed -= _playerRenderer.HealingFlash;
+            _healthComponent.OnDeath -= HandleLocalPlayerDeath;
+        }
+        if (_movementComponent != null)
+        {
+            _movementComponent.OnFallDamage -= HandleFallDamage;
         }
     }
 
@@ -123,27 +158,40 @@ public class PlayerController : NetworkBehaviour
         transform.position = new Vector3(spawnX + 0.5f, ChunkUtils.ChunkSize - 2, originalPos.z);
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
-    
-    [SerializeField] private float cooldown = 3f;
+
+    [SerializeField] private float cooldown = 30f;
     private float lastSpawnTime = -Mathf.Infinity;
 
+    [Server]
     void TrySpawningAround()
     {
         const float visionRange = 96;
 
-        if (Time.time - lastSpawnTime >= cooldown)
-            lastSpawnTime = Time.time;
-        else
+        if (Time.time - lastSpawnTime < cooldown)
             return;
+
+        {
+            LayerMask mask = LayerMask.GetMask("Enemies");
+            Collider2D[] results = Physics2D.OverlapCircleAll(
+                transform.position,
+                visionRange,
+                mask);
+        
+            if (results.Length > 10)
+                return;
+        }
 
         for (int i = 0; i < 100; i++)
         {
             float spawnAngle = Random.Range(0, 6.283f);
-            Vector3 pos = transform.position + visionRange * new Vector3((float)Math.Cos(spawnAngle), (float)Math.Sin(spawnAngle), 0);
+            Vector3 pos = transform.position + visionRange * new Vector3((float)Math.Cos(spawnAngle), (float)Math.Sin(spawnAngle) * 0.2f, 0);
         
             var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(pos));
             var data = DataManager.Biomes[type];
-        
+
+            if (data == null || data.allowedEnemies.Length == 0)
+                continue;
+
             int randomIndex = Random.Range(0, data.allowedEnemies.Length);
             var randomEnemy = data.allowedEnemies[randomIndex];
             
@@ -162,6 +210,8 @@ public class PlayerController : NetworkBehaviour
                 Quaternion.identity
             );
             NetworkServer.Spawn(spawned);
+            lastSpawnTime = Time.time;
+            ServerEnemyController.EnemyCounter++;
             break;
         }
     }
@@ -178,8 +228,14 @@ public class PlayerController : NetworkBehaviour
             healthBar.text = _healthComponent.HealthNow.ToString();
         }
         
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer || _isDead) return;
         
+        var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(transform.position));
+        var data = DataManager.Biomes[type];
+        
+        if (data.background != null && backgroundRenderer != null)
+            backgroundRenderer.sprite = data.background;
+
         for (int x = 0; x < ChunkManager.Instance.WorldSize.x; x++)
         {
             for (int y = 0; y < ChunkManager.Instance.WorldSize.y; y++)
@@ -270,4 +326,98 @@ public class PlayerController : NetworkBehaviour
         }
     }
     
+    void OnPlayerNameChanged(string oldName, string newName)
+    {
+        if (_nameText != null)
+        {
+            _nameText.text = newName;
+        }
+    }
+
+    [Command]
+    public void CmdSetName(string newName)
+    {
+        playerName = newName;
+    }
+
+    // ── Fall Damage ──────────────────────────────────────────────
+    private void HandleFallDamage(int damage)
+    {
+        if (_healthComponent != null && !_healthComponent.IsDead)
+        {
+            CmdApplyFallDamage(damage);
+        }
+    }
+
+    [Command]
+    private void CmdApplyFallDamage(int damage)
+    {
+        if (_healthComponent != null)
+        {
+            _healthComponent.ApplyDamageServerRpc(damage);
+        }
+    }
+
+    // ── Death / Respawn ──────────────────────────────────────────
+    private void HandleLocalPlayerDeath()
+    {
+        _isDead = true;
+        // Disable input
+        if (_movementComponent != null)
+            _movementComponent.enabled = false;
+        if (_blockHighlight != null)
+            _blockHighlight.enabled = false;
+
+        // Immediately hide the player sprite
+        if (_playerRenderer != null)
+            _playerRenderer.SetVisible(false);
+
+        StartCoroutine(RespawnAfterDelay());
+    }
+
+    private IEnumerator RespawnAfterDelay()
+    {
+        yield return new WaitForSeconds(respawnDelay);
+        CmdRequestRespawn();
+    }
+
+    [Command]
+    private void CmdRequestRespawn()
+    {
+        if (_healthComponent == null) return;
+
+        // Reset health on server (SyncVar propagates to clients)
+        _healthComponent.ResetHealth();
+
+        // Teleport to the developer-defined spawn position
+        transform.position = spawnPosition;
+
+        // Notify the client to re-enable controls
+        RpcCompleteRespawn();
+    }
+
+    [ClientRpc]
+    private void RpcCompleteRespawn()
+    {
+        _isDead = false;
+
+        // Show the player sprite again
+        if (_playerRenderer != null)
+            _playerRenderer.SetVisible(true);
+
+        if (!isLocalPlayer) return;
+
+        // Re-enable input
+        if (_movementComponent != null)
+            _movementComponent.enabled = true;
+        if (_blockHighlight != null)
+        {
+            _blockHighlight.enabled = true;
+            _blockHighlight.InitializeHighlight();
+        }
+
+        // Reset physics so the player doesn't keep falling
+        if (_rb != null)
+            _rb.linearVelocity = Vector2.zero;
+    }
 }

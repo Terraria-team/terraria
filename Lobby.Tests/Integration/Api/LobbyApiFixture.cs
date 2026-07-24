@@ -1,6 +1,6 @@
-using Lobby.Application.Contracts;
-using Lobby.Application.Entities;
-using Lobby.Infrastructure.Data;
+using Lobby.Application.Contracts.ExternalServices;
+using Lobby.Application.Domain;
+using Lobby.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
@@ -14,7 +14,8 @@ namespace Lobby.Tests.Integration.Api;
 /// </summary>
 public sealed class LobbyApiFixture : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:17-alpine")
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
+        .WithImage("postgres:17-alpine")
         .Build();
 
     public LobbyApiFactory Factory { get; private set; } = null!;
@@ -39,9 +40,11 @@ public sealed class LobbyApiFixture : IAsyncLifetime
         using var scope = Factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<LobbyDbContext>();
         await db.RefreshTokens.ExecuteDeleteAsync();
-        await db.PlayerGoogleLogins.ExecuteDeleteAsync();
-        await db.Players.ExecuteDeleteAsync();
+        await db.PlayerExternalIdentities.ExecuteDeleteAsync();
         await db.ServerInstances.ExecuteDeleteAsync();
+        await db.TerrariaWorlds.ExecuteDeleteAsync();
+        await db.TerrariaWorldStorages.ExecuteDeleteAsync();
+        await db.Players.ExecuteDeleteAsync();
     }
 
     /// <summary>Виконує дію над LobbyDbContext застосунку (сідінг/перевірки).</summary>

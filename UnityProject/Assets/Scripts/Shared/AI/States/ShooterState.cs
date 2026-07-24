@@ -188,7 +188,7 @@ namespace Server.AI
             }
 
             // Prevent clipping into tile corners when falling
-            if (currentY < 0f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
+            if (!_enemy.IsGrounded() && currentY < -0.1f && Mathf.Abs(_enemy.Rb.linearVelocity.x) < 0.1f)
             {
                 speedX = 0f;
             }

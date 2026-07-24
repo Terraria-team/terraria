@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe69a55c7f55d2409e851144eca918b, type: 3}
+  m_Name: PlatinumIngot
+  m_EditorClassIdentifier: Shared::ItemData
+  id: 32
+  icon: {fileID: 21300000, guid: 48a649e11354ddd4f8dac4ad5fb87f05, type: 3}
+  unlocalizedName: 
+  stackSize: 5
+  primaryAction: 0
+  consumeOnAction: 0
+  blockToPlace: {fileID: 11400000, guid: 365c42fd34f928d40b3647b9e5f7d9ba, type: 2}
+  projectileToSpawn: 0
+  swingData: {fileID: 0}

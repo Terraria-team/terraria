@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Lobby.Application.Settings;
-using Lobby.Infrastructure.Services;
+using Lobby.Infrastructure.ExternalServices;
+using Lobby.Infrastructure.ExternalServices.Settings;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Lobby.Tests.Services;

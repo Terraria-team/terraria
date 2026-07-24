@@ -48,11 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee14f4182e905f4c9ed1be80fc7a297, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Client::InventoryUI
+  craftPrefab: {fileID: 4095186794095959919, guid: 48d2c7bd6a65f0e42bd1337fb17d8851, type: 3}
   slotPrefab: {fileID: 4095186794095959919, guid: b365be14099394949815628b6191f84a, type: 3}
   parent: {fileID: 1978094744888558932}
   slotObjectBaseOffset: 80
   slotObjectOffset: 130
   slotObjectScale: 0.3
+  craftAreaOffset: 160
 --- !u!1 &8176624637013669728
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe69a55c7f55d2409e851144eca918b, type: 3}
+  m_Name: Glass
+  m_EditorClassIdentifier: Shared::ItemData
+  id: 10
+  icon: {fileID: 21300000, guid: a11b65d7580d40842a767817a2dd8296, type: 3}
+  unlocalizedName: 
+  stackSize: 5
+  primaryAction: 2
+  consumeOnAction: 1
+  blockToPlace: {fileID: 11400000, guid: 8d7f314af5d77184fa0b6fcd2782b819, type: 2}
+  projectileToSpawn: 0
+  swingData: {fileID: 0}

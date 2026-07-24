@@ -1,6 +1,6 @@
 using System.Net;
-using Lobby.Application.Contracts;
-using Lobby.Application.Entities;
+using Lobby.Application.Contracts.ExternalServices;
+using Lobby.Application.Domain;
 using Lobby.Application.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +19,7 @@ public sealed class LobbyApiFactory : WebApplicationFactory<Program>
 {
     private readonly string _connectionString;
 
-    public FakeGoogleAuthService GoogleAuth { get; } = new();
+    public FakeExternalAuthProvider GoogleAuth { get; } = new();
 
     public LobbyApiFactory(string connectionString) => _connectionString = connectionString;
 
@@ -29,8 +29,8 @@ public sealed class LobbyApiFactory : WebApplicationFactory<Program>
 
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll<IGoogleAuthService>();
-            services.AddSingleton<IGoogleAuthService>(GoogleAuth);
+            services.RemoveAll<IExternalAuthProvider>();
+            services.AddSingleton<IExternalAuthProvider>(GoogleAuth);
 
             services.RemoveAll<IServerInstanceSpawner>();
             services.AddSingleton<IServerInstanceSpawner, FakeServerInstanceSpawner>();
@@ -41,14 +41,16 @@ public sealed class LobbyApiFactory : WebApplicationFactory<Program>
 }
 
 /// <summary>
-/// Фейковий обмін Google-коду: повертає заздалегідь заданий результат,
-/// а якщо його не задано — помилку авторизації, як робить справжній сервіс на невалідному коді.
+/// Фейкова верифікація зовнішньої ідентичності: повертає заздалегідь заданий результат,
+/// а якщо його не задано — помилку авторизації, як робить справжній адаптер на невалідному коді.
 /// </summary>
-public sealed class FakeGoogleAuthService : IGoogleAuthService
+public sealed class FakeExternalAuthProvider : IExternalAuthProvider
 {
-    public ResultModel<PlayerGoogleLoginModel>? NextResult { get; set; }
+    public string ProviderName => "Google";
 
-    public Task<ResultModel<PlayerGoogleLoginModel>> ExchangeCode(string code, string redirectUri) =>
+    public ResultModel<PlayerExternalIdentityModel>? NextResult { get; set; }
+
+    public Task<ResultModel<PlayerExternalIdentityModel>> VerifyIdentityAsync(string code, string redirectUri) =>
         Task.FromResult(NextResult ?? ErrorModel.Unauthorized("fake: invalid google code"));
 }
 
@@ -59,13 +61,18 @@ public sealed class FakeServerInstanceSpawner : IServerInstanceSpawner
 {
     public const string ContainerIdPrefix = "fake-container-";
 
-    public Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(int port, string name) =>
-        Task.FromResult(new ServerInstanceSpawnInfoEntity(
+    public Task<ServerInstanceSpawnInfoEntity> CreateNewServerInstance(Guid id, string name)
+    {
+        // Додано порт, оскільки раніше змінна не була оголошена
+        const int port = 7777; 
+        
+        return Task.FromResult(new ServerInstanceSpawnInfoEntity(
             ContainerId: $"{ContainerIdPrefix}{port}",
             Image: "fake/terraria-server:test",
             Name: name,
             Port: port,
             Status: ServerInstanceStatus.Running));
+    }
 }
 
 /// <summary>
