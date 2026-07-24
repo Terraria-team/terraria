@@ -162,15 +162,24 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float cooldown = 30f;
     private float lastSpawnTime = -Mathf.Infinity;
 
+    [Server]
     void TrySpawningAround()
     {
         const float visionRange = 96;
 
         if (Time.time - lastSpawnTime < cooldown)
             return;
+
+        {
+            LayerMask mask = LayerMask.GetMask("Enemies");
+            Collider2D[] results = Physics2D.OverlapCircleAll(
+                transform.position,
+                visionRange,
+                mask);
         
-        if (ServerEnemyController.EnemyCounter > 10)
-            return;
+            if (results.Length > 10)
+                return;
+        }
 
         for (int i = 0; i < 100; i++)
         {

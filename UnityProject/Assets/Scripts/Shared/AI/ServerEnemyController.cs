@@ -119,6 +119,19 @@ namespace Server.AI
         {
             if (isServer)
             {
+                {
+                    const float visionRange = 96;
+
+                    LayerMask mask = LayerMask.GetMask("Player");
+                    Collider2D[] results = Physics2D.OverlapCircleAll(
+                        transform.position,
+                        visionRange * 2,
+                        mask);
+    
+                    if (results.Length == 0)
+                        HandleDeath();
+                }
+                
                 _currentState?.UpdateState();
 
                 // Update facing direction based on horizontal velocity
