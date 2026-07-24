@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -44,7 +44,7 @@ namespace Server
                 return null;
             }
 
-            var endpoint = $"{_baseUrl}{_serverInstancesUrl}{_serverInstanceId}/player-count";
+            var endpoint = $"{_baseUrl.TrimEnd('/')}/{_serverInstancesUrl.Trim('/')}/{_serverInstanceId}/player-count";
             var payload = new UpdatePlayerCountDto { PlayerCount = count };
             
             var (content, statusCode, error) = await HttpUtil.SendRawAsync(
