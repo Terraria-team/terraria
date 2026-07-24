@@ -121,7 +121,6 @@ public class ChunkManager : NetworkBehaviour
     {
         TileBase[] tiles = new TileBase[ChunkUtils.ChunkMaxIndex];
 
-        int validTiles = 0;
         for (ushort i = 0; i < ChunkUtils.ChunkMaxIndex; i++)
         {
             BlockID block = updatedChunk[i];
@@ -129,16 +128,6 @@ public class ChunkManager : NetworkBehaviour
             tiles[i] = block.IsAir
                 ? null
                 : block.BlockData.blockTexture;
-            
-            if (tiles[i] != null) 
-                validTiles++;
-        }
-
-        Debug.LogWarning($"Server got {validTiles} tiles");
-        
-        if (NetworkServer.active && validTiles == 0 && !updatedChunk[0].IsAir)
-        {
-            Debug.LogError("Server Tile array is empty! TileBase assets are being stripped from the server build.");
         }
 
         BoundsInt bounds = new BoundsInt(

@@ -96,6 +96,8 @@ namespace Server.AI
             }
         }
 
+        public static int EnemyCounter = 0;
+        
         [Server]
         private void HandleDeath()
         {
@@ -109,6 +111,7 @@ namespace Server.AI
 
             // TODO: Drop loot here when item drop system is ready
 
+            EnemyCounter--;
             NetworkServer.Destroy(gameObject);
         }
 

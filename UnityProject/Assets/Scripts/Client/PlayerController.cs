@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Core.WorldGeneration;
 using Mirror;
+using Server.AI;
 using Shared.Components;
 using TMPro;
 using UnityEngine;
@@ -157,31 +158,30 @@ public class PlayerController : NetworkBehaviour
         transform.position = new Vector3(spawnX + 0.5f, ChunkUtils.ChunkSize - 2, originalPos.z);
         Debug.LogWarning($"[PlayerController] Failed to find any empty spawn space. Fallback to top: {transform.position}");
     }
-    
-    [SerializeField] private float cooldown = 120f;
+
+    [SerializeField] private float cooldown = 30f;
     private float lastSpawnTime = -Mathf.Infinity;
 
     void TrySpawningAround()
     {
         const float visionRange = 96;
 
-        if (Time.time - lastSpawnTime >= cooldown)
-            lastSpawnTime = Time.time;
-        else
+        if (Time.time - lastSpawnTime < cooldown)
+            return;
+        
+        if (ServerEnemyController.EnemyCounter > 10)
             return;
 
         for (int i = 0; i < 100; i++)
         {
             float spawnAngle = Random.Range(0, 6.283f);
-            Vector3 pos = transform.position + visionRange * new Vector3((float)Math.Cos(spawnAngle), (float)Math.Sin(spawnAngle), 0);
+            Vector3 pos = transform.position + visionRange * new Vector3((float)Math.Cos(spawnAngle), (float)Math.Sin(spawnAngle) * 0.2f, 0);
         
             var type = MapGenerator.GetBiomeTypeAt(ChunkUtils.ChunkCoordsAtWorldPosition(pos));
             var data = DataManager.Biomes[type];
 
             if (data == null || data.allowedEnemies.Length == 0)
-            {
                 continue;
-            }
 
             int randomIndex = Random.Range(0, data.allowedEnemies.Length);
             var randomEnemy = data.allowedEnemies[randomIndex];
@@ -201,6 +201,8 @@ public class PlayerController : NetworkBehaviour
                 Quaternion.identity
             );
             NetworkServer.Spawn(spawned);
+            lastSpawnTime = Time.time;
+            ServerEnemyController.EnemyCounter++;
             break;
         }
     }

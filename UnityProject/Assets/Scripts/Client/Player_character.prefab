@@ -76,9 +76,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  backgroundRenderer: {fileID: 0}
   healthBar: {fileID: 1748882237933020220}
   uiPrefab: {fileID: 8176624637013669728, guid: bc90622679ea93941abab2e7f06e36c3, type: 3}
   playerData: {fileID: 11400000, guid: 010450a4ab5480f4aa56d5e0f1fb7a94, type: 2}
+  playerName: 
   respawnDelay: 2
   spawnPosition: {x: 440, y: 322, z: 0}
   cooldown: 1
@@ -163,7 +165,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &6934858697328286831
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
